@@ -1,0 +1,15 @@
+{
+    "name": "segmentio"
+  , "version": "0.0.1"
+  , "description": "An official Segment.io client driver for node"
+  , "keywords": ["segment.io", "node", "client", "driver", "analytics"]
+  , "author": "Ilya Volodarsky <ilya@segment.io>"
+  , "engines": { "node": ">= 0.6.0" }
+  , "main": "./lib/client"
+  , "dependencies":{
+     "underscore": "*"
+  }
+  , "devDependencies": {
+     "mocha": "*"
+  }
+}

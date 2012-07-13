@@ -1,0 +1,97 @@
+# Segment.io
+
+[Segment.io](https://segment.io) is a segmentation-focused analytics platform. If you haven't yet,
+register for a project [here](https://segment.io).
+
+This is an official node.js client that wraps the [Segment.io REST API](https://segment.io/docs) .
+
+You can use this driver to identify and track your visitor's events into your Segment.io project.
+
+## Design
+
+This client uses batching to efficiently record your events in aggregate, rather than making an HTTP
+request every time. This means that it is safe to use in your web server controllers, or in back-end services
+without worrying that it will make too many HTTP requests and slow down the system.
+
+You can control the batching behavior as described below.
+
+## How to Use
+
+#### Install
+
+```javascript
+npm install segmentio
+```
+#### Create a Client
+
+```javascript
+var Segmentio = require('segmentio');
+var seg = new Segmentio('YOUR_API_KEY', 'production');
+```
+
+#### Identify a Visitor
+
+Identifying a visitor ties all of their actions to an ID you recognize and records visitor traits you can segment by.
+
+```
+seg.identify(sessionId, visitorId, traits);
+```
+
+sessionId (string) is a unique id associated with an anonymous visitor before they are logged in. If the user
+is logged in, you can use null here.
+
+visitor_id (string) is usually an email, but any unique ID will work. This is how you recognize a signed-in visitor
+in your system. Note: it can be null if the visitor is not logged in.By explicitly identifying a visitor, you tie all of
+their actions to their identity. This makes it possible for you to run things like segment-based email campaigns.
+
+traits (object) is a dictionary with keys like “Subscription Plan” or “Favorite Genre”. You can segment your visitors by any trait you record. Once you record a trait, no need to send it again, so the traits argument is optional.
+
+```javascript
+
+seg.identify('DKGXt384hFDT82D', 'ilya@segment.io', {
+    'First Name': 'Ilya',
+    'Last Name': 'Volodarsky',
+    'Subscription Plan': 'Premium',
+    'On Mailing List': true
+});
+
+```
+
+#### Track an Action
+
+Whenever a visitor triggers an event on your site, you’ll want to track it so that you can analyze and segment by those events later.
+
+```
+seg.track(sessionId, visitorId, event, properties);
+```
+
+sessionId (string) is a unique id associated with an anonymous visitor before they are logged in. If the user
+is logged in, you can use null here.
+
+visitor_id (string) is usually an email, but any unique ID will work. This is how you recognize a signed-in visitor
+in your system. Note: it can be null if the visitor is not logged in.By explicitly identifying a visitor, you tie all of
+their actions to their identity. This makes it possible for you to run things like segment-based email campaigns.
+
+event (string) is a human readable description like "Played a Song", "Printed a Report" or "Updated Status". You’ll be able to segment by when and how many times each event was triggered.
+
+properties (object) is a dictionary with items that describe the event in more detail. This argument is optional, but highly recommended—you’ll find these properties extremely useful later.
+
+```javascript
+
+seg.track('DKGXt384hFDT82D', ilya@segment.io', 'Listened to a song', {
+    'Title': 'Eleanor Rigby',
+    'Artist': 'Beatles',
+    'Playlist': 'Popular'
+});
+
+```
+
+#### Adjusting Batching
+
+You can adjust the flush triggers in the client. Take a look
+
+#### Testing
+
+```javascript
+npm test
+```

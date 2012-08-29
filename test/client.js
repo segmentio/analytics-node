@@ -11,9 +11,27 @@ var options = {
 };
 
 
+/**
+ * Sets up the listeners for seg, to call 'done' on a flush and error on error.
+ * @param {Function} done - completion callback
+ */
+var setListeners = function (seg, done) {
+
+    var listenerId = seg.once('error', function (err) {
+        should.not.exist(err);
+    });
+
+    seg.once('flushed', function () {
+        seg.removeAllListeners();
+        done();
+    });
+};
+
+
+
 describe('Batch', function () {
 
-    var visitorId = 'test@segment.io',
+    var userId    = 'test@segment.io',
         sessionId = '123456789',
         apiKey    = 'fakeid';
 
@@ -22,25 +40,19 @@ describe('Batch', function () {
 
     it('should properly identify', function (done) {
 
-        seg.identify({ visitor : visitorId,
-                       session : sessionId,
-                       traits  : { baller : true }}, function (err, result) {
+        setListeners(seg, done);
 
-            should.not.exist(err);
-
-            done();
-        });
+        seg.identify({ userId    : userId,
+                       sessionId : sessionId,
+                       traits    : { baller : true }});
     });
 
     it('should properly track', function (done) {
 
-        seg.track({ visitor : visitorId,
-                    event   : 'Ate a cookie' }, function (err, result) {
+        setListeners(seg, done);
 
-            should.not.exist(err);
-
-            done();
-        });
+        seg.track({ userId  : userId,
+                    event   : 'Ate a cookie' });
     });
 
 

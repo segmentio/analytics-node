@@ -4,8 +4,8 @@
   , "description": "An official Segment.io client driver for node"
   , "repository": "git://github.com/segmentio/segmentio"
   , "keywords": ["segment.io", "node", "client", "driver", "analytics"]
-  , "author": "Ilya Volodarsky <ilya@segment.io>"
-  , "engines": { "node": ">= 0.6.x" }
+  , "authors": "Ilya Volodarsky <ilya@segment.io>, Calvin French-Owen <calvin@segment.io>"
+  , "engines": { "node": ">= 0.8.x" }
   , "main": "./lib/segmentio"
   , "dependencies":{
      "underscore": "*"

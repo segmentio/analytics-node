@@ -26,7 +26,7 @@ npm install segmentio
 
 ```javascript
 var Segmentio = require('segmentio');
-var seg = new Segmentio('YOUR_API_KEY', 'production');
+var seg = new Segmentio('YOUR_API_KEY');
 ```
 
 #### Identify a Visitor

@@ -4,7 +4,7 @@ var should = require('should'),
 
 
 var options = {
-    host : 'http://localhost:81',
+    host : 'https://api.segment.io',
     flushSize : 1,
     timerInterval: 750
 };

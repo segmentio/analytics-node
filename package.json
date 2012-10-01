@@ -1,8 +1,8 @@
 {
     "name": "segmentio"
-  , "version": "0.0.1"
+  , "version": "0.1.0"
   , "description": "An official Segment.io client driver for node"
-  , "repository": "git://github.com/segmentio/segmentio"
+  , "repository": "git://github.com/segmentio/segmentio-node"
   , "keywords": ["segment.io", "segmentio", "client", "driver", "analytics"]
   , "authors": "Ilya Volodarsky <ilya@segment.io>, Calvin French-Owen <calvin@segment.io>"
   , "engines": { "node": ">= 0.8.x" }

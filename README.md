@@ -6,7 +6,7 @@ register for a project [here](https://segment.io).
 
 This is an official node.js client that wraps the [Segment.io REST API](https://segment.io/docs) .
 
-You can use this driver to identify and track your visitor's events into your Segment.io project.
+You can use this driver to identify and track your user's events into your Segment.io project.
 
 ## Design
 
@@ -40,26 +40,26 @@ var segmentio = new require('segmentio').Client();
 segmentio.init('YOUR_API_KEY');
 ``` 
 
-#### Identify a Visitor
+#### Identify a User
 
-Identifying a visitor ties all of their actions to an ID you recognize and records visitor traits you can segment by.
+Identifying a user ties all of their actions to an ID you recognize and records user traits you can segment by.
 
 ```javascript
 segmentio.identify({
     sessionId : String 
-    visitorId : String
+    userId : String
     traits : Object
 });
 ```
 
-**sessionId** (string) is a unique id associated with an anonymous visitor before they are logged in. If the user
+**sessionId** (string) is a unique id associated with an anonymous user before they are logged in. If the user
 is logged in, you can use null here.
 
-**visitorId** (string) is usually an email, but any unique ID will work. This is how you recognize a signed-in visitor
-in your system. Note: it can be null if the visitor is not logged in.By explicitly identifying a visitor, you tie all of
+**userId** (string) is usually an email, but any unique ID will work. This is how you recognize a signed-in user
+in your system. Note: it can be null if the user is not logged in. By explicitly identifying a user, you tie all of
 their actions to their identity. This makes it possible for you to run things like segment-based email campaigns.
 
-**traits** (object) is a dictionary with keys like “Subscription Plan” or “Favorite Genre”. You can segment your visitors by any trait you record. Once you record a trait, no need to send it again, so the traits argument is optional.
+**traits** (object) is a dictionary with keys like “Subscription Plan” or “Favorite Genre”. You can segment your users by any trait you record. Once you record a trait, no need to send it again, so the traits argument is optional.
 
 ```javascript
 segmentio.identify({
@@ -77,7 +77,7 @@ segmentio.identify({
 
 #### Track an Action
 
-Whenever a visitor triggers an event on your site, you’ll want to track it so that you can analyze and segment by those events later.
+Whenever a user triggers an event on your site, you’ll want to track it so that you can analyze and segment by those events later.
 
 ```
 seg.track({
@@ -88,11 +88,11 @@ seg.track({
 });
 ```
 
-**sessionId** (string) is a unique id associated with an anonymous visitor before they are logged in. If the user
+**sessionId** (string) is a unique id associated with an anonymous user before they are logged in. If the user
 is logged in, you can use null here. Either this or the userId must be supplied.
 
-**userId** (string) is usually an email, but any unique ID will work. This is how you recognize a signed-in visitor
-in your system. Note: it can be null if the visitor is not logged in. By explicitly identifying a visitor, you tie all of
+**userId** (string) is usually an email, but any unique ID will work. This is how you recognize a signed-in user
+in your system. Note: it can be null if the user is not logged in. By explicitly identifying a user, you tie all of
 their actions to their identity. This makes it possible for you to run things like segment-based email campaigns. Either this or the sessionId must be supplied.
 
 **event** (string) is a human readable description like "Played a Song", "Printed a Report" or "Updated Status". You’ll be able to segment by when and how many times each event was triggered.

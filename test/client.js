@@ -167,7 +167,7 @@ describe('Client batch', function () {
     it('should emit when there are too many objects in the queue',
         function (done) {
 
-        seg.on('error', function (err) {
+        seg.on('err', function (err) {
 
             should.exist(err);
             seg.queue.should.have.length(0);

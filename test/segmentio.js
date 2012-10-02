@@ -20,16 +20,20 @@ describe('Segmentio module', function () {
     });
 
 
-    it('should properly identify', function () {
+    it('should properly identify', function (done) {
 
         segmentio.identify({ userId    : userId,
                              sessionId : sessionId,
                              traits    : { baller : true }});
+
+        setTimeout(done, 500);
     });
 
-    it('should properly track', function () {
+    it('should properly track', function (done) {
 
         segmentio.track({ userId  : userId,
                           event   : 'Ate a cookie' });
+
+        setTimeout(done, 500);
     });
 });

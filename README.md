@@ -29,7 +29,7 @@ The default and easiest method for most apps is to just use the API client as a 
 
 ```javascript
 var segmentio = require('segmentio');
-segmentio.init('YOUR_API_KEY');
+segmentio.init(isProduction ? 'LIVE_API_KEY' : 'TEST_API_KEY');
 ```
 
 Then whenever you `require('segmentio')` from your app, you'll have access to the same client.
@@ -37,7 +37,7 @@ Then whenever you `require('segmentio')` from your app, you'll have access to th
 You can also create your own client if you'd like a little more customization. The API is exactly the same.
 ```javascript
 var segmentio = new require('segmentio').Client();
-segmentio.init('YOUR_API_KEY');
+segmentio.init(isProduction ? 'LIVE_API_KEY' : 'TEST_API_KEY');
 ``` 
 
 #### Identify a User
@@ -80,7 +80,7 @@ segmentio.identify({
 Whenever a user triggers an event on your site, you’ll want to track it so that you can analyze and segment by those events later.
 
 ```
-seg.track({
+segmentio.track({
     sessionId : String, 
     userId : String, 
     event : String, 
@@ -101,7 +101,7 @@ their actions to their identity. This makes it possible for you to run things li
 
 ```javascript
 
-seg.track({
+segmentio.track({
     sessionId : 'DKGXt384hFDT82D', 
     userId : 'ilya@segment.io', 
     event : 'Listened to a song', 
@@ -117,13 +117,28 @@ seg.track({
 
 You can adjust the flush triggers in the client. Take a look into the source.
 
+## Error Handling and Integration
+
+In order to handle errors, the node client will emit every time an error occurs. To prevent the segmentio client from crashing your server with an unhandled exception, it emits on `err` rather than the more conventional `error`.
+
+During integration, we recommend listening on the `err` event to make sure that all the data is being properly recorded:
+```javascript
+segmentio.on('err', function() { console.warn('A segment.io error occured', err); });
+```
+You may also listen on the following events for more fine-grained granularity.
+
+* **flushed** - when the client has sent its queue to the server
+* **flushing** - when the client is in the process of submitting its queue
+* **err** - when an error in the tracking code or connection happens.
+* **initialized** - when the client is initialized and able to record events.
+
 #### Testing
 
 ```javascript
 npm test
 ```
 
-#### License
+## License
 
 (The MIT License)
 

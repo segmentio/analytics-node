@@ -6,7 +6,7 @@ register for a project [here](https://segment.io).
 
 This is the official node.js client that wraps the [Segment.io REST API](https://segment.io/docs) .
 
-You can use this driver to identify and track your user's events into your Segment.io project.
+You can use this driver to identify your users and track their events into your Segment.io project.
 
 ## Design
 

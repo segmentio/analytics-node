@@ -79,7 +79,7 @@ segmentio.identify({
 
 Whenever a user triggers an event on your site, you’ll want to track it so that you can analyze and segment by those events later.
 
-```
+```javascript
 segmentio.track({
     sessionId : String, 
     userId : String, 
@@ -132,7 +132,7 @@ You may also listen on the following events for more fine-grained granularity.
 * **err** - when an error in the tracking code or connection happens.
 * **initialized** - when the client is initialized and able to record events.
 
-#### Testing
+## Testing
 
 ```javascript
 npm test

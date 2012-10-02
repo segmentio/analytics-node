@@ -4,7 +4,7 @@ Segment.io Node Client
 [Segment.io](https://segment.io) is a segmentation-focused analytics platform. If you haven't yet,
 register for a project [here](https://segment.io).
 
-This is an official node.js client that wraps the [Segment.io REST API](https://segment.io/docs) .
+This is the official node.js client that wraps the [Segment.io REST API](https://segment.io/docs) .
 
 You can use this driver to identify and track your user's events into your Segment.io project.
 

@@ -38,7 +38,7 @@ You can also create your own client if you'd like a little more customization. T
 ```javascript
 var segmentio = new require('segmentio').Client();
 segmentio.init(isProduction ? 'LIVE_API_KEY' : 'TEST_API_KEY');
-``` 
+```
 
 #### Identify a User
 
@@ -46,9 +46,10 @@ Identifying a user ties all of their actions to an ID you recognize and records 
 
 ```javascript
 segmentio.identify({
-    sessionId : String 
-    userId : String
-    traits : Object
+    sessionId : String
+    userId    : String
+    traits    : Object,
+    timestamp : Date
 });
 ```
 
@@ -61,16 +62,19 @@ their actions to their identity. This makes it possible for you to run things li
 
 **traits** (object) is a dictionary with keys like “Subscription Plan” or “Favorite Genre”. You can segment your users by any trait you record. Once you record a trait, no need to send it again, so the traits argument is optional.
 
+**timestamp** (Date) is a Date object representing when the identify took place. It is optional, and if not provided, server-now will be used.
+
 ```javascript
 segmentio.identify({
-    sessionId : 'DKGXt384hFDT82D', 
-    userId : 'ilya@segment.io', 
+    sessionId : 'DKGXt384hFDT82D',
+    userId : 'ilya@segment.io',
     traits : {
         'First Name': 'Ilya',
         'Last Name': 'Volodarsky',
         'Subscription Plan': 'Premium',
         'On Mailing List': true
-    }
+    },
+    timestamp: new Date('2012-12-02T00:30:08.276Z')
 });
 
 ```
@@ -81,10 +85,11 @@ Whenever a user triggers an event on your site, you’ll want to track it so tha
 
 ```javascript
 segmentio.track({
-    sessionId : String, 
-    userId : String, 
-    event : String, 
-    properties : Object 
+    sessionId  : String,
+    userId     : String,
+    event      : String,
+    properties : Object,
+    timestamp  : Date
 });
 ```
 
@@ -99,17 +104,20 @@ their actions to their identity. This makes it possible for you to run things li
 
 **properties** (object) is a dictionary with items that describe the event in more detail. This argument is optional, but highly recommended—you’ll find these properties extremely useful later.
 
+**timestamp** (Date) is a Date object representing when the track took place. It is optional, and if not provided, server-now will be used.
+
 ```javascript
 
 segmentio.track({
-    sessionId : 'DKGXt384hFDT82D', 
-    userId : 'ilya@segment.io', 
-    event : 'Listened to a song', 
+    sessionId : 'DKGXt384hFDT82D',
+    userId : 'ilya@segment.io',
+    event : 'Listened to a song',
     properties : {
         'Title': 'Eleanor Rigby',
         'Artist': 'Beatles',
         'Playlist': 'Popular'
-    }
+    },
+    timestamp: new Date('2012-12-02T00:30:08.276Z')
 });
 ```
 

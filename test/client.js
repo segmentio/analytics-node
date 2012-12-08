@@ -101,6 +101,15 @@ describe('Client track', function () {
         }).should.throw();
     });
 
+    it('should not track with bad timestamp', function () {
+
+        (function () {
+
+            client.track({ userId : 'test@segment.io', timestamp: 12298383 });
+
+        }).should.throw();
+    });
+
     it('should track successfully', function () {
 
         client.track({ userId : 'test@segment.io',
@@ -126,13 +135,26 @@ describe('Client identify', function () {
         }).should.throw();
     });
 
+    it('should not identify with bad timestamp', function () {
+
+        (function () {
+
+        client.identify({ userId    : 'test@segment.io',
+                          sessionId : '1234',
+                          timestamp : 'wooo' });
+
+        }).should.throw();
+    });
+
     it('should identify successfully', function () {
 
         client.identify({ userId    : 'test@segment.io',
-                          sessionId : '1234' });
+                          sessionId : '1234',
+                          timestamp : new Date('2012-12-02T00:30:08.276Z') });
 
         client.identify({ userId : 'test@segment.io',
-                          traits : { account : 'pro' }});
+                          traits : { account : 'pro' },
+                          timestamp : new Date('2012-12-02T00:30:08.276Z')});
     });
 });
 
@@ -153,15 +175,17 @@ describe('Client batch', function () {
 
         seg.identify({ userId    : userId,
                        sessionId : sessionId,
-                       traits    : { baller : true }});
+                       traits    : { baller : true },
+                       timestamp : new Date('2012-12-02T00:30:08.276Z')});
     });
 
     it('should properly track', function (done) {
 
         setListeners(seg, done);
 
-        seg.track({ userId  : userId,
-                    event   : 'Ate a cookie' });
+        seg.track({ userId    : userId,
+                    event     : 'Ate a cookie',
+                    timestamp : new Date('2012-12-02T00:30:08.276Z') });
     });
 
     it('should emit when there are too many objects in the queue',

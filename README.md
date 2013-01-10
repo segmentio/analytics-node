@@ -249,14 +249,14 @@ analytics.init({
 
 #### Multiple Clients
 
-Different parts of your app may require different types of batching. In that case, you can initialize different analytic-node client instances. The API is exactly the same.
+Different parts of your app may require different types of batching. In that case, you can initialize different `analytic-node` client instances. The API is exactly the same.
 
 ```javascript
 var analytics = new require('analytics-node').Client();
 analytics.init({apiKey: 'MY_API_KEY', ...});
 ```
 
-#### Testing
+## Testing
 
 ```bash
 npm test

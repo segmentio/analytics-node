@@ -158,7 +158,7 @@ This client is built to support high performance environments. That means it is 
 
 **Why is that possible?**
 
-Every action **does** not incur does not result in an HTTP request, allowing the system to not get bogged down processing network IO
+Every action **does not** result in an HTTP request, but is instead queued in memory. Messages are flushed in batch in the background, which allows for much faster code.
 
 **What happens if there's just too many messages?**
 

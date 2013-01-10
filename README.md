@@ -190,7 +190,7 @@ promise.on('err', function (err) {
 
 **How do I know when __any__ messages are flushed?**
 
-You can use the `analytics` client to know when any messages are flushed, or any errors occur.
+You can use the `analytics` client as an event emitter to listen for any flushes or errors.
 
 ```javascript
 var analytics = require('analytics-node');

@@ -154,7 +154,7 @@ analytics.flush(function () {
 
 #### Why Batch?
 
-This client is built to support high performance environments. That means you can put analytics-node into a web server that is serving hundreds of hits per second.
+This client is built to support high performance environments. That means it is safe to use analytics-node in a web server that is serving hundreds of hits per second.
 
 **Why is that possible?**
 

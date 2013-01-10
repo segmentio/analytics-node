@@ -205,7 +205,7 @@ analytics.on('err', function (err) {
 });
 ```
 
-#### Error Handling and Integration
+#### Error Handling
 
 In order to handle errors, the node client will emit every time an error occurs. To prevent analytics-node from crashing your server with an unhandled exception, it emits on `err` rather than the more conventional `error`.
 

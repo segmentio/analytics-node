@@ -12,7 +12,7 @@ exports.check = function (promise, done) {
     done(err);
   });
 
-  promise.once('flushed', function () {
+  promise.once('flush', function () {
     promise.removeAllListeners();
     done();
   });

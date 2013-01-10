@@ -57,14 +57,14 @@ analytics.identify({
 });
 ```
 
-**sessionId** (string) is a unique id associated with an anonymous user **before** they are logged in. If the user
+**sessionId** (String) is a unique id associated with an anonymous user **before** they are logged in. If the user
 is logged in, you can use null here.
 
-**userId** (string) is the user's id **after** they are logged in. It's the same id as which you would recognize a signed-in user in your system. Note: you must provide either a `sessionId` or a `userId`.
+**userId** (String) is the user's id **after** they are logged in. It's the same id as which you would recognize a signed-in user in your system. Note: you must provide either a `sessionId` or a `userId`.
 
-**traits** (object) is a dictionary with keys like `subscriptionPlan` or `age`. You only need to record a trait once, no need to send it again.
+**traits** (Object) is a dictionary with keys like `subscriptionPlan` or `age`. You only need to record a trait once, no need to send it again.
 
-**timestamp** (date, optional) is a Javascript date object representing when the track took place. If the **identify** just happened, leave it blank and we'll use the server's time. If you are importing data from the past, make sure you provide this argument.
+**timestamp** (Date, optional) is a Javascript date object representing when the track took place. If the **identify** just happened, leave it blank and we'll use the server's time. If you are importing data from the past, make sure you provide this argument.
 
 
 ```javascript
@@ -96,16 +96,16 @@ analytics.track({
 });
 ```
 
-**sessionId** (string) is a unique id associated with an anonymous user **before** they are logged in. Even if the user
+**sessionId** (String) is a unique id associated with an anonymous user **before** they are logged in. Even if the user
 is logged in, you can still send us the **sessionId** or you can just use `null`.
 
-**userId** (string) is the user's id **after** they are logged in. It's the same id as which you would recognize a signed-in user in your system. Note: you must provide either a `sessionId` or a `userId`.
+**userId** (String) is the user's id **after** they are logged in. It's the same id as which you would recognize a signed-in user in your system. Note: you must provide either a `sessionId` or a `userId`.
 
-**event** (string) describes what this user just did. It's a human readable description like "Played a Song", "Printed a Report" or "Updated Status".
+**event** (String) describes what this user just did. It's a human readable description like "Played a Song", "Printed a Report" or "Updated Status".
 
-**properties** (object) is a dictionary with items that describe the event in more detail. This argument is optional, but highly recommended—you’ll find these properties extremely useful later.
+**properties** (Object) is a dictionary with items that describe the event in more detail. This argument is optional, but highly recommended—you’ll find these properties extremely useful later.
 
-**timestamp** (date, optional) is a Javascript date object representing when the track took place. If the event just happened, leave it blank and we'll use the server's time. If you are importing data from the past, make sure you provide this argument.
+**timestamp** (Date, optional) is a Javascript date object representing when the track took place. If the event just happened, leave it blank and we'll use the server's time. If you are importing data from the past, make sure you provide this argument.
 
 ```javascript
 
@@ -148,7 +148,7 @@ At the end of your program, you may want to flush to make sure there's nothing l
 
 ```javascript
 analytics.flush(function (err) {
-    console.log('Flushed, and now I can exit!');
+    console.log('Flushed, and now this program can exit!');
 });
 ```
 
@@ -178,8 +178,8 @@ var analytics = require('analytics-node');
 var promise = analytics.track({ userId : 'calvin@segment.io',
                                 event  : 'Plays Ultimate' });
 
-promise.on('flushed', function () {
-    console.log('This message was flushed!')
+promise.on('flush', function () {
+    console.log('I'm 2000 miles away now!')
 });
 
 promise.on('err', function (err) {
@@ -195,7 +195,7 @@ You can use the `analytics` client as an event emitter to listen for any flushes
 ```javascript
 var analytics = require('analytics-node');
 
-analytics.on('flushed', function () {
+analytics.on('flush', function () {
     console.log('I just got flushed. YAY!');
 });
 ```
@@ -217,9 +217,8 @@ analytics.on('err', function (err) {
 
 You may also listen on the following events for more granular information.
 
-* **initialized** - when the client is initialized and able to record events.
-* **flushing** - when the client is in the process of submitting its queue.
-* **flushed** - when the client has sent a part of its queue to the server.
+* **initialize** - when the client is initialized and able to record events.
+* **flush** - after the client flushes part of its queue.
 * **err** - when an error in the tracking code or connection happens.
 
 #### Understanding the Client Options
@@ -241,11 +240,11 @@ analytics.init({
 });
 ```
 
-**flushAt** (number) - Flush after this many messages are in the queue.
-**flushAfter** (number) - Flush after this many milliseconds have passed since the last flush.
-**maxQueueSize** (number) - Stop accepting messages into the queue after this many messages are backlogged in the queue.
-**timerInterval** (number) - Check this many milliseconds to see if there's anything to flush.
-**triggers** (array[function]) - An array of trigger functions that determine when it's time to flush.
+**flushAt** (Number) - Flush after this many messages are in the queue.
+**flushAfter** (Number) - Flush after this many milliseconds have passed since the last flush.
+**maxQueueSize** (Number) - Stop accepting messages into the queue after this many messages are backlogged in the queue.
+**timerInterval** (Number) - Check this many milliseconds to see if there's anything to flush.
+**triggers** (Array[Function]) - An array of trigger functions that determine when it's time to flush.
 
 #### Multiple Clients
 

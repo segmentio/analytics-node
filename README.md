@@ -156,11 +156,11 @@ analytics.flush(function () {
 
 This client is built to support high performance environments. That means you can put analytics-node into a web server that is serving hundreds of hits per second.
 
-** Why is that possible? **
+**Why is that possible?**
 
 Every action **does** not incur does not result in an HTTP request, allowing the system to not get bogged down processing network IO
 
-** What happens if there's just too many messages? **
+**What happens if there's just too many messages?**
 
 If the client detects that it can't flush faster than its receiving messages, it will simply stop accepting messages.
 
@@ -169,7 +169,7 @@ This means your program won't crash because of a backed up analytics queue.
 
 Batching means that your message might not get sent right away.
 
-** How do I know when my message is flushed and received? **
+**How do I know when my message is flushed and received?**
 
 ```javascript
 var analytics = require('analytics-node');
@@ -187,7 +187,7 @@ promise.on('err', function (err) {
 });
 ```
 
-** How do I know when __any__ messages are flushed? **
+**How do I know when __any__ messages are flushed?**
 
 ```javascript
 var analytics = require('analytics-node');

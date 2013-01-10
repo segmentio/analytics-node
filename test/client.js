@@ -1,33 +1,21 @@
 
-var should = require('should'),
-    Client = require('../lib/client');
+var _      = require('underscore'),
+    should = require('should'),
+
+    Client = require('../lib/client'),
+    check  = require('./utils').check,
+
+    // test options
+    options = require('./options');
 
 
-var options = {
-    host : 'https://api.segment.io',
-    flushSize : 1,
-    timerInterval: 750
-};
 
 
-/**
- * Sets up the listeners for seg, to call 'done' on a flush and error on error.
- * @param {Function} done - completion callback
- */
-var setListeners = function (seg, done) {
-
-    var listenerId = seg.once('error', function (err) {
-        should.not.exist(err);
-    });
-
-    seg.once('flushed', function () {
-        seg.removeAllListeners();
-        done();
-    });
-};
 
 
-describe('Client initialize', function () {
+describe('Client', function () {
+
+  describe('#initialize', function () {
 
     it('should throw an error if not initialzed', function () {
 
@@ -45,7 +33,7 @@ describe('Client initialize', function () {
 
     it('should initialize automatically with constructor args', function () {
 
-        var client = new Client('fakeid', options);
+        var client = new Client(options);
 
         client.track({
             event  : 'Track succeeded',
@@ -62,164 +50,197 @@ describe('Client initialize', function () {
 
         }).should.throw();
     });
-});
+  });
 
+  describe('#track', function () {
 
-
-describe('Client track', function () {
-
-    var apiKey  = 'fakeid',
-        client  = new Client(apiKey, options);
+    var client  = new Client(options);
 
 
     it('should not track a call with bad data', function () {
 
-        (function () {
+      (function () {
 
-            client.track('Not an object');
+        client.track('Not an object');
 
-        }).should.throw();
+      }).should.throw();
     });
 
 
     it('should not track a call without any user info', function () {
 
-        (function () {
+      (function () {
 
-            client.track({ event : 'Hello' });
+        client.track({ event : 'Hello' });
 
-        }).should.throw();
+      }).should.throw();
     });
 
 
     it('should not track a call without an event', function () {
 
-        (function () {
+      (function () {
 
-            client.track({ userId : 'test@segment.io' });
+        client.track({ userId : 'test@segment.io' });
 
-        }).should.throw();
+      }).should.throw();
     });
 
     it('should not track with bad timestamp', function () {
 
-        (function () {
+      (function () {
 
-            client.track({ userId : 'test@segment.io', timestamp: 12298383 });
+        client.track({ userId : 'test@segment.io', timestamp: 12298383 });
 
-        }).should.throw();
+      }).should.throw();
     });
 
     it('should track successfully', function () {
 
-        client.track({ userId : 'test@segment.io',
-                       event  : 'Test Event' });
+      client.track({ userId : 'test@segment.io',
+                     event  : 'Test Event' });
 
-        client.track({ sessionId : '12345678910',
-                       event     : 'Test Event' });
+      client.track({ sessionId : '12345678910',
+                     event     : 'Test Event' });
     });
-});
+  });
 
 
-describe('Client identify', function () {
+  describe('#identify', function () {
 
-    var apiKey  = 'fakeid',
-        client  = new Client(apiKey, options);
+    var client  = new Client(options);
 
     it('should not identify without a user or session', function () {
 
-        (function () {
+      (function () {
 
-            client.identify({ traits : { yellow : 'dog' }});
+        client.identify({ traits : { yellow : 'dog' }});
 
-        }).should.throw();
+      }).should.throw();
     });
 
     it('should not identify with bad timestamp', function () {
 
-        (function () {
+      (function () {
 
-        client.identify({ userId    : 'test@segment.io',
-                          sessionId : '1234',
-                          timestamp : 'wooo' });
+      client.identify({ userId    : 'test@segment.io',
+                        sessionId : '1234',
+                        timestamp : 'wooo' });
 
-        }).should.throw();
+      }).should.throw();
     });
 
     it('should identify successfully', function () {
 
-        client.identify({ userId    : 'test@segment.io',
-                          sessionId : '1234',
-                          timestamp : new Date('2012-12-02T00:30:08.276Z') });
+      client.identify({ userId    : 'test@segment.io',
+                        sessionId : '1234',
+                        timestamp : new Date('2012-12-02T00:30:08.276Z') });
 
-        client.identify({ userId : 'test@segment.io',
-                          traits : { account : 'pro' },
-                          timestamp : new Date('2012-12-02T00:30:08.276Z')});
+      client.identify({ userId : 'test@segment.io',
+                        traits : { account : 'pro' },
+                        timestamp : new Date('2012-12-02T00:30:08.276Z')});
     });
-});
+  });
 
-
-
-
-describe('Client batch', function () {
+  describe('#flush', function () {
 
     var userId    = 'test@segment.io',
-        sessionId = '123456789',
-        apiKey    = 'fakeid';
+        sessionId = '123456789';
 
-    var seg = new Client(apiKey, options);
+    var client = new Client(options);
 
     it('should properly identify', function (done) {
 
-        setListeners(seg, done);
+      var promise = client.identify({
+                     userId    : userId,
+                     sessionId : sessionId,
+                     traits    : { baller : true },
+                     timestamp : new Date('2012-12-02T00:30:08.276Z')});
 
-        seg.identify({ userId    : userId,
-                       sessionId : sessionId,
-                       traits    : { baller : true },
-                       timestamp : new Date('2012-12-02T00:30:08.276Z')});
+      check(promise, done);
+
     });
 
     it('should properly track', function (done) {
 
-        setListeners(seg, done);
+      var promise = client.track({
+                  userId    : userId,
+                  event     : 'Ate a cookie',
+                  timestamp : new Date('2012-12-02T00:30:08.276Z') });
 
-        seg.track({ userId    : userId,
-                    event     : 'Ate a cookie',
-                    timestamp : new Date('2012-12-02T00:30:08.276Z') });
+      check(promise, done);
+
     });
 
     it('should emit when there are too many objects in the queue',
         function (done) {
 
-        seg.on('err', function (err) {
+      client.on('err', function (err) {
 
-            should.exist(err);
-            seg.queue.should.have.length(0);
+        should.exist(err);
+        client.queue.should.have.length(0);
 
-            seg.removeAllListeners();
-            seg.options.maxQueueSize = 1000;
+        client.removeAllListeners();
+        client.options.maxQueueSize = 1000;
 
-            done();
-        });
+        done();
+      });
 
-        seg.options.maxQueueSize = 0;
+      client.options.maxQueueSize = 0;
 
-        seg.track({ userId : userId,
-                    event  : 'Overflowed the queue' });
+      client.track({ userId : userId,
+                     event  : 'Overflowed the queue' });
     });
 
+    it('should upload flush after flushAt has been added to the queue', function (done) {
 
-    it('should upload after ten seconds since last sync', function (done) {
+      var flushAt = 5;
 
-        this.timeout(11000);
+      // check that the queue is empty initially
+      client.queue.should.have.length(0);
 
-        setListeners(seg, done);
+      client.options.flushAt = flushAt;
 
-        seg.options.flushSize = 10;
+      _.each(_.range(flushAt-1), function () {
 
-        seg.track({ userId : userId,
-                    event  : 'Successfully tracked a user' });
+        client.track({ userId : userId,
+                       event  : 'Successfully tracked a user' });
+      });
 
+      // check that it hasn't flushed yet
+      client.queue.should.have.length(flushAt - 1);
+
+      // run it to make sure it flushes now
+      client.track({ userId : userId,
+                     event  : 'Successfully tracked a user' });
+
+      client.queue.should.have.length(0);
+
+      check(client, done);
     });
+
+    it('should upload after timerInterval seconds since last sync', function (done) {
+
+      // wait 2 seconds more than one timer interval
+      this.timeout(client.options.timerInterval + 2000);
+
+      // check that the queue is empty initially
+      client.queue.should.have.length(0);
+
+      // flush after 10 messages are in the queue (we wont hit this condition)
+      client.options.flushAt = 10;
+      // flush after no flush has happened for half the time of the timer interval
+      client.options.flushAfter = client.options.timerInterval / 2;
+
+      var promise = client.track({
+                  userId : userId,
+                  event  : 'Successfully tracked a user' });
+
+      check(promise, done);
+    });
+
+  });
+
 });
+
 

@@ -1,12 +1,12 @@
 {
-    "name": "segmentio"
-  , "version": "0.1.5"
+    "name": "analytics-node"
+  , "version": "0.2.1"
   , "description": "An official Segment.io client driver for node"
-  , "repository": "git://github.com/segmentio/segment-node"
-  , "keywords": ["segment.io", "segmentio", "client", "driver", "analytics"]
+  , "repository": "git://github.com/segmentio/analytics-node"
+  , "keywords": ["analytics", "segment.io", "segmentio", "client", "driver", "analytics"]
   , "authors": "Ilya Volodarsky <ilya@segment.io>, Calvin French-Owen <calvin@segment.io>"
   , "engines": { "node": ">= 0.8.x" }
-  , "main": "./lib/segmentio"
+  , "main": "./lib/analytics"
   , "dependencies":{
      "underscore": "*"
   }

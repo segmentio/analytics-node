@@ -217,10 +217,10 @@ analytics.on('err', function() {
 
 You may also listen on the following events for more granular information.
 
-* **flushed** - when the client has sent its queue to the server
-* **flushing** - when the client is in the process of submitting its queue
-* **err** - when an error in the tracking code or connection happens.
 * **initialized** - when the client is initialized and able to record events.
+* **flushing** - when the client is in the process of submitting its queue.
+* **flushed** - when the client has sent its queue to the server.
+* **err** - when an error in the tracking code or connection happens.
 
 #### Understanding the Client Options
 

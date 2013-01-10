@@ -29,7 +29,7 @@ You can control the batching behavior as described [below](#advanced).
 
 ## Quick-start
 
-If you haven't yet, register for a project [here](https://segment.io).
+If you haven't yet, get an API key [here](https://segment.io).
 
 #### Install
 
@@ -38,23 +38,17 @@ npm install analytics-node
 ```
 #### Initialize the client
 
-The default and easiest method for most apps is to just use the API client as a module. To get started, just use the following:
+The default and easiest method for most apps is to just use the API client as a module. To get started, just initialize it once:
 
 ```javascript
 var analytics = require('analytics-node');
 analytics.init({apiKey: 'MY_API_KEY'}});
 ```
-Then whenever you `require('analytics-node')` from your app, you'll have access to the same client.
-
-You can also create your own client if you'd like a little more customization. The API is exactly the same.
-```javascript
-var analytics = new require('analytics-node').Client();
-analytics.init({apiKey: 'MY_API_KEY'});
-```
+Then whenever you `require('analytics-node')` from any other file your app, you'll have access to the same client.
 
 #### Identify a User
 
-Identifying a user ties all of their actions to an ID, and associates user `traits` to that ID.
+Identifying a user ties all of their actions to an id, and associates user `traits` to that id.
 
 ```javascript
 analytics.identify({
@@ -70,9 +64,10 @@ is logged in, you can use null here.
 
 **userId** (string) is the user's id **after** they are logged in. It's the same id as which you would recognize a signed-in user in your system. Note: you must provide either a `sessionId` or a `userId`.
 
-**traits** (object) is a dictionary with keys like “Subscription Plan” or “Age”. Once you record a trait, no need to send it again, so the traits argument is optional.
+**traits** (object) is a dictionary with keys like “Subscription Plan” or “Age”. You only need to record a trait once, no need to send it again.
 
 **timestamp** (Date) is a Date object representing when the track took place. It is optional. If this event just happened, leave it blank and we'll use the server's time. If you are importing data from the past, make sure you provide this argument.
+
 
 ```javascript
 analytics.identify({
@@ -129,6 +124,8 @@ segmentio.track({
 });
 ```
 
+That's it, just two functions!
+
 ## Advanced
 
 #### Batching Behavior
@@ -170,32 +167,6 @@ Every action **does** not incur does not result in an HTTP request, allowing the
 If the client detects that it can't flush faster than its receiving messages, it will simply stop accepting messages.
 
 This means your program won't crash because of a backed up analytics queue.
-
-#### Understanding the Client Options
-
-If you hate defaults, than you'll love how configurable the analytics-node is.
-Check out these gizmos:
-
-```javascript
-var analytics = require('analytics-node');
-analytics.init({
-    apiKey        : 'API_KEY',
-
-    flushAt       : 20,
-    flushAfter    : 10000,
-
-    maxQueueSize  : 10000,
-    timerInterval : 10000,
-    triggers      : [analytics.triggers.size, analytics.triggers.time]
-});
-```
-
-* **flushAt** (Number): Flush after this many messages are in the queue.
-* **flushAfter** (Number): Flush after this many milliseconds have passed since the last flush.
-* **maxQueueSize** (Number): Stop accepting messages into the queue after this many messages are backlogged in the queue.
-* **timerInterval** (Number): Check every `timerInterval` milliseconds to see if there's anything to flush.
-* **triggers** (Array[Function]): An array of `trigger` functions that determine when it's time to flush.
-
 #### Message Acknowledgement
 
 Batching means that your message might not get sent right away.
@@ -233,8 +204,6 @@ analytics.on('err', function (err) {
 });
 ```
 
-## Troubleshooting
-
 #### Error Handling and Integration
 
 In order to handle errors, the node client will emit every time an error occurs. To prevent analytics-node from crashing your server with an unhandled exception, it emits on `err` rather than the more conventional `error`.
@@ -255,6 +224,40 @@ You may also listen on the following events for more fine-grained granularity.
 * **flushing** - when the client is in the process of submitting its queue
 * **err** - when an error in the tracking code or connection happens.
 * **initialized** - when the client is initialized and able to record events.
+
+#### Understanding the Client Options
+
+If you hate defaults, than you'll love how configurable the analytics-node is.
+Check out these gizmos:
+
+```javascript
+var analytics = require('analytics-node');
+analytics.init({
+    apiKey        : 'API_KEY',
+
+    flushAt       : 20,
+    flushAfter    : 10000,
+
+    maxQueueSize  : 10000,
+    timerInterval : 10000,
+    triggers      : [analytics.triggers.size, analytics.triggers.time]
+});
+```
+
+* **flushAt** (Number): Flush after this many messages are in the queue.
+* **flushAfter** (Number): Flush after this many milliseconds have passed since the last flush.
+* **maxQueueSize** (Number): Stop accepting messages into the queue after this many messages are backlogged in the queue.
+* **timerInterval** (Number): Check every `timerInterval` milliseconds to see if there's anything to flush.
+* **triggers** (Array[Function]): An array of `trigger` functions that determine when it's time to flush.
+
+#### Multiple Clients
+
+Different parts of your app may require different types of batching. In that case, you can initialize different analytic-node client instances. The API is exactly the same.
+
+```javascript
+var analytics = new require('analytics-node').Client();
+analytics.init({apiKey: 'MY_API_KEY', ...});
+```
 
 #### Testing
 

@@ -158,13 +158,12 @@ This client is built to support high performance environments. That means it is 
 
 **Why is that possible?**
 
-Every action **does not** result in an HTTP request, but is instead queued in memory. Messages are flushed in batch in the background, which allows for much faster code.
+Every action **does not** result in an HTTP request, but is instead queued in memory. Messages are flushed in batch in the background, which allows for much faster operation.
 
 **What happens if there's just too many messages?**
 
-If the client detects that it can't flush faster than its receiving messages, it will simply stop accepting messages.
+If the client detects that it can't flush faster than its receiving messages, it will simply stop accepting messages. This means your program won't crash because of a backed up analytics queue.
 
-This means your program won't crash because of a backed up analytics queue.
 #### Message Acknowledgement
 
 Batching means that your message might not get sent right away.

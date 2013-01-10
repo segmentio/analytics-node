@@ -1,7 +1,8 @@
 
 module.exports = {
 
-  apiKey        : 'test',
+  host          : 'https://api2.segment.io',
+  apiKey        : 'fakeid',
 
   flushAt       : 1,
   flushAfter    : 10000,

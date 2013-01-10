@@ -34,7 +34,7 @@ Then whenever you `require('analytics-node')` from your app, you'll have access 
 You can also create your own client if you'd like a little more customization. The API is exactly the same.
 ```javascript
 var analytics = new require('analytics-node').Client();
-segmentio.init({apiKey: 'MY_API_KEY'});
+analytics.init({apiKey: 'MY_API_KEY'});
 ```
 
 #### Identify a User
@@ -60,7 +60,7 @@ is logged in, you can use null here.
 **timestamp** (Date) is a Date object representing when the track took place. It is optional. If this event just happened, leave it blank and we'll use the server's time. If you are importing data from the past, make sure you provide this argument.
 
 ```javascript
-segmentio.identify({
+analytics.identify({
     sessionId : 'DKGXt384hFDT82D',
     userId : 'ilya@segment.io',
     traits : {
@@ -79,7 +79,7 @@ segmentio.identify({
 Whenever a user triggers an event, you’ll want to track it.
 
 ```javascript
-segmentio.track({
+analytics.track({
     sessionId  : String,
     userId     : String,
     event      : String,

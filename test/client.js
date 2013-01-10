@@ -9,10 +9,6 @@ var _      = require('underscore'),
     options = require('./options');
 
 
-
-
-
-
 describe('Client', function () {
 
   describe('#initialize', function () {

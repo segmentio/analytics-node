@@ -37,4 +37,8 @@ describe('Analytics module', function () {
 
     check(promise, done);
   });
+
+
+  it('should properly flush', analytics.flush);
+
 });

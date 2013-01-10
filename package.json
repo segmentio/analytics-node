@@ -1,6 +1,6 @@
 {
     "name": "analytics-node"
-  , "version": "0.2.1"
+  , "version": "0.2.3"
   , "description": "An official Segment.io client driver for node"
   , "repository": "git://github.com/segmentio/analytics-node"
   , "keywords": ["analytics", "segment.io", "segmentio", "client", "driver", "analytics"]

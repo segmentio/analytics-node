@@ -11,7 +11,7 @@ var _      = require('underscore'),
 
 describe('Client', function () {
 
-  describe('#initialize', function () {
+  describe('#init', function () {
 
     it('should throw an error if not initialzed', function () {
 

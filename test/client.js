@@ -38,7 +38,7 @@ describe('Client', function () {
     });
 
 
-    it('should not allow non-string API Keys', function () {
+    it('should not allow non-string options', function () {
 
         (function () {
 

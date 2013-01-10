@@ -9,7 +9,7 @@ analytics-node is a node.js client for [Segment.io](https://segment.io). It's th
 
 ```javascript
 var analytics = require('analytics-node');
-analytics.init({apiKey: 'MY_API_KEY'});
+analytics.init({secret: 'MY_API_SECRET'});
 analytics.track({userId: 'user@gmail.com', event: 'Played a Song'});
 ```
 
@@ -25,9 +25,13 @@ This client uses an internal queue to efficiently send your events in aggregate,
 request every time. This means that it is safe to use in your high scale web server controllers, or in your backend services
 without worrying that it will make too many HTTP requests and slow down the program. You no longer need to use a message queue to have analytics.
 
+### Feedback
+
+[Feedback is very welcome!](mailto:friends@segment.io)
+
 ## Quick-start
 
-If you haven't yet, get an API key [here](https://segment.io).
+If you haven't yet, get an API secret [here](https://segment.io).
 
 #### Install
 
@@ -40,7 +44,7 @@ The default and easiest method for most apps is to just use the API client as a 
 
 ```javascript
 var analytics = require('analytics-node');
-analytics.init({apiKey: 'MY_API_KEY'}});
+analytics.init({secret: 'MY_API_SECRET'}});
 ```
 Then whenever you `require('analytics-node')` from any other file your app, you'll have access to the same client.
 
@@ -139,7 +143,7 @@ By default, the client will flush:
 When debugging, or in short-lived programs, you might want the client to make the request right away. In this case, you can turn off batching by setting the `flushAt` argument to 1.
 
 ```javascript
-analytics.init({ apiKey: 'API_KEY', flushAt: 1 });
+analytics.init({ secret: 'MY_API_SECRET', flushAt: 1 });
 ````
 
 #### Flush Whenever You Want
@@ -184,7 +188,7 @@ promise.on('flush', function () {
 
 promise.on('err', function (err) {
     console.log('Error occured: ', err);
-    // [Error: We couldnt find an app with that API_KEY. Have you created it at segment.io? If so, please double check it.]
+    // [Error: We couldnt find an app with that "secret". Have you created it at segment.io? If so, please double check it.]
 });
 ```
 
@@ -209,7 +213,7 @@ During integration, we recommend listening on the `err` event to make sure that 
 ```javascript
 analytics.on('err', function (err) {
     console.warn('Error occured', err);
-    // [Error: We couldnt find an app with that API_KEY. Have you created it at segment.io? If so, please double check it.]
+    // [Error: We couldnt find an app with that "secret". Have you created it at segment.io? If so, please double check it.]
 });
 ```
 
@@ -229,7 +233,7 @@ Check out these gizmos:
 ```javascript
 var analytics = require('analytics-node');
 analytics.init({
-    apiKey        : 'API_KEY',
+    secret        : 'MY_API_SECRET',
 
     flushAt       : 20,
     flushAfter    : 10000,
@@ -252,7 +256,7 @@ Different parts of your app may require different types of batching. In that cas
 
 ```javascript
 var analytics = new require('analytics-node').Client();
-analytics.init({apiKey: 'MY_API_KEY', ...});
+analytics.init({secret: 'MY_API_SECRET', ...});
 ```
 
 ## Testing

@@ -62,22 +62,22 @@ is logged in, you can use null here.
 
 **userId** (string) is the user's id **after** they are logged in. It's the same id as which you would recognize a signed-in user in your system. Note: you must provide either a `sessionId` or a `userId`.
 
-**traits** (object) is a dictionary with keys like “Subscription Plan” or “Age”. You only need to record a trait once, no need to send it again.
+**traits** (object) is a dictionary with keys like `subscriptionPlan` or `age`. You only need to record a trait once, no need to send it again.
 
-**timestamp** (Date) is a Date object representing when the track took place. It is optional. If this event just happened, leave it blank and we'll use the server's time. If you are importing data from the past, make sure you provide this argument.
+**timestamp** (date, optional) is a Javascript date object representing when the track took place. If the **identify** just happened, leave it blank and we'll use the server's time. If you are importing data from the past, make sure you provide this argument.
 
 
 ```javascript
 analytics.identify({
     sessionId : 'DKGXt384hFDT82D',
-    userId : 'ilya@segment.io',
-    traits : {
-        'First Name': 'Ilya',
-        'Last Name': 'Volodarsky',
-        'Subscription Plan': 'Premium',
-        'On Mailing List': true
+    userId    : 'ilya@segment.io',
+    traits    : {
+        firstName        : 'Ilya',
+        lastName         : 'Volodarsky',
+        subscriptionPlan : 'Premium',
+        onMailingList    : true
     },
-    timestamp: new Date('2012-12-02T00:30:08.276Z')
+    timestamp : new Date('2012-12-02T00:30:08.276Z')
 });
 
 ```
@@ -96,8 +96,8 @@ analytics.track({
 });
 ```
 
-**sessionId** (string) is a unique id associated with an anonymous user **before** they are logged in. If the user
-is logged in, you can use null here.
+**sessionId** (string) is a unique id associated with an anonymous user **before** they are logged in. Even if the user
+is logged in, you can still send us the **sessionId** or you can just use `null`.
 
 **userId** (string) is the user's id **after** they are logged in. It's the same id as which you would recognize a signed-in user in your system. Note: you must provide either a `sessionId` or a `userId`.
 
@@ -105,11 +105,11 @@ is logged in, you can use null here.
 
 **properties** (object) is a dictionary with items that describe the event in more detail. This argument is optional, but highly recommended—you’ll find these properties extremely useful later.
 
-**timestamp** (Date) is a Date object representing when the track took place. It is optional. If this event just happened, leave it blank and we'll use the server's time. If you are importing data from the past, make sure you provide this argument.
+**timestamp** (date, optional) is a Javascript date object representing when the track took place. If the event just happened, leave it blank and we'll use the server's time. If you are importing data from the past, make sure you provide this argument.
 
 ```javascript
 
-segmentio.track({
+analytics.track({
     sessionId : 'DKGXt384hFDT82D',
     userId : 'ilya@segment.io',
     event : 'Listened to a song',
@@ -128,18 +128,18 @@ That's it, just two functions!
 
 #### Batching Behavior
 
-By default, the client will flush
+By default, the client will flush:
 
-1. the first time it gets a message
-1. every 20 messages (control with `flushAt`)
-1. if 10 seconds passes without a flush (control with `flushAfter`)
++ the first time it gets a message
++ every 20 messages (control with `flushAt`)
++ if 10 seconds has passed since the last flush (control with `flushAfter`)
 
 #### Turn off Batching
 
-When debugging or in short-lived programs, you might want the client to make the request right away. In this case, you can turn off batching by setting the `flushAt` argument to 1.
+When debugging, or in short-lived programs, you might want the client to make the request right away. In this case, you can turn off batching by setting the `flushAt` argument to 1.
 
 ```javascript
-analytics.initialize({ apiKey: 'API_KEY', flushAt: 1 });
+analytics.init({ apiKey: 'API_KEY', flushAt: 1 });
 ````
 
 #### Flush Whenever You Want
@@ -154,15 +154,15 @@ analytics.flush(function () {
 
 #### Why Batch?
 
-This client is built to support high performance environments. That means it is safe to use analytics-node in a web server that is serving hundreds of hits per second.
+This client is built to support high performance environments. That means it is safe to use analytics-node in a web server that is serving hundreds of requests per second.
 
-**Why is that possible?**
+**How does the batching work?**
 
 Every action **does not** result in an HTTP request, but is instead queued in memory. Messages are flushed in batch in the background, which allows for much faster operation.
 
-**What happens if there's just too many messages?**
+**What happens if there are just too many messages?**
 
-If the client detects that it can't flush faster than its receiving messages, it will simply stop accepting messages. This means your program won't crash because of a backed up analytics queue.
+If the client detects that it can't flush faster than it's receiving messages, it'll simply stop accepting messages. This means your program won't crash because of a backed up analytics queue.
 
 #### Message Acknowledgement
 
@@ -170,7 +170,7 @@ Batching means that your message might not get sent right away.
 
 **How do I know when this specific message is flushed?**
 
-Every `identify` and `track` call returns a promise, which you can use to know when that message is flushed.
+Every `identify` and `track` returns a promise, which you can use to know when that message is flushed.
 
 ```javascript
 var analytics = require('analytics-node');
@@ -179,11 +179,11 @@ var promise = analytics.track({ userId : 'calvin@segment.io',
                                 event  : 'Plays Ultimate' });
 
 promise.on('flushed', function () {
-    console.log('Flushed to server at some point in the future!')
+    console.log('This message was flushed!')
 });
 
 promise.on('err', function (err) {
-    console.log('Error occured: ' + err);
+    console.log('Error occured: ', err);
     // [Error: We couldnt find an app with that API_KEY. Have you created it at segment.io? If so, please double check it.]
 });
 ```
@@ -196,7 +196,7 @@ You can use the `analytics` client as an event emitter to listen for any flushes
 var analytics = require('analytics-node');
 
 analytics.on('flushed', function () {
-    console.log('I just got flushed. YAY!')
+    console.log('I just got flushed. YAY!');
 });
 ```
 
@@ -207,7 +207,7 @@ In order to handle errors, the node client will emit every time an error occurs.
 During integration, we recommend listening on the `err` event to make sure that all the data is being properly recorded.
 
 ```javascript
-analytics.on('err', function() {
+analytics.on('err', function (err) {
     console.warn('Error occured', err);
     // [Error: We couldnt find an app with that API_KEY. Have you created it at segment.io? If so, please double check it.]
 });
@@ -241,11 +241,11 @@ analytics.init({
 });
 ```
 
-* **flushAt** (Number): Flush after this many messages are in the queue.
-* **flushAfter** (Number): Flush after this many milliseconds have passed since the last flush.
-* **maxQueueSize** (Number): Stop accepting messages into the queue after this many messages are backlogged in the queue.
-* **timerInterval** (Number): Check this many milliseconds to see if there's anything to flush.
-* **triggers** (Array[Function]): An array of trigger functions that determine when it's time to flush.
+**flushAt** (number) - Flush after this many messages are in the queue.
+**flushAfter** (number) - Flush after this many milliseconds have passed since the last flush.
+**maxQueueSize** (number) - Stop accepting messages into the queue after this many messages are backlogged in the queue.
+**timerInterval** (number) - Check this many milliseconds to see if there's anything to flush.
+**triggers** (array[function]) - An array of trigger functions that determine when it's time to flush.
 
 #### Multiple Clients
 

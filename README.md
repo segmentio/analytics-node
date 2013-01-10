@@ -198,11 +198,6 @@ var analytics = require('analytics-node');
 analytics.on('flushed', function () {
     console.log('I just got flushed. YAY!')
 });
-
-analytics.on('err', function (err) {
-    console.log('Error occured',  err);
-    // [Error: We couldnt find an app with that API_KEY. Have you created it at segment.io? If so, please double check it.]
-});
 ```
 
 #### Error Handling
@@ -214,12 +209,13 @@ During integration, we recommend listening on the `err` event to make sure that 
 ```javascript
 analytics.on('err', function() {
     console.warn('Error occured', err);
+    // [Error: We couldnt find an app with that API_KEY. Have you created it at segment.io? If so, please double check it.]
 });
 ```
 
 #### Other Events
 
-You may also listen on the following events for more fine-grained granularity.
+You may also listen on the following events for more granular information.
 
 * **flushed** - when the client has sent its queue to the server
 * **flushing** - when the client is in the process of submitting its queue

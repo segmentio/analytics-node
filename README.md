@@ -22,10 +22,8 @@ and turn on integrations with just one click at [Segment.io](https://segment.io)
 ### Design
 
 This client is designed for **high performance**. It uses an internal queue to efficiently send your events in aggregate, rather than making an HTTP
-request every time. This means that it is safe to use in your web server controllers, or in back-end services
-without worrying that it will make too many HTTP requests and slow down the program.
-
-You can control the batching behavior as described [below](#advanced).
+request every time. This means that it is safe to use in your high scale web server controllers, or in your backend services
+without worrying that it will make too many HTTP requests and slow down the program. You also no longer need to use a message queue to have analytics.
 
 ## Quick-start
 

@@ -5,7 +5,7 @@ analytics-node is a node.js client for [Segment.io](https://segment.io). It's th
 
 ### Node Analytics Made Simple
 
-[Segment.io](https://segment.io) is the simplest way to integrate analytics into your application. One API allows you to turn on almost any other analytics service. No more learning new APIs, repeated code, and wasted development time.
+[Segment.io](https://segment.io) is the simplest way to integrate analytics into your application. One API allows you to turn on any other analytics service. No more learning new APIs, repeated code, and wasted development time.
 
 ```javascript
 var analytics = require('analytics-node');
@@ -13,7 +13,7 @@ analytics.init({apiKey: 'MY_API_KEY'}});
 analytics.track({userId: 'user@gmail.com', event: 'Played a Song'});
 ```
 
-then turn on integrations with just one click at [Segment.io](https://segment.io).
+and turn on integrations with just one click at [Segment.io](https://segment.io).
 
 ![](http://img62.imageshack.us/img62/892/logosls.png)
 

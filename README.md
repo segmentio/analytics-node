@@ -9,7 +9,7 @@ analytics-node is a node.js client for [Segment.io](https://segment.io). It's th
 
 ```javascript
 var analytics = require('analytics-node');
-analytics.init({apiKey: 'MY_API_KEY'}});
+analytics.init({apiKey: 'MY_API_KEY'});
 analytics.track({userId: 'user@gmail.com', event: 'Played a Song'});
 ```
 
@@ -147,7 +147,7 @@ analytics.init({ apiKey: 'API_KEY', flushAt: 1 });
 At the end of your program, you may want to flush to make sure there's nothing left in the queue.
 
 ```javascript
-analytics.flush(function () {
+analytics.flush(function (err) {
     console.log('Flushed, and now I can exit!');
 });
 ```

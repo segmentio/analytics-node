@@ -168,7 +168,9 @@ If the client detects that it can't flush faster than its receiving messages, it
 
 Batching means that your message might not get sent right away.
 
-**How do I know when my message is flushed and received?**
+**How do I know when this specific message is flushed?**
+
+Every `identify` and `track` call returns a promise, which you can use to know when that message is flushed.
 
 ```javascript
 var analytics = require('analytics-node');
@@ -188,15 +190,17 @@ promise.on('err', function (err) {
 
 **How do I know when __any__ messages are flushed?**
 
+You can use the `analytics` client to know when any messages are flushed, or any errors occur.
+
 ```javascript
 var analytics = require('analytics-node');
 
 analytics.on('flushed', function () {
-    console.log('Flushed to server at some point in the future!')
+    console.log('I just got flushed. YAY!')
 });
 
 analytics.on('err', function (err) {
-    console.log('Analytics error occured',  err);
+    console.log('Error occured',  err);
     // [Error: We couldnt find an app with that API_KEY. Have you created it at segment.io? If so, please double check it.]
 });
 ```
@@ -209,7 +213,7 @@ During integration, we recommend listening on the `err` event to make sure that 
 
 ```javascript
 analytics.on('err', function() {
-    console.warn('Analytics error occured', err);
+    console.warn('Error occured', err);
 });
 ```
 

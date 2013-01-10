@@ -219,7 +219,7 @@ You may also listen on the following events for more granular information.
 
 * **initialized** - when the client is initialized and able to record events.
 * **flushing** - when the client is in the process of submitting its queue.
-* **flushed** - when the client has sent its queue to the server.
+* **flushed** - when the client has sent a part of its queue to the server.
 * **err** - when an error in the tracking code or connection happens.
 
 #### Understanding the Client Options
@@ -244,8 +244,8 @@ analytics.init({
 * **flushAt** (Number): Flush after this many messages are in the queue.
 * **flushAfter** (Number): Flush after this many milliseconds have passed since the last flush.
 * **maxQueueSize** (Number): Stop accepting messages into the queue after this many messages are backlogged in the queue.
-* **timerInterval** (Number): Check every `timerInterval` milliseconds to see if there's anything to flush.
-* **triggers** (Array[Function]): An array of `trigger` functions that determine when it's time to flush.
+* **timerInterval** (Number): Check this many milliseconds to see if there's anything to flush.
+* **triggers** (Array[Function]): An array of trigger functions that determine when it's time to flush.
 
 #### Multiple Clients
 

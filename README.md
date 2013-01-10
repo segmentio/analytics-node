@@ -15,11 +15,7 @@ analytics.track({userId: 'user@gmail.com', event: 'Played a Song'});
 
 and then turn on integrations with one click on [Segment.io](https://segment.io).
 
-![Google Analytics](http://www.koozai.com/blog/wp-content/uploads/2011/06/Google-Analytics1.png)
-
-![Mixpanel](http://www.theresumator.com/images/cms-testimonials/mixpanel.gif)
-
-![KISSMetrics](https://cloudability.com/images/customers/kiss_metrics.jpg)
+![](http://img62.imageshack.us/img62/892/logosls.png)
 
 ... and many more.
 

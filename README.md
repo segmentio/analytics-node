@@ -19,7 +19,7 @@ and then turn on integrations with one click on [Segment.io](https://segment.io)
 
 ![Mixpanel](https://segment.io/modules/integration/providers/Mixpanel/logo.png)
 
-![KISSMetrics](https://segment.io/modules/integration/providers/Kissmetrics/logo.png)
+![KISSMetrics](https://segment.io/modules/integration/providers/KISSmetrics/logo.png)
 
 ... with new integrations added every day.
 

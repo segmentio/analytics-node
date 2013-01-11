@@ -144,7 +144,7 @@ by sending the analytics request to [Segment.io](https://segment.io). Our server
 
 Some analytics services have REST APIs while others only support client-side integrations.
 
-You can learn which integrations are supported server-side vs. client-side on your [project's integrations page]((https://segment.io)).
+You can learn which integrations are supported server-side vs. client-side on your [project's integrations]((https://segment.io) page.
 
 ## Advanced
 

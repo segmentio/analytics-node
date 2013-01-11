@@ -134,7 +134,7 @@ That's it, just two functions!
 
 There are two main modes of analytics integration: server-side and client-side. You can use just one, or both.
 
-#### Server-side vs. Client-side
+#### Client-side vs. Server-side
 
 * **Client-side analytics** - (via [analytics.js](https://github.com/segmentio/analytics.js)) works by loading in other integrations
 in the browser.
@@ -144,7 +144,7 @@ by sending the analytics request to [Segment.io](https://segment.io). Our server
 
 Some analytics services have REST APIs while others only support client-side integrations.
 
-You can learn which integrations are supported server-side vs. client-side on your project's [Segment.io](https://segment.io) integration page.
+You can learn which integrations are supported server-side vs. client-side on your project's [Segment.io](https://segment.io) integrations page.
 
 ## Advanced
 

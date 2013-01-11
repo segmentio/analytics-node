@@ -262,11 +262,11 @@ analytics.init({
 });
 ```
 
-**flushAt** (Number) - Flush after this many messages are in the queue.
-**flushAfter** (Number) - Flush after this many milliseconds have passed since the last flush.
-**maxQueueSize** (Number) - Stop accepting messages into the queue after this many messages are backlogged in the queue.
-**timerInterval** (Number) - Check this many milliseconds to see if there's anything to flush.
-**triggers** (Array[Function]) - An array of trigger functions that determine when it's time to flush.
+* **flushAt** (Number) - Flush after this many messages are in the queue.
+* **flushAfter** (Number) - Flush after this many milliseconds have passed since the last flush.
+* **maxQueueSize** (Number) - Stop accepting messages into the queue after this many messages are backlogged in the queue.
+* **timerInterval** (Number) - Check this many milliseconds to see if there's anything to flush.
+* **triggers** (Array[Function]) - An array of trigger functions that determine when it's time to flush.
 
 ### Multiple Clients
 

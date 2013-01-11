@@ -148,7 +148,7 @@ You can learn which integrations are supported server-side vs. client-side on yo
 
 ## Advanced
 
-#### Batching Behavior
+### Batching Behavior
 
 By default, the client will flush:
 
@@ -222,7 +222,7 @@ analytics.on('flush', function () {
 });
 ```
 
-#### Error Handling
+### Error Handling
 
 In order to handle errors, the node client will emit every time an error occurs. To prevent analytics-node from crashing your server with an unhandled exception, it emits on `err` rather than the more conventional `error`.
 
@@ -235,15 +235,15 @@ analytics.on('err', function (err) {
 });
 ```
 
-#### Other Events
+### Events
 
-You may also listen on the following events for more granular information.
+You may also listen on `analytics` variable for the following events:
 
 * **initialize** - when the client is initialized and able to record events.
 * **flush** - after the client flushes part of its queue.
 * **err** - when an error in the tracking code or connection happens.
 
-#### Understanding the Client Options
+### Understanding the Client Options
 
 If you hate defaults, than you'll love how configurable the analytics-node is.
 Check out these gizmos:
@@ -268,7 +268,7 @@ analytics.init({
 **timerInterval** (Number) - Check this many milliseconds to see if there's anything to flush.
 **triggers** (Array[Function]) - An array of trigger functions that determine when it's time to flush.
 
-#### Multiple Clients
+### Multiple Clients
 
 Different parts of your app may require different types of batching. In that case, you can initialize different `analytic-node` client instances. The API is exactly the same.
 
@@ -283,7 +283,7 @@ analytics.init({secret: 'MY_API_SECRET', ...});
 npm test
 ```
 
-#### License
+## License
 
 ```
 WWWWWW||WWWWWW

@@ -132,7 +132,7 @@ That's it, just two functions!
 
 ## Integrations
 
-There are two main modes of analytics integration: server-side and client-side. You can use just one, or both.
+There are two main modes of analytics integration: client-side and server-side. You can use just one, or both.
 
 #### Client-side vs. Server-side
 

@@ -201,7 +201,7 @@ var promise = analytics.track({ userId : 'calvin@segment.io',
                                 event  : 'Plays Ultimate' });
 
 promise.on('flush', function () {
-    console.log('I'm 2000 miles away now!')
+    console.log("I'm 2000 miles away now!");
 });
 
 promise.on('err', function (err) {

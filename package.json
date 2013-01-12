@@ -1,6 +1,6 @@
 {
     "name": "analytics-node"
-  , "version": "0.2.7"
+  , "version": "0.2.8"
   , "description": "The hassle-free way to integrate analytics into any node application."
   , "repository": "git://github.com/segmentio/analytics-node"
   , "keywords": ["analytics", "segment.io", "segmentio", "client", "driver", "analytics"]

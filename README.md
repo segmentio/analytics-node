@@ -46,9 +46,9 @@ The default and easiest method for most apps is to just use the API client as a 
 
 ```javascript
 var analytics = require('analytics-node');
-analytics.init({secret: 'MY_API_SECRET'});
+analytics.init({secret: 'YOUR_API_SECRET'});
 ```
-Then whenever you `require('analytics-node')` from any other file your app, you'll have access to the same client.
+Then whenever you `require('analytics-node')` from any other file in your app, you'll have access to the same client.
 
 #### Identify a User
 
@@ -76,14 +76,13 @@ is logged in, you can use null here.
 ```javascript
 analytics.identify({
     sessionId : 'DKGXt384hFDT82D',
-    userId    : 'ilya@segment.io',
+    userId    : '019mr8mf4r',
     traits    : {
-        firstName        : 'Ilya',
-        lastName         : 'Volodarsky',
+        name             : 'Achilles',
+        email            : 'achilles@segment.io'
         subscriptionPlan : 'Premium',
-        onMailingList    : true
-    },
-    timestamp : new Date('2012-12-02T00:30:08.276Z')
+        friendCount      : 29
+    }
 });
 
 ```
@@ -116,15 +115,13 @@ is logged in, you can still send us the **sessionId** or you can just use `null`
 ```javascript
 
 analytics.track({
-    sessionId : 'DKGXt384hFDT82D',
-    userId : 'ilya@segment.io',
-    event : 'Listened to a song',
+    sessionId  : 'DKGXt384hFDT82D',
+    userId     : '019mr8mf4r',
+    event      : 'Listened to a song',
     properties : {
-        'Title': 'Eleanor Rigby',
-        'Artist': 'Beatles',
-        'Playlist': 'Popular'
-    },
-    timestamp: new Date('2012-12-02T00:30:08.276Z')
+        revenue        : 39.95,
+        shippingMethod : '2-day'
+    }
 });
 ```
 

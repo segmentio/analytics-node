@@ -46,9 +46,9 @@ The default and easiest method for most apps is to just use the API client as a 
 
 ```javascript
 var analytics = require('analytics-node');
-analytics.init({secret: 'MY_API_SECRET'}});
+analytics.init({secret: 'YOUR_API_SECRET'});
 ```
-Then whenever you `require('analytics-node')` from any other file your app, you'll have access to the same client.
+Then whenever you `require('analytics-node')` from any other file in your app, you'll have access to the same client.
 
 #### Identify a User
 

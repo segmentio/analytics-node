@@ -1,7 +1,7 @@
 
 module.exports = {
 
-  host          : 'https://api2.segment.io',
+  host          : 'https://api.segment.io',
   secret        : 'testsecret',
 
   flushAt       : 1,

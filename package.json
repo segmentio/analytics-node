@@ -6,7 +6,7 @@
   , "keywords": ["analytics", "segment.io", "segmentio", "client", "driver", "analytics"]
   , "authors": "Ilya Volodarsky <ilya@segment.io>, Calvin French-Owen <calvin@segment.io>"
   , "engines": { "node": ">= 0.8.x" }
-  , "main": "./lib/analytics"
+  , "main": "./lib"
   , "dependencies":{
       "underscore": "*"
     , "request": "*"

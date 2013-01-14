@@ -1,22 +1,30 @@
 {
-    "name": "analytics-node"
-  , "version": "0.2.8"
-  , "description": "The hassle-free way to integrate analytics into any node application."
-  , "repository": "git://github.com/segmentio/analytics-node"
-  , "keywords": ["analytics", "segment.io", "segmentio", "client", "driver", "analytics"]
-  , "authors": "Ilya Volodarsky <ilya@segment.io>, Calvin French-Owen <calvin@segment.io>"
-  , "engines": { "node": ">= 0.8.x" }
-  , "main": "./lib"
-  , "dependencies":{
-      "underscore": "*"
-    , "request": "*"
-  }
-  , "devDependencies": {
-       "mocha": "*"
-     , "should": "*"
-  }
-
-  , "scripts": {
+  "name": "analytics-node",
+  "version": "0.2.8",
+  "description": "The hassle-free way to integrate analytics into any node application.",
+  "repository": "git://github.com/segmentio/analytics-node",
+  "keywords": [
+    "analytics",
+    "segment.io",
+    "segmentio",
+    "client",
+    "driver",
+    "analytics"
+  ],
+  "authors": "Ilya Volodarsky <ilya@segment.io>, Calvin French-Owen <calvin@segment.io>",
+  "engines": {
+    "node": ">= 0.8.x"
+  },
+  "main": "./lib",
+  "dependencies": {
+    "underscore": "1.4.3",
+    "request": "2.12.0"
+  },
+  "devDependencies": {
+    "mocha": "1.8.1",
+    "should": "1.2.1"
+  },
+  "scripts": {
     "test": "make test"
   }
 }

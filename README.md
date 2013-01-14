@@ -120,7 +120,7 @@ is logged in, you can still send us the **sessionId** or you can just use `null`
 analytics.track({
     sessionId  : 'DKGXt384hFDT82D',
     userId     : '019mr8mf4r',
-    event      : 'Listened to a song',
+    event      : 'Purchased an Item',
     properties : {
         revenue        : 39.95,
         shippingMethod : '2-day'

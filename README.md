@@ -16,7 +16,7 @@ Setting up a new analytics solution can be a real pain. The APIs from each analy
 
 ```javascript
 var analytics = require('analytics-node');
-analytics.init({secret: 'MY_API_SECRET'});
+analytics.init({secret: 'YOUR_API_SECRET'});
 analytics.track({userId: 'user@gmail.com', event: 'Played a Song'});
 ```
 
@@ -161,7 +161,7 @@ By default, the client will flush:
 When debugging, or in short-lived programs, you might want the client to make the request right away. In this case, you can turn off batching by setting the `flushAt` argument to 1.
 
 ```javascript
-analytics.init({ secret: 'MY_API_SECRET', flushAt: 1 });
+analytics.init({ secret: 'YOUR_API_SECRET', flushAt: 1 });
 ````
 
 #### Flush Whenever You Want
@@ -251,7 +251,7 @@ Check out these gizmos:
 ```javascript
 var analytics = require('analytics-node');
 analytics.init({
-    secret        : 'MY_API_SECRET',
+    secret        : 'YOUR_API_SECRET',
 
     flushAt       : 20,
     flushAfter    : 10000,
@@ -274,7 +274,7 @@ Different parts of your app may require different types of batching. In that cas
 
 ```javascript
 var analytics = new require('analytics-node').Client();
-analytics.init({secret: 'MY_API_SECRET', ...});
+analytics.init({secret: 'YOUR_API_SECRET', ...});
 ```
 
 ## Testing

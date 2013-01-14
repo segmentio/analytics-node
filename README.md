@@ -67,7 +67,7 @@ analytics.identify({
 ```
 
 **sessionId** (String) is a unique id associated with an anonymous user **before** they are logged in. If the user
-is logged in, you can use null here.
+is logged in, you can just omit it.
 
 **userId** (String) is the user's id **after** they are logged in. It's the same id as which you would recognize a signed-in user in your system. Note: you must provide either a `sessionId` or a `userId`.
 
@@ -105,7 +105,7 @@ analytics.track({
 ```
 
 **sessionId** (String) is a unique id associated with an anonymous user **before** they are logged in. Even if the user
-is logged in, you can still send us the **sessionId** or you can just use `null`.
+is logged in, you can still send us the **sessionId** or you can just omit it.
 
 **userId** (String) is the user's id **after** they are logged in. It's the same id as which you would recognize a signed-in user in your system. Note: you must provide either a `sessionId` or a `userId`.
 

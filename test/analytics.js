@@ -9,8 +9,7 @@ var should    = require('should'),
 
 describe('Analytics module', function () {
 
-  var userId    = 'test@segment.io',
-      sessionId = '123456789';
+  var userId    = 'test@segment.io';
 
   it('should properly init', function (done) {
 
@@ -23,7 +22,6 @@ describe('Analytics module', function () {
 
     var promise = analytics.identify({
                          userId    : userId,
-                         sessionId : sessionId,
                          traits    : { baller : true }});
 
     check(promise, done);

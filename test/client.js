@@ -96,7 +96,7 @@ describe('Client', function () {
       client.track({ userId : 'test@segment.io',
                      event  : 'Test Event' });
 
-      client.track({ sessionId : '12345678910',
+      client.track({ userId    : 'ilya@segment.io',
                      event     : 'Test Event' });
     });
   });
@@ -106,7 +106,7 @@ describe('Client', function () {
 
     var client  = new Client(options);
 
-    it('should not identify without a user or session', function () {
+    it('should not identify without a user', function () {
 
       (function () {
 
@@ -120,7 +120,6 @@ describe('Client', function () {
       (function () {
 
       client.identify({ userId    : 'test@segment.io',
-                        sessionId : '1234',
                         timestamp : 'wooo' });
 
       }).should.throw();
@@ -129,7 +128,6 @@ describe('Client', function () {
     it('should identify successfully', function () {
 
       client.identify({ userId    : 'test@segment.io',
-                        sessionId : '1234',
                         timestamp : new Date('2012-12-02T00:30:08.276Z') });
 
       client.identify({ userId : 'test@segment.io',
@@ -140,8 +138,7 @@ describe('Client', function () {
 
   describe('#flush', function () {
 
-    var userId    = 'test@segment.io',
-        sessionId = '123456789';
+    var userId    = 'test@segment.io';
 
     var client = new Client(options);
 
@@ -149,7 +146,6 @@ describe('Client', function () {
 
       var promise = client.identify({
                      userId    : userId,
-                     sessionId : sessionId,
                      traits    : { baller : true },
                      timestamp : new Date('2012-12-02T00:30:08.276Z')});
 

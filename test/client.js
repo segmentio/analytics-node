@@ -46,6 +46,26 @@ describe('Client', function () {
 
         }).should.throw();
     });
+
+    it('should allow test mode', function (done) {
+
+        var testOptions = _.extend({}, options, { send: false });
+
+        var client = new Client(testOptions);
+
+        var promise = client.track({
+            event  : 'Threw an exception',
+            userId : 'test@segment.io'
+        });
+
+        // the client should flush immediately
+        promise.on('flush', function () {
+          // and there should have been no actual flushes
+          client.lastFlush.should.equal(new Date(0));
+          done();
+        });
+    });
+
   });
 
   describe('#track', function () {

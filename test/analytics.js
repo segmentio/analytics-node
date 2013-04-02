@@ -36,6 +36,15 @@ describe('Analytics module', function () {
     check(promise, done);
   });
 
+  it('should properly alias', function (done) {
+
+    var promise = analytics.alias({
+                      from : 'from',
+                      to   : 'to' });
+
+    check(promise, done);
+  });
+
 
   it('should properly flush', analytics.flush);
 

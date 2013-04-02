@@ -122,6 +122,67 @@ describe('Client', function () {
   });
 
 
+  describe('#alias', function () {
+
+    var client  = new Client(options);
+
+
+    it('should not alias with bad data', function () {
+
+      (function () {
+
+        client.alias('Not an object');
+
+      }).should.throw();
+    });
+
+
+    it('should not alias without any user info', function () {
+
+      (function () {
+
+        client.alias({});
+
+      }).should.throw();
+    });
+
+
+    it('should not alias without a from', function () {
+
+      (function () {
+
+        client.alias({ to : 'test@segment.io' });
+
+      }).should.throw();
+    });
+
+    it('should not alias without a to', function () {
+
+      (function () {
+
+        client.alias({ from : 'test@segment.io' });
+
+      }).should.throw();
+    });
+
+    it('should not alias with bad timestamp', function () {
+
+      (function () {
+
+        client.alias({ from : 'from', to: 'to', timestamp: 12298383 });
+
+      }).should.throw();
+    });
+
+    it('should alias successfully', function () {
+
+      client.alias({ from  : 'from',
+                     to    : 'test@segment.io'});
+
+    });
+  });
+
+
   describe('#identify', function () {
 
     var client  = new Client(options);

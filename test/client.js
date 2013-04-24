@@ -248,7 +248,7 @@ describe('Client', function () {
     it('should emit when there are too many objects in the queue',
         function (done) {
 
-      client.on('err', function (err) {
+      client.on('error', function (err) {
 
         should.exist(err);
         client.queue.should.have.length(0);

@@ -7,7 +7,7 @@ var should = require('should');
  */
 exports.check = function (promise, done) {
 
-  promise.once('err', function (err) {
+  promise.once('error', function (err) {
     should.not.exist(err);
     done(err);
   });

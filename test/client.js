@@ -217,6 +217,35 @@ describe('Client', function () {
     });
   });
 
+  describe('#group', function () {
+
+    var client  = new Client(options);
+
+    it('should not group without options', function () {
+      client.group.bind(client).should.throw();
+    });
+
+    it('should not identify without groupId', function () {
+      client.group.bind(client, { userId: 12 }).should.throw();
+    });
+
+    it('should not identify without userId or sessionId', function () {
+      client.group.bind(client, { groupId: 12 }).should.throw();
+    });
+
+    it('should not identify with bad timestamp', function () {
+      client.group.bind(client, { groupId: 12, userId: 12, timestamp: 500 }).should.throw();
+    });
+
+    it('should identify successfully', function () {
+      client.group({
+        userId: 12,
+        groupId: 10,
+        timestamp: new Date
+      })
+    });
+  });
+
   describe('#flush', function () {
 
     var userId    = 'test@segment.io';

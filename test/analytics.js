@@ -45,6 +45,16 @@ describe('Analytics module', function () {
     check(promise, done);
   });
 
+  it('should properly group', function (done) {
+
+    var promise = analytics.group({
+                      userId   : 'id',
+                      groupId : 'id',
+                      traits   : {} });
+
+    check(promise, done);
+  });
+
 
   it('should properly flush', analytics.flush);
 

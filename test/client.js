@@ -226,21 +226,21 @@ describe('Client', function () {
     });
 
     it('should not identify without groupId', function () {
-      client.group.bind(client, { userId: 12 }).should.throw();
+      client.group.bind(client, { userId: '12' }).should.throw();
     });
 
     it('should not identify without userId or sessionId', function () {
-      client.group.bind(client, { groupId: 12 }).should.throw();
+      client.group.bind(client, { groupId: '12' }).should.throw();
     });
 
     it('should not identify with bad timestamp', function () {
-      client.group.bind(client, { groupId: 12, userId: 12, timestamp: 500 }).should.throw();
+      client.group.bind(client, { groupId: '12', userId: '12', timestamp: 500 }).should.throw();
     });
 
     it('should identify successfully', function () {
       client.group({
-        userId: 12,
-        groupId: 10,
+        userId: '12',
+        groupId: '10',
         timestamp: new Date
       })
     });
@@ -254,6 +254,7 @@ describe('Client', function () {
 
     it('should properly identify', function (done) {
 
+      debugger;
       var promise = client.identify({
                      userId    : userId,
                      traits    : { baller : true },
@@ -277,6 +278,7 @@ describe('Client', function () {
     it('should emit when there are too many objects in the queue',
         function (done) {
 
+      debugger;
       client.on('error', function (err) {
 
         should.exist(err);

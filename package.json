@@ -18,7 +18,9 @@
   "main": "./lib",
   "dependencies": {
     "underscore": "1.4.3",
-    "request": "2.12.0"
+    "request": "2.12.0",
+    "component-type": "~1.0.0",
+    "defaults": "~1.0.0"
   },
   "devDependencies": {
     "mocha": "1.8.1",

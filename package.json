@@ -1,8 +1,8 @@
 {
   "name": "analytics-node",
-  "version": "0.6.0",
-  "description": "The hassle-free way to integrate analytics into any node application.",
   "repository": "git://github.com/segmentio/analytics-node",
+  "version": "1.0.0",
+  "description": "The hassle-free way to integrate analytics into any node application.",
   "keywords": [
     "analytics",
     "segment.io",
@@ -11,23 +11,18 @@
     "driver",
     "analytics"
   ],
-  "authors": "Ilya Volodarsky <ilya@segment.io>, Calvin French-Owen <calvin@segment.io>",
-  "engines": {
-    "node": ">= 0.8.x"
-  },
-  "main": "./lib",
+  "main": "lib/index.js",
   "dependencies": {
-    "underscore": "1.4.3",
-    "request": "2.12.0",
     "component-type": "~1.0.0",
-    "defaults": "~1.0.0",
     "superagent": "~0.16.0",
     "debug": "~0.7.4"
   },
   "devDependencies": {
     "mocha": "1.8.1",
-    "should": "1.2.1",
     "express": "~3.4.8"
+  },
+  "engines": {
+    "node": ">= 0.8.x"
   },
   "scripts": {
     "test": "make test"

@@ -62,12 +62,11 @@ describe('Analytics', function(){
 
   describe('#enqueue', function(){
     it('should add a message to the queue', function(){
-      var message = {};
-      var callback = function(){};
-      a.enqueue(message, callback);
+      var date = new Date();
+      a.enqueue('action', { timestamp: date }, noop);
       assert.deepEqual(a.queue[0], {
-        message: message,
-        callback: callback
+        message: { action: 'action', timestamp: date },
+        callback: noop
       });
     });
 
@@ -75,14 +74,14 @@ describe('Analytics', function(){
       a.flushAt = 1;
       a.flushAfter = null;
       a.flush = done;
-      a.enqueue();
+      a.enqueue('action', {});
     });
 
     it('should flush after a period of time', function(done){
       a.flushAt = Infinity;
       a.flushAfter = 1;
       a.flush = done;
-      a.enqueue();
+      a.enqueue('action', {});
     });
 
     it('should reset an existing timer', function(done){
@@ -90,8 +89,8 @@ describe('Analytics', function(){
       a.flushAt = Infinity;
       a.flushAfter = 1;
       a.flush = function(){ i++; };
-      a.enqueue();
-      a.enqueue();
+      a.enqueue('action', {});
+      a.enqueue('action', {});
       setTimeout(function(){
         assert.equal(1, i);
         done();
@@ -108,7 +107,7 @@ describe('Analytics', function(){
       a.flushAt = 2;
       enqueue(a, [1, 2, 3]);
       a.flush(function(err, data){
-        assert(!err);
+        if (err) return done(err);
         assert.deepEqual(data.batch, [1, 2]);
         done();
       });
@@ -117,7 +116,7 @@ describe('Analytics', function(){
     it('should send a context', function(done){
       enqueue(a, [1]);
       a.flush(function(err, data){
-        assert(!err);
+        if (err) return done(err);
         assert.deepEqual(data.context, context);
         done();
       });
@@ -135,10 +134,12 @@ describe('Analytics', function(){
 
   describe('#identify', function(){
     it('should enqueue a message', function(){
-      a.identify({ userId: 'id' });
+      var date = new Date();
+      a.identify({ userId: 'id', timestamp: date });
       assert.deepEqual(a.queue[0].message, {
         action: 'identify',
-        userId: 'id'
+        userId: 'id',
+        timestamp: date
       });
     });
 
@@ -155,11 +156,13 @@ describe('Analytics', function(){
 
   describe('#group', function(){
     it('should enqueue a message', function(){
-      a.group({ groupId: 'group', userId: 'user' });
+      var date = new Date();
+      a.group({ groupId: 'group', userId: 'user', timestamp: date });
       assert.deepEqual(a.queue[0].message, {
         action: 'group',
         userId: 'user',
-        groupId: 'group'
+        groupId: 'group',
+        timestamp: date
       });
     });
 
@@ -182,11 +185,13 @@ describe('Analytics', function(){
 
   describe('#track', function(){
     it('should enqueue a message', function(){
-      a.track({ userId: 'id', event: 'event' });
+      var date = new Date();
+      a.track({ userId: 'id', event: 'event', timestamp: date });
       assert.deepEqual(a.queue[0].message, {
         action: 'track',
         event: 'event',
-        userId: 'id'
+        userId: 'id',
+        timestamp: date
       });
     });
 
@@ -209,10 +214,12 @@ describe('Analytics', function(){
 
   describe('#page', function(){
     it('should enqueue a message', function(){
-      a.page({ userId: 'id' });
+      var date = new Date();
+      a.page({ userId: 'id', timestamp: date });
       assert.deepEqual(a.queue[0].message, {
         action: 'page',
-        userId: 'id'
+        userId: 'id',
+        timestamp: date
       });
     });
 
@@ -229,11 +236,13 @@ describe('Analytics', function(){
 
   describe('#alias', function(){
     it('should enqueue a message', function(){
-      a.alias({ previousId: 'previous', userId: 'id' });
+      var date = new Date();
+      a.alias({ previousId: 'previous', userId: 'id', timestamp: date });
       assert.deepEqual(a.queue[0].message, {
         action: 'alias',
         previousId: 'previous',
-        userId: 'id'
+        userId: 'id',
+        timestamp: date
       });
     });
 

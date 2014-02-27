@@ -109,15 +109,9 @@ describe('Analytics', function(){
       a.flush(function(err, data){
         if (err) return done(err);
         assert.deepEqual(data.batch, [1, 2]);
-        done();
-      });
-    });
-
-    it('should send a context', function(done){
-      enqueue(a, [1]);
-      a.flush(function(err, data){
-        if (err) return done(err);
         assert.deepEqual(data.context, context);
+        assert(data.timestamp instanceof Date);
+        assert(/[a-zA-Z0-9]{8}/.test(data.requestId));
         done();
       });
     });

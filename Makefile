@@ -2,7 +2,10 @@
 node_modules: package.json
 	@npm install
 
-test: node_modules
-	@./node_modules/.bin/mocha --reporter spec
+server: node_modules
+	@node test/server.js
 
-.PHONY: test
+test: node_modules
+	@./node_modules/.bin/mocha test/index.js --reporter spec --bail
+
+.PHONY: server test

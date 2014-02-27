@@ -4,5 +4,4 @@ notifications:
     - engineering@segment.io
 node_js:
   - 0.8
-  - "0.10"
-
+  - 0.10

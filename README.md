@@ -1,7 +1,7 @@
 analytics-node
 ==============
 
-[![Build Status](https://travis-ci.org/segmentio/analytics-node.png)](https://travis-ci.org/segmentio/analytics-node)
+[![Build Status](https://api.travis-ci.org/segmentio/analytics-node.svg?branch=master)](https://travis-ci.org/segmentio/analytics-node)
 
 
 analytics-node is a node.js client for [Segment.io](https://segment.io)

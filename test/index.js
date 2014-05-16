@@ -111,7 +111,8 @@ describe('Analytics', function(){
         assert.deepEqual(data.batch, [1, 2]);
         assert.deepEqual(data.context, context);
         assert(data.timestamp instanceof Date);
-        assert(/[a-zA-Z0-9]{8}/.test(data.requestId));
+        assert(data.messageId);
+        assert(/[a-zA-Z0-9]{8}/.test(data.messageId));
         done();
       });
     });

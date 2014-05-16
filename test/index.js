@@ -25,7 +25,7 @@ describe('Analytics', function(){
   });
 
   it('should require a write key', function(){
-    assert.throws(Analytics, error('You must pass your Segment.io project\'s write key.'));
+    assert.throws(Analytics, error("You must pass your Segment project's write key."));
   });
 
   it('should not require the new keyword', function(){

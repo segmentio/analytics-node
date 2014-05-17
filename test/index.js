@@ -111,8 +111,7 @@ describe('Analytics', function(){
         assert.deepEqual(data.batch, [1, 2]);
         assert.deepEqual(data.context, context);
         assert(data.timestamp instanceof Date);
-        assert(data.messageId);
-        assert(/[a-zA-Z0-9]{8}/.test(data.messageId));
+        assert(data.messageId && /[a-zA-Z0-9]{8}/.test(data.messageId));
         done();
       });
     });
@@ -188,6 +187,17 @@ describe('Analytics', function(){
         userId: 'id',
         timestamp: date
       });
+    });
+
+    it('should handle a user ids given as a number', function(){
+      var date = new Date();
+      a.track({ userId: 1, event: 'jumped the shark', timestamp: date });
+      assert.deepEqual(a.queue[0].message, {
+        userId: 1,
+        event: 'jumped the shark',
+        action: 'track',
+        timestamp: date
+      })
     });
 
     it('should validate a message', function(){

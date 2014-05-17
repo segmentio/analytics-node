@@ -63,9 +63,9 @@ describe('Analytics', function(){
   describe('#enqueue', function(){
     it('should add a message to the queue', function(){
       var date = new Date();
-      a.enqueue('action', { timestamp: date }, noop);
+      a.enqueue('type', { timestamp: date }, noop);
       assert.deepEqual(a.queue[0], {
-        message: { action: 'action', timestamp: date },
+        message: { type: 'type', timestamp: date },
         callback: noop
       });
     });
@@ -74,14 +74,14 @@ describe('Analytics', function(){
       a.flushAt = 1;
       a.flushAfter = null;
       a.flush = done;
-      a.enqueue('action', {});
+      a.enqueue('type', {});
     });
 
     it('should flush after a period of time', function(done){
       a.flushAt = Infinity;
       a.flushAfter = 1;
       a.flush = done;
-      a.enqueue('action', {});
+      a.enqueue('type', {});
     });
 
     it('should reset an existing timer', function(done){
@@ -89,8 +89,8 @@ describe('Analytics', function(){
       a.flushAt = Infinity;
       a.flushAfter = 1;
       a.flush = function(){ i++; };
-      a.enqueue('action', {});
-      a.enqueue('action', {});
+      a.enqueue('type', {});
+      a.enqueue('type', {});
       setTimeout(function(){
         assert.equal(1, i);
         done();
@@ -131,7 +131,7 @@ describe('Analytics', function(){
       var date = new Date();
       a.identify({ userId: 'id', timestamp: date });
       assert.deepEqual(a.queue[0].message, {
-        action: 'identify',
+        type: 'identify',
         userId: 'id',
         timestamp: date
       });
@@ -153,7 +153,7 @@ describe('Analytics', function(){
       var date = new Date();
       a.group({ groupId: 'group', userId: 'user', timestamp: date });
       assert.deepEqual(a.queue[0].message, {
-        action: 'group',
+        type: 'group',
         userId: 'user',
         groupId: 'group',
         timestamp: date
@@ -182,7 +182,7 @@ describe('Analytics', function(){
       var date = new Date();
       a.track({ userId: 'id', event: 'event', timestamp: date });
       assert.deepEqual(a.queue[0].message, {
-        action: 'track',
+        type: 'track',
         event: 'event',
         userId: 'id',
         timestamp: date
@@ -195,7 +195,7 @@ describe('Analytics', function(){
       assert.deepEqual(a.queue[0].message, {
         userId: 1,
         event: 'jumped the shark',
-        action: 'track',
+        type: 'track',
         timestamp: date
       })
     });
@@ -222,7 +222,7 @@ describe('Analytics', function(){
       var date = new Date();
       a.page({ userId: 'id', timestamp: date });
       assert.deepEqual(a.queue[0].message, {
-        action: 'page',
+        type: 'page',
         userId: 'id',
         timestamp: date
       });
@@ -244,7 +244,7 @@ describe('Analytics', function(){
       var date = new Date();
       a.alias({ previousId: 'previous', userId: 'id', timestamp: date });
       assert.deepEqual(a.queue[0].message, {
-        action: 'alias',
+        type: 'alias',
         previousId: 'previous',
         userId: 'id',
         timestamp: date

@@ -1,6 +1,3 @@
-before_script:
-  - node ./test/server.js
-  - sleep 5
 language: node_js
 notifications:
   email:

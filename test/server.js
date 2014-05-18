@@ -8,7 +8,6 @@ var port = 4063;
 
 express()
   .use(express.bodyParser())
-  .use(express.logger())
   .use(express.basicAuth('key', ''))
   .post('/v1/batch', fixture)
   .listen(port, function(){

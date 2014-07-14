@@ -70,6 +70,12 @@ describe('Analytics', function(){
       });
     });
 
+    it('should not modify the original message', function(){
+      var message = { event: 'test' };
+      a.enqueue('type', message, noop);
+      assert(!message.hasOwnProperty('timestamp'));
+    });
+
     it('should flush the queue if it hits the max length', function(done){
       a.flushAt = 1;
       a.flushAfter = null;

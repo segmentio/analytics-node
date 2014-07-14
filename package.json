@@ -13,6 +13,7 @@
   ],
   "main": "lib/index.js",
   "dependencies": {
+    "clone": "~0.1.17",
     "component-type": "~1.0.0",
     "join-component": "~1.0.0",
     "superagent": "~0.16.0",

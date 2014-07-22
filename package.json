@@ -17,7 +17,7 @@
     "component-type": "~1.0.0",
     "join-component": "~1.0.0",
     "superagent": "~0.16.0",
-    "debug": "~0.7.4",
+    "debug": "~1.0.4",
     "uid": "0.0.2"
   },
   "devDependencies": {

@@ -64,8 +64,9 @@ describe('Analytics', function(){
     it('should add a message to the queue', function(){
       var date = new Date();
       a.enqueue('type', { timestamp: date }, noop);
+
       assert.deepEqual(a.queue[0], {
-        message: { type: 'type', timestamp: date },
+        message: { type: 'type', timestamp: date, context: context },
         callback: noop
       });
     });
@@ -115,7 +116,6 @@ describe('Analytics', function(){
       a.flush(function(err, data){
         if (err) return done(err);
         assert.deepEqual(data.batch, [1, 2]);
-        assert.deepEqual(data.context, context);
         assert(data.timestamp instanceof Date);
         assert(data.messageId && /[a-zA-Z0-9]{8}/.test(data.messageId));
         done();
@@ -139,7 +139,8 @@ describe('Analytics', function(){
       assert.deepEqual(a.queue[0].message, {
         type: 'identify',
         userId: 'id',
-        timestamp: date
+        timestamp: date,
+        context: context
       });
     });
 
@@ -162,7 +163,8 @@ describe('Analytics', function(){
         type: 'group',
         userId: 'user',
         groupId: 'group',
-        timestamp: date
+        timestamp: date,
+        context: context
       });
     });
 
@@ -191,7 +193,8 @@ describe('Analytics', function(){
         type: 'track',
         event: 'event',
         userId: 'id',
-        timestamp: date
+        timestamp: date,
+        context: context
       });
     });
 
@@ -202,7 +205,8 @@ describe('Analytics', function(){
         userId: 1,
         event: 'jumped the shark',
         type: 'track',
-        timestamp: date
+        timestamp: date,
+        context: context
       })
     });
 
@@ -230,7 +234,8 @@ describe('Analytics', function(){
       assert.deepEqual(a.queue[0].message, {
         type: 'page',
         userId: 'id',
-        timestamp: date
+        timestamp: date,
+        context: context
       });
     });
 
@@ -253,7 +258,8 @@ describe('Analytics', function(){
         type: 'alias',
         previousId: 'previous',
         userId: 'id',
-        timestamp: date
+        timestamp: date,
+        context: context
       });
     });
 
@@ -305,4 +311,3 @@ function error(message){
     return err.message == message;
   };
 }
-

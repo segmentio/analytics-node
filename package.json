@@ -16,6 +16,7 @@
     "clone": "~0.1.17",
     "component-type": "~1.0.0",
     "join-component": "~1.0.0",
+    "lodash": "~2.4.1",
     "superagent": "~0.16.0",
     "debug": "~1.0.4",
     "uid": "0.0.2"

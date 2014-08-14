@@ -103,6 +103,17 @@ describe('Analytics', function(){
         done();
       }, 1);
     });
+
+    it('should extend the given context', function(){
+      a.enqueue('type', { event: 'test', context: { name: 'travis' } }, noop);
+      assert.deepEqual(a.queue[0].message.context, {
+        library: {
+          name:'analytics-node',
+          version: require('../package.json').version
+        },
+        name: 'travis'
+      });
+    });
   });
 
   describe('#flush', function(){

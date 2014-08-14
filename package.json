@@ -1,7 +1,7 @@
 {
   "name": "analytics-node",
   "repository": "git://github.com/segmentio/analytics-node",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "The hassle-free way to integrate analytics into any node application.",
   "keywords": [
     "analytics",

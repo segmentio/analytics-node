@@ -1,3 +1,8 @@
+1.0.4 - 2014-08-14
+==================
+
+* fix: given contexts to extended and not wiped out
+
 1.0.3 - 2014-08-05
 ==================
 

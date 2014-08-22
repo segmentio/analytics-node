@@ -48,11 +48,13 @@ describe('Analytics', function(){
     var a = Analytics('key', {
       host: 'a',
       flushAt: 1,
-      flushAfter: 2
+      flushAfter: 2,
+      proxy: 'http://localhost:9001'
     });
     assert.equal(a.host, 'a');
     assert.equal(a.flushAt, 1);
     assert.equal(a.flushAfter, 2);
+    assert.equal(a.proxy, 'http://localhost:9001');
   });
 
   it('should keep the flushAt option above zero', function(){
@@ -129,6 +131,21 @@ describe('Analytics', function(){
         assert.deepEqual(data.batch, [1, 2]);
         assert(data.timestamp instanceof Date);
         assert(data.messageId && /[a-zA-Z0-9]{8}/.test(data.messageId));
+        done();
+      });
+    });
+
+    it('should proxy', function(done) {
+      a = Analytics('key', {
+        host: 'http://localhost:4063',
+        flushAt: Infinity,
+        flushAfter: Infinity,
+        proxy: 'http://localhost:4064'
+      });
+      a.enqueue('type', { event: 'test' }, noop);
+      a.flush(function(err, data){
+        // our proxy turns all responses into 408/errs
+        assert(err);
         done();
       });
     });

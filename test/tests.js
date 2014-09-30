@@ -1,6 +1,7 @@
-
 var assert = require('assert');
 var Analytics = require('..');
+var async = require('async');
+var server = require('./server');
 
 var a;
 var noop = function(){};
@@ -12,6 +13,19 @@ var context = {
 };
 
 describe('Analytics', function(){
+  before(function(done){
+    async.series([
+      function(cb){
+        server.proxy.listen(server.ports.proxy, cb);
+      },
+      function(cb){
+        server.app
+          .post('/v1/batch', server.fixture)
+          .listen(server.ports.source, cb);
+      }
+    ], done);
+  });
+
   beforeEach(function(){
     a = Analytics('key', {
       host: 'http://localhost:4063',

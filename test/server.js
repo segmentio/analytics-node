@@ -1,9 +1,8 @@
-
 var express = require('express');
-var ports = { source: 4063, proxy: 4064 };
 var httpProxy = require('http-proxy');
 var http = require('http');
 var debug = require('debug')('analytics-node:server')
+var ports = exports.ports = { source: 4063, proxy: 4064 };
 
 /**
  * Proxy.
@@ -11,12 +10,8 @@ var debug = require('debug')('analytics-node:server')
 
 var proxy = httpProxy.createProxyServer();
 
-http.createServer(function(req, res) {
+exports.proxy = http.createServer(function(req, res) {
   proxy.web(req, res, { target: 'http://localhost:' + ports.source });
-}).listen(ports.proxy, function(){
-    console.log();
-    console.log('  Testing proxy listening on port ' + ports.proxy + '...');
-    console.log();
 });
 
 proxy.on('proxyRes', function (proxyRes, req, res) {
@@ -27,15 +22,9 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
  * App.
  */
 
-express()
+exports.app = express()
   .use(express.bodyParser())
-  .use(express.basicAuth('key', ''))
-  .post('/v1/batch', fixture)
-  .listen(ports.source, function(){
-    console.log();
-    console.log('  Testing server listening on port ' + ports.source + '...');
-    console.log();
-  });
+  .use(express.basicAuth('key', ''));
 
 /**
  * Fixture.
@@ -45,7 +34,7 @@ express()
  * @param {Funtion} next
  */
 
-function fixture(req, res, next){
+exports.fixture = function(req, res, next){
   var batch = req.body.batch;
   if ('error' == batch[0]) return res.json(400, { error: { message: 'error' }});
   res.json(200);

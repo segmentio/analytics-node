@@ -1,4 +1,4 @@
-var server = require('./server');
+var server = require('./index');
 var Mocha = require('mocha');
 var fs = require('fs');
 var path = require('path');

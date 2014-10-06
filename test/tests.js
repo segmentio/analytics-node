@@ -1,7 +1,9 @@
 var assert = require('assert');
 var Analytics = require('..');
 var async = require('async');
-var server = require('./server');
+var utils = require('./utils');
+var server;
+var proxy;
 
 var a;
 var noop = function(){};
@@ -13,19 +15,6 @@ var context = {
 };
 
 describe('Analytics', function(){
-  before(function(done){
-    async.series([
-      function(cb){
-        server.proxy.listen(server.ports.proxy, cb);
-      },
-      function(cb){
-        server.app
-          .post('/v1/batch', server.fixture)
-          .listen(server.ports.source, cb);
-      }
-    ], done);
-  });
-
   beforeEach(function(){
     a = Analytics('key', {
       host: 'http://localhost:4063',
@@ -133,43 +122,92 @@ describe('Analytics', function(){
   });
 
   describe('#flush', function(){
-    it('should not fail when no items are in the queue', function(done){
-      a.flush(done);
-    });
+    describe('without proxy', function(){
+      before(function(done){
+        server = utils.app
+          .post('/v1/batch', utils.fixture)
+          .listen(utils.ports.source, done);
+      });
 
-    it('should send a batch of items', function(done){
-      a.flushAt = 2;
-      enqueue(a, [1, 2, 3]);
-      a.flush(function(err, data){
-        if (err) return done(err);
-        assert.deepEqual(data.batch, [1, 2]);
-        assert(data.timestamp instanceof Date);
-        assert(data.messageId && /[a-zA-Z0-9]{8}/.test(data.messageId));
-        done();
+      after(function(done){
+        server.close(done);
+      });
+
+      it('should not fail when no items are in the queue', function(done){
+        a.flush(done);
+      });
+
+      it('should send a batch of items', function(done){
+        a.flushAt = 2;
+        enqueue(a, [1, 2, 3]);
+        a.flush(function(err, data){
+          if (err) return done(err);
+          assert.deepEqual(data.batch, [1, 2]);
+          assert(data.timestamp instanceof Date);
+          assert(data.messageId && /[a-zA-Z0-9]{8}/.test(data.messageId));
+          done();
+        });
+      });
+
+      it('should callback with an HTTP error', function(done){
+        enqueue(a, ['error']);
+        a.flush(function(err, data){
+          assert(err);
+          assert.equal(err.message, 'error');
+          done();
+        });
       });
     });
 
-    it('should proxy', function(done) {
-      a = Analytics('key', {
-        host: 'http://localhost:4063',
-        flushAt: Infinity,
-        flushAfter: Infinity,
-        proxy: 'http://localhost:4064'
+    describe('proxy', function(){
+      before(function(done){
+        var requests = 0;
+        async.series([
+          function(cb){
+            proxy = utils.proxyServer.listen(utils.ports.proxy, cb);
+          },
+          function(cb){
+            server = utils.app
+              .post('/v1/batch', function(req, res, next){
+                requests++;
+                res.json(408);
+                if (requests > 3) res.json(200);
+              })
+              .listen(utils.ports.source, cb);
+          }
+        ], done);
       });
-      a.enqueue('type', { event: 'test' }, noop);
-      a.flush(function(err, data){
-        // our proxy turns all responses into 408/errs
-        assert(err);
-        done();
-      });
-    });
 
-    it('should callback with an HTTP error', function(done){
-      enqueue(a, ['error']);
-      a.flush(function(err, data){
-        assert(err);
-        assert.equal(err.message, 'error');
-        done();
+      after(function(done){
+        async.series([
+          function(cb){
+            proxy.close(cb);
+          },
+          function(cb){
+            server.close(cb);
+          }
+        ], done);
+      });
+
+      it('should proxy', function(done) {
+        utils.proxy.on('proxyRes', function (proxyRes, req, res) {
+          console.log(res);
+          // proxyRes.statusCode = 408;
+        });
+
+        a = Analytics('key', {
+          host: 'http://localhost:4063',
+          flushAt: Infinity,
+          flushAfter: Infinity,
+          proxy: 'http://localhost:4064'
+        });
+
+        a.enqueue('type', { event: 'test' }, noop);
+        a.flush(function(err, data){
+          // our proxy turns all responses into 408/errs
+          assert(err);
+          done();
+        });
       });
     });
   });

@@ -8,14 +8,10 @@ var ports = exports.ports = { source: 4063, proxy: 4064 };
  * Proxy.
  */
 
-var proxy = httpProxy.createProxyServer();
+var proxy = exports.proxy = httpProxy.createProxyServer();
 
-exports.proxy = http.createServer(function(req, res) {
+exports.proxyServer = http.createServer(function(req, res) {
   proxy.web(req, res, { target: 'http://localhost:' + ports.source });
-});
-
-proxy.on('proxyRes', function (proxyRes, req, res) {
-  proxyRes.statusCode = 408;
 });
 
 /**

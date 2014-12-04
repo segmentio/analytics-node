@@ -3,7 +3,7 @@
 
 [![Build Status](https://api.travis-ci.org/segmentio/analytics-node.svg?branch=master)](https://travis-ci.org/segmentio/analytics-node)
 
-A node.js client for [Segment.io](https://segment.io) — The hassle-free way to integrate analytics into any application.
+A node.js client for [Segment](https://segment.com) — The hassle-free way to integrate analytics into any application.
 
 ## Documentation
 

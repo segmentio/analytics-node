@@ -144,6 +144,7 @@ describe('Analytics', function(){
         if (err) return done(err);
         assert.deepEqual(data.batch, [1, 2]);
         assert(data.timestamp instanceof Date);
+        assert(data.sentAt instanceof Date);
         assert(data.messageId && /[a-zA-Z0-9]{8}/.test(data.messageId));
         done();
       });

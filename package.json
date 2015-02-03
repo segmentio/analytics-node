@@ -34,5 +34,6 @@
   },
   "scripts": {
     "test": "make test"
-  }
+  },
+  "license": "MIT"
 }

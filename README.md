@@ -5,6 +5,12 @@
 
 A node.js client for [Segment](https://segment.com) — The hassle-free way to integrate analytics into any application.
 
+## Installation
+
+```bash
+$ npm install --save analytics-node
+```
+
 ## Documentation
 
 Documentation is available at [https://segment.com/libraries/node](https://segment.com/libraries/node).

@@ -1,4 +1,3 @@
-
 # Binaries.
 browserify = ./node_modules/.bin/browserify
 mocha = ./node_modules/.bin/mocha
@@ -19,6 +18,9 @@ test: node_modules
 	@$(mocha) \
 		--reporter spec \
 		--bail
+
+clean:
+	@rm analytics-node.js
 
 # Phonies.
 .PHONY: test

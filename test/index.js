@@ -151,20 +151,20 @@ describe('Analytics', function(){
       });
     });
 
-    // it('should proxy', function(done) {
-    //   a = Analytics('key', {
-    //     host: 'http://localhost:4063',
-    //     flushAt: Infinity,
-    //     flushAfter: Infinity,
-    //     proxy: 'http://localhost:4064'
-    //   });
-    //   a.enqueue('type', { event: 'test' }, noop);
-    //   a.flush(function(err, data){
-    //     // our proxy turns all responses into 408/errs
-    //     assert(err);
-    //     done();
-    //   });
-    // });
+    it('should proxy', function(done) {
+      a = Analytics('key', {
+        host: 'http://localhost:4063',
+        flushAt: Infinity,
+        flushAfter: Infinity,
+        proxy: 'http://localhost:4064'
+      });
+      a.enqueue('type', { event: 'test' }, noop);
+      a.flush(function(err, data){
+        // our proxy turns all responses into 408/errs
+        assert(err);
+        done();
+      });
+    });
 
     it('should callback with an HTTP error', function(done){
       enqueue(a, ['error']);

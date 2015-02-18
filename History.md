@@ -1,4 +1,10 @@
 
+1.2.0 / 2015-02-18
+==================
+
+ * add browserify support
+ * Add installation instructions to readme
+
 1.1.1 / 2015-02-03
 ==================
 

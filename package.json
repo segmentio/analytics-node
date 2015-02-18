@@ -1,7 +1,7 @@
 {
   "name": "analytics-node",
   "repository": "git://github.com/segmentio/analytics-node",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "The hassle-free way to integrate analytics into any node application.",
   "keywords": [
     "analytics",
@@ -13,7 +13,9 @@
   ],
   "main": "lib/index.js",
   "browserify": {
-    "transform": ["brfs"]
+    "transform": [
+      "brfs"
+    ]
   },
   "dependencies": {
     "clone": "~0.1.17",
@@ -32,7 +34,7 @@
     "express": "~3.4.8",
     "http-proxy": "~1.3.0",
     "mocha": "1.8.1",
-    "brfs" : "^1.3.0"
+    "brfs": "^1.3.0"
   },
   "engines": {
     "node": ">= 0.8.x"

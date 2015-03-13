@@ -15,16 +15,16 @@ var version = require('../package.json').version;
 var extend = require('lodash').extend;
 
 global.setImmediate = global.setImmediate || process.nextTick.bind(process);
-//
+
 /** 
  * Use globa-tunnel to provide proxy support.
  * The http_proxy environment variable will be used if the first parameter to globalTunnel.initialize is null.
 */
 globalTunnel.initialize();
+
 /**
  * Expose an `Analytics` client.
  */
-
 module.exports = Analytics;
 
 /**

@@ -5,5 +5,4 @@ notifications:
 before_install:
   npm install -g npm@'>=1.4.3'
 node_js:
-  - '0.8'
-  - '0.10'
+  - '0.12'

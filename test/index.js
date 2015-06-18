@@ -1,7 +1,6 @@
 var assert = require('assert');
 var Analytics = require('..');
 var async = require('async');
-var Browser = require('../analytics-node');
 var server = require('./server');
 
 var a;
@@ -321,12 +320,6 @@ describe('Analytics', function(){
       assert.throws(function(){
         a.alias({ userId: 'id' });
       }, error('You must pass a "previousId".'));
-    });
-  });
-
-  describe('browserify', function(){
-    it('should expose a browserified bundle', function(){
-      assert('function' == typeof Browser);
     });
   });
 });

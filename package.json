@@ -8,8 +8,7 @@
     "segment.io",
     "segmentio",
     "client",
-    "driver",
-    "analytics"
+    "driver"
   ],
   "main": "lib/index.js",
   "browserify": {

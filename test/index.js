@@ -20,7 +20,7 @@ describe('Analytics', function(){
       },
       function(cb){
         server.app
-          .post('/v1/batch', server.fixture)
+          .post('/v1/import', server.fixture)
           .listen(server.ports.source, cb);
       }
     ], done);

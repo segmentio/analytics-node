@@ -148,7 +148,7 @@ Analytics.prototype.flush = function(fn){
   debug('flush: %o', data);
 
   var req = request
-    .post(this.host + '/v1/batch');
+    .post(this.host + '/v1/import');
 
   if (this.proxy) {
     req = req.proxy(this.proxy);

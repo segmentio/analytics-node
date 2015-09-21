@@ -1,4 +1,12 @@
 
+2.0.0 / 2015-09-21
+==================
+
+  * update analytics-node.js
+  * Remove proxy support
+  * Merge pull request #47 from yorkie/patch-1
+  * remove the duplicated keyword
+
 1.2.2 / 2015-03-19
 ==================
 

@@ -1,6 +1,6 @@
 # Binaries.
-browserify = ./node_modules/.bin/browserify
-mocha = ./node_modules/.bin/mocha
+browserify = ./node_modules/browserify/bin/cmd.js
+mocha = ./node_modules/mocha/bin/mocha
 
 # Build the browserify bundle.
 analytics-node.js: node_modules lib/index.js

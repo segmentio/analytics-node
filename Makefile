@@ -22,5 +22,8 @@ test: node_modules
 clean:
 	@rm analytics-node.js
 
+nsp:
+	@$(nsp) check
+
 # Phonies.
 .PHONY: test

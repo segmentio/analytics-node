@@ -145,7 +145,7 @@ describe('Analytics', function(){
       enqueue(a, ['error']);
       a.flush(function(err, data){
         assert(err);
-        assert.equal(err.message, 'error');
+        assert.equal(err.message, 'Bad Request');
         done();
       });
     });

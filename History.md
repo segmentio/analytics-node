@@ -1,4 +1,11 @@
 
+2.0.1 / 2015-12-11
+==================
+
+  * makefile: changing bin paths and nsp target
+  * Upgraded vulnerable dependencies and minor change in the tests to support them
+  * Adding Node Security Project support
+
 2.0.0 / 2015-09-21
 ==================
 

@@ -129,7 +129,10 @@ Analytics.prototype.alias = function(message, fn){
 
 Analytics.prototype.flush = function(fn){
   fn = fn || noop;
-  if (this.timer) clearTimeout(this.timer);
+  if (this.timer) {
+    clearTimeout(this.timer);
+    this.timer = null;
+  }
   if (!this.queue.length) return setImmediate(fn);
 
   var items = this.queue.splice(0, this.flushAt);

@@ -1,4 +1,10 @@
 
+2.0.2 / 2016-03-03
+==================
+
+  * updating travis.yml
+  * increase messageId entropy, and include one id per message
+
 2.0.1 / 2015-12-11
 ==================
 

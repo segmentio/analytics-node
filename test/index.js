@@ -5,6 +5,7 @@ var server = require('./server');
 
 var a;
 var noop = function(){};
+var id = 'id';
 var context = {
   library: {
     name: 'analytics-node',
@@ -72,10 +73,14 @@ describe('Analytics', function(){
       var date = new Date();
       a.enqueue('type', { timestamp: date }, noop);
 
-      assert.deepEqual(a.queue[0], {
-        message: { type: 'type', timestamp: date, context: context },
-        callback: noop
-      });
+      var msg = a.queue[0].message;
+      var callback = a.queue[0].callback;
+
+      assert.equal(callback, noop);
+      assert.equal(msg.type, 'type');
+      assert.deepEqual(msg.timestamp, date);
+      assert.deepEqual(msg.context, context);
+      assert(msg.messageId);
     });
 
     it('should not modify the original message', function(){
@@ -121,6 +126,13 @@ describe('Analytics', function(){
         name: 'travis'
       });
     });
+
+    it('should add a message id', function(){
+      a.enqueue('type', { event: 'test' }, noop);
+      var msg = a.queue[0].message;
+      assert(msg.messageId);
+      assert(/node-[a-zA-Z0-9]{32}/.test(msg.messageId));
+    })
   });
 
   describe('#flush', function(){
@@ -136,7 +148,6 @@ describe('Analytics', function(){
         assert.deepEqual(data.batch, [1, 2]);
         assert(data.timestamp instanceof Date);
         assert(data.sentAt instanceof Date);
-        assert(data.messageId && /[a-zA-Z0-9]{8}/.test(data.messageId));
         done();
       });
     });
@@ -154,12 +165,13 @@ describe('Analytics', function(){
   describe('#identify', function(){
     it('should enqueue a message', function(){
       var date = new Date();
-      a.identify({ userId: 'id', timestamp: date });
+      a.identify({ userId: 'id', timestamp: date, messageId: id });
       assert.deepEqual(a.queue[0].message, {
         type: 'identify',
         userId: 'id',
         timestamp: date,
-        context: context
+        context: context,
+        messageId: id
       });
     });
 
@@ -177,13 +189,14 @@ describe('Analytics', function(){
   describe('#group', function(){
     it('should enqueue a message', function(){
       var date = new Date();
-      a.group({ groupId: 'group', userId: 'user', timestamp: date });
+      a.group({ groupId: 'group', userId: 'user', timestamp: date, messageId: id });
       assert.deepEqual(a.queue[0].message, {
         type: 'group',
         userId: 'user',
         groupId: 'group',
         timestamp: date,
-        context: context
+        context: context,
+        messageId: id
       });
     });
 
@@ -207,25 +220,27 @@ describe('Analytics', function(){
   describe('#track', function(){
     it('should enqueue a message', function(){
       var date = new Date();
-      a.track({ userId: 'id', event: 'event', timestamp: date });
+      a.track({ userId: 'id', event: 'event', timestamp: date, messageId: id });
       assert.deepEqual(a.queue[0].message, {
         type: 'track',
         event: 'event',
         userId: 'id',
         timestamp: date,
-        context: context
+        context: context,
+        messageId: id
       });
     });
 
     it('should handle a user ids given as a number', function(){
       var date = new Date();
-      a.track({ userId: 1, event: 'jumped the shark', timestamp: date });
+      a.track({ userId: 1, event: 'jumped the shark', timestamp: date, messageId: id });
       assert.deepEqual(a.queue[0].message, {
         userId: 1,
         event: 'jumped the shark',
         type: 'track',
         timestamp: date,
-        context: context
+        context: context,
+        messageId: id
       })
     });
 
@@ -249,12 +264,13 @@ describe('Analytics', function(){
   describe('#page', function(){
     it('should enqueue a message', function(){
       var date = new Date();
-      a.page({ userId: 'id', timestamp: date });
+      a.page({ userId: 'id', timestamp: date, messageId: id });
       assert.deepEqual(a.queue[0].message, {
         type: 'page',
         userId: 'id',
         timestamp: date,
-        context: context
+        context: context,
+        messageId: id
       });
     });
 
@@ -272,13 +288,14 @@ describe('Analytics', function(){
   describe('#alias', function(){
     it('should enqueue a message', function(){
       var date = new Date();
-      a.alias({ previousId: 'previous', userId: 'id', timestamp: date });
+      a.alias({ previousId: 'previous', userId: 'id', timestamp: date, messageId: id });
       assert.deepEqual(a.queue[0].message, {
         type: 'alias',
         previousId: 'previous',
         userId: 'id',
         timestamp: date,
-        context: context
+        context: context,
+        messageId: id
       });
     });
 

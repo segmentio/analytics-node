@@ -16,8 +16,12 @@
       "brfs"
     ]
   },
+  "bin": {
+    "analytics": "bin/analytics"
+  },
   "dependencies": {
     "clone": "~0.1.17",
+    "commander": "^2.9.0",
     "component-type": "~1.0.0",
     "crypto-token": "^1.0.1",
     "debug": "^2.2.0",

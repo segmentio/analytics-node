@@ -9,7 +9,7 @@ require('superagent-retry')(request);
 var type = require('component-type');
 var join = require('join-component');
 var uid = require('uid');
-var version = require('../package.json').version;
+var version = '2.1.0';
 var extend = require('lodash').extend;
 
 global.setImmediate = global.setImmediate || process.nextTick.bind(process);
@@ -2389,7 +2389,7 @@ function clone(parent, circular, depth, prototype) {
       if (proto) {
         attrs = Object.getOwnPropertyDescriptor(proto, i);
       }
-      
+
       if (attrs && attrs.set == null) {
         continue;
       }
@@ -10114,7 +10114,7 @@ process.umask = function() { return 0; };
  * TODO: combatible error handling?
  */
 
-module.exports = function(arr, fn, initial){  
+module.exports = function(arr, fn, initial){
   var idx = 0;
   var len = arr.length;
   var curr = arguments.length == 3
@@ -10124,7 +10124,7 @@ module.exports = function(arr, fn, initial){
   while (idx < len) {
     curr = fn.call(null, curr, arr[idx], ++idx, arr);
   }
-  
+
   return curr;
 };
 },{}],18:[function(require,module,exports){

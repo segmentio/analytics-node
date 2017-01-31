@@ -1,4 +1,10 @@
 
+2.1.1 / 2017-01-31
+==================
+
+  * Merge pull request #74 from alexstrat/master
+  * Update dependencies
+
 2.1.0 / 2016-03-31
 ==================
 

@@ -1,4 +1,10 @@
 
+2.2.0 / 2017-02-06
+==================
+
+  * Replace validation with `@segment/loosely-validate-event`
+  * add releasing notes
+
 2.1.1 / 2017-01-31
 ==================
 

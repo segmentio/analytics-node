@@ -20,12 +20,11 @@
     "analytics": "bin/analytics"
   },
   "dependencies": {
+    "@segment/loosely-validate-event": "^1.1.1",
     "clone": "~2.1.0",
     "commander": "^2.9.0",
-    "component-type": "~1.2.1",
     "crypto-token": "^1.0.1",
     "debug": "^2.2.0",
-    "join-component": "~1.1.0",
     "lodash": "~4.17.2",
     "superagent": "^3.0.0",
     "superagent-proxy": "^1.0.0",

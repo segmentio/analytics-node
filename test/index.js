@@ -52,6 +52,11 @@ describe('Analytics', function(){
     assert.equal(a.flushAfter, 10000);
   });
 
+  it('should remove trailing slashes from `.host`', function(){
+    var a = Analytics('key', { host: 'http://google.com/////' });
+    assert.equal(a.host, 'http://google.com')
+  });
+
   it('should take options', function(){
     var a = Analytics('key', {
       host: 'a',

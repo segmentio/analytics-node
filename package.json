@@ -26,6 +26,7 @@
     "crypto-token": "^1.0.1",
     "debug": "^2.2.0",
     "lodash": "~4.17.2",
+    "remove-trailing-slash": "^0.1.0",
     "superagent": "^3.0.0",
     "superagent-proxy": "^1.0.0",
     "superagent-retry": "^0.6.0"

@@ -6,10 +6,12 @@ var server = require('./server');
 var a;
 var noop = function(){};
 var id = 'id';
+
 var context = {
   library: {
     name: 'analytics-node',
-    version: require('../package.json').version
+    version: require('../package.json').version,
+    nodeVersion: process.versions.node
   }
 };
 
@@ -126,7 +128,8 @@ describe('Analytics', function(){
       assert.deepEqual(a.queue[0].message.context, {
         library: {
           name:'analytics-node',
-          version: require('../package.json').version
+          version: require('../package.json').version,
+          nodeVersion: process.versions.node
         },
         name: 'travis'
       });

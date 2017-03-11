@@ -10,8 +10,7 @@ var id = 'id';
 var context = {
   library: {
     name: 'analytics-node',
-    version: require('../package.json').version,
-    nodeVersion: process.versions.node
+    version: require('../package.json').version
   }
 };
 
@@ -128,8 +127,7 @@ describe('Analytics', function(){
       assert.deepEqual(a.queue[0].message.context, {
         library: {
           name:'analytics-node',
-          version: require('../package.json').version,
-          nodeVersion: process.versions.node
+          version: require('../package.json').version
         },
         name: 'travis'
       });
@@ -179,7 +177,8 @@ describe('Analytics', function(){
         userId: 'id',
         timestamp: date,
         context: context,
-        messageId: id
+        messageId: id,
+        _metadata: { nodeVersion: process.versions.node }
       });
     });
 
@@ -204,7 +203,8 @@ describe('Analytics', function(){
         groupId: 'group',
         timestamp: date,
         context: context,
-        messageId: id
+        messageId: id,
+        _metadata: { nodeVersion: process.versions.node }
       });
     });
 
@@ -235,7 +235,8 @@ describe('Analytics', function(){
         userId: 'id',
         timestamp: date,
         context: context,
-        messageId: id
+        messageId: id,
+        _metadata: { nodeVersion: process.versions.node }
       });
     });
 
@@ -248,7 +249,8 @@ describe('Analytics', function(){
         type: 'track',
         timestamp: date,
         context: context,
-        messageId: id
+        messageId: id,
+        _metadata: { nodeVersion: process.versions.node }
       })
     });
 
@@ -278,7 +280,8 @@ describe('Analytics', function(){
         userId: 'id',
         timestamp: date,
         context: context,
-        messageId: id
+        messageId: id,
+        _metadata: { nodeVersion: process.versions.node }
       });
     });
 
@@ -303,7 +306,8 @@ describe('Analytics', function(){
         userId: 'id',
         timestamp: date,
         context: context,
-        messageId: id
+        messageId: id,
+        _metadata: { nodeVersion: process.versions.node }
       });
     });
 

@@ -129,6 +129,10 @@ Analytics.prototype.alias = function(message, fn){
 
 Analytics.prototype.flush = function(fn){
   fn = fn || noop;
+  if (this.timer) {
+    clearTimeout(this.timer);
+    this.timer = null;
+  }
   if (!this.queue.length) return setImmediate(fn);
 
   var items = this.queue.splice(0, this.flushAt);
@@ -181,8 +185,7 @@ Analytics.prototype.enqueue = function(type, message, fn){
   });
 
   if (this.queue.length >= this.flushAt) this.flush();
-  if (this.timer) clearTimeout(this.timer);
-  if (this.flushAfter) this.timer = setTimeout(this.flush.bind(this), this.flushAfter);
+  if (this.flushAfter && !this.timer)  this.timer = setTimeout(this.flush.bind(this), this.flushAfter);
 };
 
 /**
@@ -2389,7 +2392,7 @@ function clone(parent, circular, depth, prototype) {
       if (proto) {
         attrs = Object.getOwnPropertyDescriptor(proto, i);
       }
-      
+
       if (attrs && attrs.set == null) {
         continue;
       }
@@ -10114,7 +10117,7 @@ process.umask = function() { return 0; };
  * TODO: combatible error handling?
  */
 
-module.exports = function(arr, fn, initial){  
+module.exports = function(arr, fn, initial){
   var idx = 0;
   var len = arr.length;
   var curr = arguments.length == 3
@@ -10124,7 +10127,7 @@ module.exports = function(arr, fn, initial){
   while (idx < len) {
     curr = fn.call(null, curr, arr[idx], ++idx, arr);
   }
-  
+
   return curr;
 };
 },{}],18:[function(require,module,exports){

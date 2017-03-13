@@ -109,17 +109,19 @@ describe('Analytics', function(){
       a.enqueue('type', {});
     });
 
-    it('should reset an existing timer', function(done){
+    it('should not reset an existing timer', function(done){
       var i = 0;
       a.flushAt = Infinity;
-      a.flushAfter = 1;
+      a.flushAfter = 3;
       a.flush = function(){ i++; };
       a.enqueue('type', {});
-      a.enqueue('type', {});
       setTimeout(function(){
+        a.enqueue('type', {});
+      }, 1);
+      setTimeout(function() {
         assert.equal(1, i);
         done();
-      }, 1);
+      }, 4);
     });
 
     it('should extend the given context', function(){

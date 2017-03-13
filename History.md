@@ -1,4 +1,10 @@
 
+2.3.0 / 2017-03-13
+==================
+
+  * Add node version to messages via _metadata (#84)
+  * remove trailing slash on `.host` (#81)
+
 2.2.0 / 2017-02-06
 ==================
 

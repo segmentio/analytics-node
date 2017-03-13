@@ -38,13 +38,17 @@
     "express": "~3.4.8",
     "http-proxy": "~1.11.1",
     "mocha": "1.8.1",
-    "nsp": "^2.0.2"
+    "nsp": "^2.0.2",
+    "standard": "^9.0.1"
   },
   "engines": {
     "node": ">= 0.12.x"
   },
   "scripts": {
     "test": "make test"
+  },
+  "standard": {
+    "ignore": [ "analytics-node.js" ]
   },
   "license": "MIT"
 }

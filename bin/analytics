@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-var Analytics = require('..');
-var assert = require('assert');
-var pkg = require('../package.json');
-var program = require('commander');
+var Analytics = require('..')
+var assert = require('assert')
+var pkg = require('../package.json')
+var program = require('commander')
 
 program
   .version(pkg.version)
-  .option('-w, --write-key <key>', 'the segment write key to use');
+  .option('-w, --write-key <key>', 'the segment write key to use')
 
 program
   .command('track <event>')
@@ -17,7 +17,7 @@ program
   .option('-p, --properties <data>', 'the event properties to send (JSON-encoded)', toObject)
   .option('-t, --timestamp <date>', 'the date of the event', toDate)
   .option('-c, --context <data>', 'additional context for the event (JSON-encoded)', toObject)
-  .action(function(event, options) {
+  .action(function (event, options) {
     run('track', {
       event: event,
       userId: options.user,
@@ -25,8 +25,8 @@ program
       properties: options.properties,
       timestamp: options.timestamp,
       context: options.context
-    });
-  });
+    })
+  })
 
 program
   .command('page')
@@ -37,7 +37,7 @@ program
   .option('-p, --properties <data>', 'attributes of the page (JSON-encoded)', toObject)
   .option('-t, --timestamp <date>', 'the date of the event', toDate)
   .option('-c, --context <data>', 'additional context for the event (JSON-encoded)', toObject)
-  .action(function(options) {
+  .action(function (options) {
     run('page', {
       userId: options.user,
       name: options.name,
@@ -45,8 +45,8 @@ program
       properties: options.properties,
       timestamp: options.timestamp,
       context: options.context
-    });
-  });
+    })
+  })
 
 program
   .command('identify')
@@ -55,14 +55,14 @@ program
   .option('-T, --traits <data>', 'the user traits to send (JSON-encoded)', toObject)
   .option('-t, --timestamp <date>', 'the date of the event', toDate)
   .option('-c, --context <data>', 'additional context for the event (JSON-encoded)', toObject)
-  .action(function(options) {
+  .action(function (options) {
     run('identify', {
       userId: options.user,
       traits: options.traits,
       timestamp: options.timestamp,
       context: options.context
-    });
-  });
+    })
+  })
 
 program
   .command('group')
@@ -73,7 +73,7 @@ program
   .option('-T, --traits <data>', 'attributes about the group (JSON-encoded)', toObject)
   .option('-t, --timestamp <date>', 'the date of the event', toDate)
   .option('-c, --context <data>', 'additional context for the event (JSON-encoded)', toObject)
-  .action(function(options) {
+  .action(function (options) {
     run('group', {
       userId: options.user,
       anonymousId: options.anonymous,
@@ -81,49 +81,49 @@ program
       traits: options.traits,
       timestamp: options.timestamp,
       context: options.context
-    });
-  });
+    })
+  })
 
 program
   .command('alias')
   .description('remap a user to a new id')
   .option('-u, --user <id>', 'the user id to send the event as')
   .option('-p, --previous <id>', 'the previous user id (to add the alias for)')
-  .action(function(options) {
+  .action(function (options) {
     run('alias', {
       userId: options.user,
       previousId: options.previous
-    });
-  });
+    })
+  })
 
-program.parse(process.argv);
+program.parse(process.argv)
 
 if (program.args.length === 0) {
-  program.help();
+  program.help()
 }
 
-function run(method, options) {
-  var writeKey = process.env.SEGMENT_WRITE_KEY || program.writeKey;
-  assert(writeKey, 'you need to define your write key via the $SEGMENT_WRITE_KEY environment variable or the --write-key flag');
+function run (method, options) {
+  var writeKey = process.env.SEGMENT_WRITE_KEY || program.writeKey
+  assert(writeKey, 'you need to define your write key via the $SEGMENT_WRITE_KEY environment variable or the --write-key flag')
 
-  var analytics = new Analytics(writeKey, { flushAt: 1 });
+  var analytics = new Analytics(writeKey, { flushAt: 1 })
 
-  analytics[method](options, done);
+  analytics[method](options, done)
 }
 
-function toDate(str) {
-  return new Date(str);
+function toDate (str) {
+  return new Date(str)
 }
 
-function toObject(str) {
-  return JSON.parse(str);
+function toObject (str) {
+  return JSON.parse(str)
 }
 
-function done(err) {
+function done (err) {
   if (err) {
-    console.error(err.stack);
-    process.exit(1);
+    console.error(err.stack)
+    process.exit(1)
   } else {
-    process.exit(0);
+    process.exit(0)
   }
 }

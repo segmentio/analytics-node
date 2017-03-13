@@ -30,4 +30,5 @@ deployment:
       - make analytics-node.js
       - git add analytics-node.js
       - git commit -m "analytics-node.js@$CIRCLE_TAG"
+      - git push origin master
       - npm publish

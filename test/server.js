@@ -1,22 +1,21 @@
-var express = require('express');
-var httpProxy = require('http-proxy');
-var http = require('http');
-var debug = require('debug')('analytics-node:server')
-var ports = exports.ports = { source: 4063, proxy: 4064 };
+var express = require('express')
+var httpProxy = require('http-proxy')
+var http = require('http')
+var ports = exports.ports = { source: 4063, proxy: 4064 }
 
 /**
  * Proxy.
  */
 
-var proxy = httpProxy.createProxyServer();
+var proxy = httpProxy.createProxyServer()
 
-exports.proxy = http.createServer(function(req, res) {
-  proxy.web(req, res, { target: 'http://localhost:' + ports.source });
-});
+exports.proxy = http.createServer(function (req, res) {
+  proxy.web(req, res, { target: 'http://localhost:' + ports.source })
+})
 
 proxy.on('proxyRes', function (proxyRes, req, res) {
-  proxyRes.statusCode = 408;
-});
+  proxyRes.statusCode = 408
+})
 
 /**
  * App.
@@ -24,7 +23,7 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
 
 exports.app = express()
   .use(express.bodyParser())
-  .use(express.basicAuth('key', ''));
+  .use(express.basicAuth('key', ''))
 
 /**
  * Fixture.
@@ -34,8 +33,10 @@ exports.app = express()
  * @param {Funtion} next
  */
 
-exports.fixture = function(req, res, next){
-  var batch = req.body.batch;
-  if ('error' == batch[0]) return res.json(400, { error: { message: 'error' }});
-  res.json(200);
+exports.fixture = function (req, res, next) {
+  var batch = req.body.batch
+  if (batch[0] === 'error') {
+    return res.json(400, { error: { message: 'error' } })
+  }
+  res.json(200)
 }

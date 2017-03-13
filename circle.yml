@@ -22,6 +22,7 @@ dependencies:
 
 test:
   override:
+    - make lint
     - nvm use 0.12; npm rebuild > /dev/null; make test
     - nvm use 4.1; npm rebuild > /dev/null; make test
     - nvm use 4; npm rebuild > /dev/null; make test

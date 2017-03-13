@@ -2,6 +2,7 @@
 browserify = ./node_modules/.bin/browserify
 mocha = ./node_modules/.bin/mocha
 nsp = ./node_modules/.bin/nsp
+standard = ./node_modules/.bin/standard
 
 # Build the browserify bundle.
 analytics-node.js: node_modules lib/index.js
@@ -20,6 +21,9 @@ test: node_modules
 		--reporter spec \
 		--bail
 
+lint: node_modules
+	$(standard)
+
 clean:
 	@rm analytics-node.js
 
@@ -27,4 +31,4 @@ nsp:
 	@$(nsp) check
 
 # Phonies.
-.PHONY: test
+.PHONY: test lint clean nsp

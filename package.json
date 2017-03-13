@@ -20,7 +20,7 @@
     "analytics": "bin/analytics"
   },
   "dependencies": {
-    "@segment/loosely-validate-event": "^1.1.1",
+    "@segment/loosely-validate-event": "^1.1.2",
     "clone": "~2.1.0",
     "commander": "^2.9.0",
     "crypto-token": "^1.0.1",

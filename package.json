@@ -1,7 +1,7 @@
 {
   "name": "analytics-node",
   "repository": "git://github.com/segmentio/analytics-node",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "The hassle-free way to integrate analytics into any node application.",
   "keywords": [
     "analytics",
@@ -20,7 +20,7 @@
     "analytics": "bin/analytics"
   },
   "dependencies": {
-    "@segment/loosely-validate-event": "^1.1.1",
+    "@segment/loosely-validate-event": "^1.1.2",
     "clone": "~2.1.0",
     "commander": "^2.9.0",
     "crypto-token": "^1.0.1",

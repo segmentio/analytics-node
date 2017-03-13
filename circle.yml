@@ -1,0 +1,34 @@
+machine:
+  node:
+    version: 6
+
+checkout:
+  post:
+    - npm config set "//registry.npmjs.org/:_authToken" $NPM_AUTH
+    - git config user.name "SegmentBot"
+    - git config user.email "tools+segmentbot@segment.com"
+
+dependencies:
+  override:
+    - make node_modules
+    - nvm install 0.12
+    - nvm install 4.1
+    - nvm install 4
+    - nvm install 6
+
+test:
+  override:
+    - nvm use 0.12; npm rebuild > /dev/null; make test
+    - nvm use 4.1; npm rebuild > /dev/null; make test
+    - nvm use 4; npm rebuild > /dev/null; make test
+    - nvm use 6; npm rebuild > /dev/null; make test
+
+deployment:
+  publish:
+    tag: /[0-9]+\.[0-9]+\.[0-9]+/
+    commands:
+      - make analytics-node.js
+      - git add analytics-node.js
+      - git commit -m "analytics-node.js@$CIRCLE_TAG [ci skip]"
+      - git push origin master
+      - npm publish

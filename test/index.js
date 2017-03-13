@@ -296,6 +296,31 @@ describe('Analytics', function(){
     });
   });
 
+  describe('#screen', function(){
+    it('should enqueue a message', function(){
+      var date = new Date();
+      a.screen({ userId: 'id', timestamp: date, messageId: id });
+      assert.deepEqual(a.queue[0].message, {
+        type: 'screen',
+        userId: 'id',
+        timestamp: date,
+        context: context,
+        messageId: id,
+        _metadata: { nodeVersion: process.versions.node }
+      });
+    });
+
+    it('should validate a message', function(){
+      assert.throws(a.screen, error('You must pass a message object.'));
+    });
+
+    it('should require a userId or anonymousId', function(){
+      assert.throws(function(){
+        a.screen({});
+      }, error('You must pass either an "anonymousId" or a "userId".'));
+    });
+  });
+
   describe('#alias', function(){
     it('should enqueue a message', function(){
       var date = new Date();

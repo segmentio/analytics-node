@@ -305,7 +305,8 @@ describe('Analytics', function(){
         userId: 'id',
         timestamp: date,
         context: context,
-        messageId: id
+        messageId: id,
+        _metadata: { nodeVersion: process.versions.node }
       });
     });
 

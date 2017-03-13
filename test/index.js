@@ -6,6 +6,7 @@ var server = require('./server');
 var a;
 var noop = function(){};
 var id = 'id';
+
 var context = {
   library: {
     name: 'analytics-node',
@@ -176,7 +177,8 @@ describe('Analytics', function(){
         userId: 'id',
         timestamp: date,
         context: context,
-        messageId: id
+        messageId: id,
+        _metadata: { nodeVersion: process.versions.node }
       });
     });
 
@@ -201,7 +203,8 @@ describe('Analytics', function(){
         groupId: 'group',
         timestamp: date,
         context: context,
-        messageId: id
+        messageId: id,
+        _metadata: { nodeVersion: process.versions.node }
       });
     });
 
@@ -232,7 +235,8 @@ describe('Analytics', function(){
         userId: 'id',
         timestamp: date,
         context: context,
-        messageId: id
+        messageId: id,
+        _metadata: { nodeVersion: process.versions.node }
       });
     });
 
@@ -245,7 +249,8 @@ describe('Analytics', function(){
         type: 'track',
         timestamp: date,
         context: context,
-        messageId: id
+        messageId: id,
+        _metadata: { nodeVersion: process.versions.node }
       })
     });
 
@@ -275,7 +280,8 @@ describe('Analytics', function(){
         userId: 'id',
         timestamp: date,
         context: context,
-        messageId: id
+        messageId: id,
+        _metadata: { nodeVersion: process.versions.node }
       });
     });
 
@@ -300,7 +306,8 @@ describe('Analytics', function(){
         userId: 'id',
         timestamp: date,
         context: context,
-        messageId: id
+        messageId: id,
+        _metadata: { nodeVersion: process.versions.node }
       });
     });
 

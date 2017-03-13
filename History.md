@@ -1,4 +1,12 @@
 
+2.4.0 / 2017-03-13
+==================
+
+  * test: add `_metadata` to "screen" assertion (#87)
+  * replace Travis with CircleCI (#86)
+  * add support for screen events (#82)
+  * use correct optional syntax for JSDOC (#83)
+
 2.3.0 / 2017-03-13
 ==================
 

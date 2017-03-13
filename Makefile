@@ -10,9 +10,9 @@ analytics-node.js: node_modules lib/index.js
 		--outfile analytics-node.js
 
 # Install the node module dependencies.
-node_modules: package.json
-	@npm install
-	@touch package.json
+node_modules: yarn.lock
+	yarn
+	touch $@
 
 # Run the tests.
 test: node_modules

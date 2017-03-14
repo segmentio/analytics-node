@@ -1,4 +1,5 @@
 var express = require('express')
+var bodyParser = require('body-parser')
 
 /**
  * Port.
@@ -11,8 +12,7 @@ exports.port = 4063
  */
 
 exports.app = express()
-  .use(express.bodyParser())
-  .use(express.basicAuth('key', ''))
+  .use(bodyParser.json())
 
 /**
  * Fixture.

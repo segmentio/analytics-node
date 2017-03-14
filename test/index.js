@@ -19,7 +19,7 @@ describe('Analytics', function () {
   before(function (done) {
     server.app
       .post('/v1/batch', server.fixture)
-      .listen(server.ports.source, done)
+      .listen(server.port, done)
   })
 
   beforeEach(function () {

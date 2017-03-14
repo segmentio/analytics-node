@@ -1,21 +1,10 @@
 var express = require('express')
-var httpProxy = require('http-proxy')
-var http = require('http')
-var ports = exports.ports = { source: 4063, proxy: 4064 }
 
 /**
- * Proxy.
+ * Port.
  */
 
-var proxy = httpProxy.createProxyServer()
-
-exports.proxy = http.createServer(function (req, res) {
-  proxy.web(req, res, { target: 'http://localhost:' + ports.source })
-})
-
-proxy.on('proxyRes', function (proxyRes, req, res) {
-  proxyRes.statusCode = 408
-})
+exports.port = 4063
 
 /**
  * App.

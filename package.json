@@ -36,7 +36,7 @@
     "browserify": "^14.1.0",
     "express": "^4.15.2",
     "mocha": "^3.2.0",
-    "nsp": "^2.0.2",
+    "nsp": "^2.6.3",
     "standard": "^9.0.1"
   },
   "engines": {

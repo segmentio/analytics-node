@@ -1,4 +1,15 @@
 
+2.4.1 / 2017-05-05
+==================
+
+  * Preventing webpack to bundle all lodash lib (#94)
+  * README: fix header
+  * README: fix badge
+  * package: upgrade dependencies (#89)
+  * standard (#88)
+  * yarn (#85)
+  * analytics-node.js@2.4.0 [ci skip]
+
 2.4.0 / 2017-03-13
 ==================
 

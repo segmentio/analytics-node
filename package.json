@@ -27,8 +27,7 @@
     "debug": "^2.6.2",
     "lodash": "^4.17.4",
     "remove-trailing-slash": "^0.1.0",
-    "superagent": "^3.5.0",
-    "superagent-retry": "^0.6.0"
+    "superagent": "^3.5.0"
   },
   "devDependencies": {
     "body-parser": "^1.17.1",

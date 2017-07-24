@@ -116,11 +116,11 @@ describe('Analytics', function () {
       a.flushAfter = 10
       a.flush = function () { i++ }
       a.enqueue('type', {})
-      
+
       setTimeout(function () {
         a.enqueue('type', {})
       }, 5)
-      
+
       setTimeout(function () {
         assert.equal(1, i)
         done()

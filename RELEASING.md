@@ -9,5 +9,3 @@ $ git release <version>
 ```
 
 Where `<version>` represents a valid [semver](http://semver.org) version number.
-
-CircleCI will handle rebuilding `analytics-node.js` and publishing to npm for you.

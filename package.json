@@ -11,11 +11,6 @@
     "driver"
   ],
   "main": "lib/index.js",
-  "browserify": {
-    "transform": [
-      "brfs"
-    ]
-  },
   "bin": {
     "analytics": "bin/analytics"
   },
@@ -31,8 +26,6 @@
   },
   "devDependencies": {
     "body-parser": "^1.17.1",
-    "brfs": "^1.4.3",
-    "browserify": "^14.1.0",
     "express": "^4.15.2",
     "mocha": "^3.2.0",
     "nsp": "^2.6.3",

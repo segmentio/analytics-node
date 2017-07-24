@@ -33,8 +33,4 @@ deployment:
   publish:
     tag: /[0-9]+\.[0-9]+\.[0-9]+/
     commands:
-      - make analytics-node.js
-      - git add analytics-node.js
-      - git commit -m "analytics-node.js@$CIRCLE_TAG [ci skip]"
-      - git push origin master
       - npm publish

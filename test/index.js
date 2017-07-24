@@ -110,17 +110,21 @@ describe('Analytics', function () {
       a.enqueue('type', {})
     })
 
-    it('should reset an existing timer', function (done) {
+    it('should not reset an existing timer', function (done) {
       var i = 0
       a.flushAt = Infinity
-      a.flushAfter = 1
+      a.flushAfter = 10
       a.flush = function () { i++ }
       a.enqueue('type', {})
-      a.enqueue('type', {})
+      
+      setTimeout(function () {
+        a.enqueue('type', {})
+      }, 5)
+      
       setTimeout(function () {
         assert.equal(1, i)
         done()
-      }, 1)
+      }, 10)
     })
 
     it('should extend the given context', function () {

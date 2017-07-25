@@ -2,12 +2,6 @@ machine:
   node:
     version: 6
 
-checkout:
-  post:
-    - npm config set "//registry.npmjs.org/:_authToken" $NPM_AUTH
-    - git config user.name "SegmentBot"
-    - git config user.email "tools+segmentbot@segment.com"
-
 dependencies:
   pre:
     - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 0.21.3
@@ -26,9 +20,3 @@ test:
     - nvm use 4.1; npm rebuild > /dev/null; make test
     - nvm use 4; npm rebuild > /dev/null; make test
     - nvm use 6; npm rebuild > /dev/null; make test
-
-deployment:
-  publish:
-    tag: /[0-9]+\.[0-9]+\.[0-9]+/
-    commands:
-      - npm publish

@@ -40,10 +40,6 @@ test('require a write key', t => {
   t.throws(() => new Analytics(), 'You must pass your Segment project\'s write key.')
 })
 
-test('don\'t require the new keyword', t => {
-  t.notThrows(() => Analytics('key'))
-})
-
 test('create a queue', t => {
   const client = createClient()
 

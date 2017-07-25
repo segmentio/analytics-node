@@ -11,7 +11,6 @@ checkout:
 dependencies:
   pre:
     - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 0.21.3
-    - nvm install 0.12
     - nvm install 4.1
     - nvm install 4
     - nvm install 6
@@ -24,7 +23,6 @@ test:
   override:
     - make lint
     - node_modules/.bin/nsp check
-    - nvm use 0.12; npm rebuild > /dev/null; make test
     - nvm use 4.1; npm rebuild > /dev/null; make test
     - nvm use 4; npm rebuild > /dev/null; make test
     - nvm use 6; npm rebuild > /dev/null; make test

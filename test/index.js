@@ -1,390 +1,389 @@
-/* global describe, before, beforeEach, it */
+import {spy, stub} from 'sinon'
+import delay from 'delay'
+import pify from 'pify'
+import test from 'ava'
+import server from './_server'
+import Analytics from '..'
+import {version} from '../package'
 
-var assert = require('assert')
-var Analytics = require('..')
-var server = require('./server')
+const noop = () => {}
 
-var a
-var noop = function () {}
-var id = 'id'
-
-var context = {
+const context = {
   library: {
     name: 'analytics-node',
-    version: require('../package.json').version
+    version
   }
 }
 
-describe('Analytics', function () {
-  before(function (done) {
-    server.app
-      .post('/v1/batch', server.fixture)
-      .listen(server.port, done)
+const metadata = { nodeVersion: process.versions.node }
+
+const createClient = options => {
+  options = Object.assign({
+    host: `http://localhost:${server.port}`
+  }, options)
+
+  const client = new Analytics('key', options)
+  client.flush = pify(client.flush.bind(client))
+
+  return client
+}
+
+test.before.cb(t => {
+  server.app.listen(server.port, t.end)
+})
+
+test('expose a constructor', t => {
+  t.is(typeof Analytics, 'function')
+})
+
+test('require a write key', t => {
+  t.throws(() => new Analytics(), 'You must pass your Segment project\'s write key.')
+})
+
+test('don\'t require the new keyword', t => {
+  t.notThrows(() => Analytics('key'))
+})
+
+test('create a queue', t => {
+  const client = createClient()
+
+  t.deepEqual(client.queue, [])
+})
+
+test('default options', t => {
+  const client = new Analytics('key')
+
+  t.is(client.writeKey, 'key')
+  t.is(client.host, 'https://api.segment.io')
+  t.is(client.flushAt, 20)
+  t.is(client.flushAfter, 10000)
+})
+
+test('remove trailing slashes from `host`', t => {
+  const client = new Analytics('key', { host: 'http://google.com///' })
+
+  t.is(client.host, 'http://google.com')
+})
+
+test('overwrite defaults with options', t => {
+  const client = new Analytics('key', {
+    host: 'a',
+    flushAt: 1,
+    flushAfter: 2
   })
 
-  beforeEach(function () {
-    a = Analytics('key', {
-      host: 'http://localhost:4063',
-      flushAt: Infinity,
-      flushAfter: Infinity
-    })
+  t.is(client.host, 'a')
+  t.is(client.flushAt, 1)
+  t.is(client.flushAfter, 2)
+})
+
+test('keep the flushAt option above zero', t => {
+  const client = createClient({ flushAt: 0 })
+
+  t.is(client.flushAt, 1)
+})
+
+test('enqueue - add a message to the queue', t => {
+  const client = createClient()
+
+  const timestamp = new Date()
+  client.enqueue('type', { timestamp }, noop)
+
+  t.is(client.queue.length, 1)
+
+  const item = client.queue.pop()
+
+  t.is(typeof item.message.messageId, 'string')
+  t.regex(item.message.messageId, /node-[a-zA-Z0-9]{32}/)
+  t.deepEqual(item, {
+    message: {
+      timestamp,
+      type: 'type',
+      context,
+      _metadata: metadata,
+      messageId: item.message.messageId
+    },
+    callback: noop
+  })
+})
+
+test('enqueue - don\'t modify the original message', t => {
+  const client = createClient()
+  const message = { event: 'test' }
+
+  client.enqueue('type', message)
+
+  t.deepEqual(message, { event: 'test' })
+})
+
+test('enqueue - flush the queue if it hits the max length', t => {
+  const client = createClient({
+    flushAt: 1,
+    flushAfter: null
   })
 
-  it('should expose a constructor', function () {
-    assert.equal('function', typeof Analytics)
-  })
+  stub(client, 'flush')
 
-  it('should require a write key', function () {
-    assert.throws(Analytics, error("You must pass your Segment project's write key."))
-  })
+  client.enqueue('type', {})
 
-  it('should not require the new keyword', function () {
-    assert(a instanceof Analytics)
-  })
+  t.true(client.flush.calledOnce)
+})
 
-  it('should create a queue', function () {
-    assert.deepEqual(a.queue, [])
-  })
+test('enqueue - flush after a period of time', async t => {
+  const client = createClient({ flushAfter: 10 })
+  stub(client, 'flush')
 
-  it('should set default options', function () {
-    var a = Analytics('key')
-    assert.equal(a.writeKey, 'key')
-    assert.equal(a.host, 'https://api.segment.io')
-    assert.equal(a.flushAt, 20)
-    assert.equal(a.flushAfter, 10000)
-  })
+  client.enqueue('type', {})
 
-  it('should remove trailing slashes from `.host`', function () {
-    var a = Analytics('key', { host: 'http://google.com/////' })
-    assert.equal(a.host, 'http://google.com')
-  })
+  t.false(client.flush.called)
+  await delay(20)
 
-  it('should take options', function () {
-    var a = Analytics('key', {
-      host: 'a',
-      flushAt: 1,
-      flushAfter: 2
-    })
-    assert.equal(a.host, 'a')
-    assert.equal(a.flushAt, 1)
-    assert.equal(a.flushAfter, 2)
-  })
+  t.true(client.flush.calledOnce)
+})
 
-  it('should keep the flushAt option above zero', function () {
-    var a = Analytics('key', { flushAt: 0 })
-    assert.equal(a.flushAt, 1)
-  })
+test('enqueue - don\'t reset an existing timer', async t => {
+  const client = createClient({ flushAfter: 10 })
+  stub(client, 'flush')
 
-  describe('#enqueue', function () {
-    it('should add a message to the queue', function () {
-      var date = new Date()
-      a.enqueue('type', { timestamp: date }, noop)
+  client.enqueue('type', {})
+  await delay(5)
+  client.enqueue('type', {})
+  await delay(5)
 
-      var msg = a.queue[0].message
-      var callback = a.queue[0].callback
+  t.true(client.flush.calledOnce)
+})
 
-      assert.equal(callback, noop)
-      assert.equal(msg.type, 'type')
-      assert.deepEqual(msg.timestamp, date)
-      assert.deepEqual(msg.context, context)
-      assert(msg.messageId)
-    })
+test('enqueue - extend context', t => {
+  const client = createClient()
 
-    it('should not modify the original message', function () {
-      var message = { event: 'test' }
-      a.enqueue('type', message, noop)
-      assert(!message.hasOwnProperty('timestamp'))
-    })
+  client.enqueue('type', {
+    event: 'test',
+    context: { name: 'travis' }
+  }, noop)
 
-    it('should flush the queue if it hits the max length', function (done) {
-      a.flushAt = 1
-      a.flushAfter = null
-      a.flush = done
-      a.enqueue('type', {})
-    })
+  const actualContext = client.queue[0].message.context
+  const expectedContext = Object.assign({}, context, { name: 'travis' })
 
-    it('should flush after a period of time', function (done) {
-      a.flushAt = Infinity
-      a.flushAfter = 1
-      a.flush = done
-      a.enqueue('type', {})
-    })
+  t.deepEqual(actualContext, expectedContext)
+})
 
-    it('should not reset an existing timer', function (done) {
-      var i = 0
-      a.flushAt = Infinity
-      a.flushAfter = 10
-      a.flush = function () { i++ }
-      a.enqueue('type', {})
+test('flush - don\'t fail when queue is empty', async t => {
+  const client = createClient()
 
-      setTimeout(function () {
-        a.enqueue('type', {})
-      }, 5)
+  await t.notThrows(client.flush())
+})
 
-      setTimeout(function () {
-        assert.equal(1, i)
-        done()
-      }, 10)
-    })
+test('flush - send messages', async t => {
+  const client = createClient({ flushAt: 2 })
 
-    it('should extend the given context', function () {
-      a.enqueue('type', { event: 'test', context: { name: 'travis' } }, noop)
-      assert.deepEqual(a.queue[0].message.context, {
-        library: {
-          name: 'analytics-node',
-          version: require('../package.json').version
-        },
-        name: 'travis'
-      })
-    })
+  const callbackA = spy()
+  const callbackB = spy()
+  const callbackC = spy()
 
-    it('should add a message id', function () {
-      a.enqueue('type', { event: 'test' }, noop)
-      var msg = a.queue[0].message
-      assert(msg.messageId)
-      assert(/node-[a-zA-Z0-9]{32}/.test(msg.messageId))
-    })
-  })
+  client.queue = [
+    {
+      message: 'a',
+      callback: callbackA
+    },
+    {
+      message: 'b',
+      callback: callbackB
+    },
+    {
+      message: 'c',
+      callback: callbackC
+    }
+  ]
 
-  describe('#flush', function () {
-    it('should not fail when no items are in the queue', function (done) {
-      a.flush(done)
-    })
+  const data = await client.flush()
+  t.deepEqual(Object.keys(data), ['batch', 'timestamp', 'sentAt'])
+  t.deepEqual(data.batch, ['a', 'b'])
+  t.true(data.timestamp instanceof Date)
+  t.true(data.sentAt instanceof Date)
+  t.true(callbackA.calledOnce)
+  t.true(callbackB.calledOnce)
+  t.false(callbackC.called)
+})
 
-    it('should send a batch of items', function (done) {
-      a.flushAt = 2
-      enqueue(a, [1, 2, 3])
-      a.flush(function (err, data) {
-        if (err) return done(err)
-        assert.deepEqual(data.batch, [1, 2])
-        assert(data.timestamp instanceof Date)
-        assert(data.sentAt instanceof Date)
-        done()
-      })
-    })
+test('flush - respond with an error', async t => {
+  const client = createClient()
+  const callback = spy()
 
-    it('should callback with an HTTP error', function (done) {
-      enqueue(a, ['error'])
-      a.flush(function (err, data) {
-        assert(err)
-        assert.equal(err.message, 'Bad Request')
-        done()
-      })
-    })
-  })
+  client.queue = [
+    {
+      message: 'error',
+      callback
+    }
+  ]
 
-  describe('#identify', function () {
-    it('should enqueue a message', function () {
-      var date = new Date()
-      a.identify({ userId: 'id', timestamp: date, messageId: id })
-      assert.deepEqual(a.queue[0].message, {
-        type: 'identify',
-        userId: 'id',
-        timestamp: date,
-        context: context,
-        messageId: id,
-        _metadata: { nodeVersion: process.versions.node }
-      })
-    })
+  await t.throws(client.flush(), 'Bad Request')
+})
 
-    it('should validate a message', function () {
-      assert.throws(a.identify, error('You must pass a message object.'))
-    })
+test('identify - enqueue a message', t => {
+  const client = createClient()
+  stub(client, 'enqueue')
 
-    it('should require a userId or anonymousId', function () {
-      assert.throws(function () {
-        a.identify({})
-      }, error('You must pass either an "anonymousId" or a "userId".'))
-    })
-  })
+  const message = { userId: 'id' }
+  client.identify(message, noop)
 
-  describe('#group', function () {
-    it('should enqueue a message', function () {
-      var date = new Date()
-      a.group({ groupId: 'group', userId: 'user', timestamp: date, messageId: id })
-      assert.deepEqual(a.queue[0].message, {
-        type: 'group',
-        userId: 'user',
-        groupId: 'group',
-        timestamp: date,
-        context: context,
-        messageId: id,
-        _metadata: { nodeVersion: process.versions.node }
-      })
-    })
+  t.true(client.enqueue.calledOnce)
+  t.deepEqual(client.enqueue.firstCall.args, ['identify', message, noop])
+})
 
-    it('should validate a message', function () {
-      assert.throws(a.group, error('You must pass a message object.'))
-    })
+test('identify - require a userId or anonymousId', t => {
+  const client = createClient()
+  stub(client, 'enqueue')
 
-    it('should require a userId or anonymousId', function () {
-      assert.throws(function () {
-        a.group({})
-      }, error('You must pass either an "anonymousId" or a "userId".'))
-    })
+  t.throws(() => client.identify(), 'You must pass a message object.')
+  t.throws(() => client.identify({}), 'You must pass either an "anonymousId" or a "userId".')
+  t.notThrows(() => client.identify({ userId: 'id' }))
+  t.notThrows(() => client.identify({ anonymousId: 'id' }))
+})
 
-    it('should require a groupId', function () {
-      assert.throws(function () {
-        a.group({ userId: 'id' })
-      }, error('You must pass a "groupId".'))
-    })
-  })
+test('group - enqueue a message', t => {
+  const client = createClient()
+  stub(client, 'enqueue')
 
-  describe('#track', function () {
-    it('should enqueue a message', function () {
-      var date = new Date()
-      a.track({ userId: 'id', event: 'event', timestamp: date, messageId: id })
-      assert.deepEqual(a.queue[0].message, {
-        type: 'track',
-        event: 'event',
-        userId: 'id',
-        timestamp: date,
-        context: context,
-        messageId: id,
-        _metadata: { nodeVersion: process.versions.node }
-      })
-    })
+  const message = {
+    groupId: 'id',
+    userId: 'id'
+  }
 
-    it('should handle a user ids given as a number', function () {
-      var date = new Date()
-      a.track({ userId: 1, event: 'jumped the shark', timestamp: date, messageId: id })
-      assert.deepEqual(a.queue[0].message, {
-        userId: 1,
-        event: 'jumped the shark',
-        type: 'track',
-        timestamp: date,
-        context: context,
-        messageId: id,
-        _metadata: { nodeVersion: process.versions.node }
-      })
-    })
+  client.group(message, noop)
 
-    it('should validate a message', function () {
-      assert.throws(a.track, error('You must pass a message object.'))
-    })
+  t.true(client.enqueue.calledOnce)
+  t.deepEqual(client.enqueue.firstCall.args, ['group', message, noop])
+})
 
-    it('should require a userId or anonymousId', function () {
-      assert.throws(function () {
-        a.track({})
-      }, error('You must pass either an "anonymousId" or a "userId".'))
-    })
+test('group - require a groupId and either userId or anonymousId', t => {
+  const client = createClient()
+  stub(client, 'enqueue')
 
-    it('should require an event', function () {
-      assert.throws(function () {
-        a.track({ userId: 'id' })
-      }, error('You must pass an "event".'))
+  t.throws(() => client.group(), 'You must pass a message object.')
+  t.throws(() => client.group({}), 'You must pass either an "anonymousId" or a "userId".')
+  t.throws(() => client.group({ userId: 'id' }), 'You must pass a "groupId".')
+  t.throws(() => client.group({ anonymousId: 'id' }), 'You must pass a "groupId".')
+  t.notThrows(() => {
+    client.group({
+      groupId: 'id',
+      userId: 'id'
     })
   })
 
-  describe('#page', function () {
-    it('should enqueue a message', function () {
-      var date = new Date()
-      a.page({ userId: 'id', timestamp: date, messageId: id })
-      assert.deepEqual(a.queue[0].message, {
-        type: 'page',
-        userId: 'id',
-        timestamp: date,
-        context: context,
-        messageId: id,
-        _metadata: { nodeVersion: process.versions.node }
-      })
-    })
-
-    it('should validate a message', function () {
-      assert.throws(a.page, error('You must pass a message object.'))
-    })
-
-    it('should require a userId or anonymousId', function () {
-      assert.throws(function () {
-        a.page({})
-      }, error('You must pass either an "anonymousId" or a "userId".'))
-    })
-  })
-
-  describe('#screen', function () {
-    it('should enqueue a message', function () {
-      var date = new Date()
-      a.screen({ userId: 'id', timestamp: date, messageId: id })
-      assert.deepEqual(a.queue[0].message, {
-        type: 'screen',
-        userId: 'id',
-        timestamp: date,
-        context: context,
-        messageId: id,
-        _metadata: { nodeVersion: process.versions.node }
-      })
-    })
-
-    it('should validate a message', function () {
-      assert.throws(a.screen, error('You must pass a message object.'))
-    })
-
-    it('should require a userId or anonymousId', function () {
-      assert.throws(function () {
-        a.screen({})
-      }, error('You must pass either an "anonymousId" or a "userId".'))
-    })
-  })
-
-  describe('#alias', function () {
-    it('should enqueue a message', function () {
-      var date = new Date()
-      a.alias({ previousId: 'previous', userId: 'id', timestamp: date, messageId: id })
-      assert.deepEqual(a.queue[0].message, {
-        type: 'alias',
-        previousId: 'previous',
-        userId: 'id',
-        timestamp: date,
-        context: context,
-        messageId: id,
-        _metadata: { nodeVersion: process.versions.node }
-      })
-    })
-
-    it('should validate a message', function () {
-      assert.throws(a.alias, error('You must pass a message object.'))
-    })
-
-    it('should require a userId', function () {
-      assert.throws(function () {
-        a.alias({})
-      }, error('You must pass a "userId".'))
-    })
-
-    it('should require a previousId', function () {
-      assert.throws(function () {
-        a.alias({ userId: 'id' })
-      }, error('You must pass a "previousId".'))
+  t.notThrows(() => {
+    client.group({
+      groupId: 'id',
+      anonymousId: 'id'
     })
   })
 })
 
-/**
- * Create a queue with `messages`.
- *
- * @param {Analytics} a
- * @param {Array} messages
- * @return {Array}
- */
+test('track - enqueue a message', t => {
+  const client = createClient()
+  stub(client, 'enqueue')
 
-function enqueue (a, messages) {
-  a.queue = messages.map(function (msg) {
-    return {
-      message: msg,
-      callback: noop
-    }
-  })
-}
-
-/**
- * Assert an error with `message` is thrown.
- *
- * @param {String} message
- * @return {Function}
- */
-
-function error (message) {
-  return function (err) {
-    return err.message === message
+  const message = {
+    userId: 1,
+    event: 'event'
   }
-}
+
+  client.track(message, noop)
+
+  t.true(client.enqueue.calledOnce)
+  t.deepEqual(client.enqueue.firstCall.args, ['track', message, noop])
+})
+
+test('track - require event and either userId or anonymousId', t => {
+  const client = createClient()
+  stub(client, 'enqueue')
+
+  t.throws(() => client.track(), 'You must pass a message object.')
+  t.throws(() => client.track({}), 'You must pass either an "anonymousId" or a "userId".')
+  t.throws(() => client.track({ userId: 'id' }), 'You must pass an "event".')
+  t.throws(() => client.track({ anonymousId: 'id' }), 'You must pass an "event".')
+  t.notThrows(() => {
+    client.track({
+      userId: 'id',
+      event: 'event'
+    })
+  })
+
+  t.notThrows(() => {
+    client.track({
+      anonymousId: 'id',
+      event: 'event'
+    })
+  })
+})
+
+test('page - enqueue a message', t => {
+  const client = createClient()
+  stub(client, 'enqueue')
+
+  const message = { userId: 'id' }
+  client.page(message, noop)
+
+  t.true(client.enqueue.calledOnce)
+  t.deepEqual(client.enqueue.firstCall.args, ['page', message, noop])
+})
+
+test('page - require either userId or anonymousId', t => {
+  const client = createClient()
+  stub(client, 'enqueue')
+
+  t.throws(() => client.page(), 'You must pass a message object.')
+  t.throws(() => client.page({}), 'You must pass either an "anonymousId" or a "userId".')
+  t.notThrows(() => client.page({ userId: 'id' }))
+  t.notThrows(() => client.page({ anonymousId: 'id' }))
+})
+
+test('screen - enqueue a message', t => {
+  const client = createClient()
+  stub(client, 'enqueue')
+
+  const message = { userId: 'id' }
+  client.screen(message, noop)
+
+  t.true(client.enqueue.calledOnce)
+  t.deepEqual(client.enqueue.firstCall.args, ['screen', message, noop])
+})
+
+test('screen - require either userId or anonymousId', t => {
+  const client = createClient()
+  stub(client, 'enqueue')
+
+  t.throws(() => client.screen(), 'You must pass a message object.')
+  t.throws(() => client.screen({}), 'You must pass either an "anonymousId" or a "userId".')
+  t.notThrows(() => client.screen({ userId: 'id' }))
+  t.notThrows(() => client.screen({ anonymousId: 'id' }))
+})
+
+test('alias - enqueue a message', t => {
+  const client = createClient()
+  stub(client, 'enqueue')
+
+  const message = {
+    userId: 'id',
+    previousId: 'id'
+  }
+
+  client.alias(message, noop)
+
+  t.true(client.enqueue.calledOnce)
+  t.deepEqual(client.enqueue.firstCall.args, ['alias', message, noop])
+})
+
+test('alias - require previousId and userId', t => {
+  const client = createClient()
+  stub(client, 'enqueue')
+
+  t.throws(() => client.alias(), 'You must pass a message object.')
+  t.throws(() => client.alias({}), 'You must pass a "userId".')
+  t.throws(() => client.alias({ userId: 'id' }), 'You must pass a "previousId".')
+  t.notThrows(() => {
+    client.alias({
+      userId: 'id',
+      previousId: 'id'
+    })
+  })
+})

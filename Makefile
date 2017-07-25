@@ -1,6 +1,6 @@
 # Binaries.
 browserify = ./node_modules/.bin/browserify
-mocha = ./node_modules/.bin/mocha
+ava = ./node_modules/.bin/ava
 nsp = ./node_modules/.bin/nsp
 standard = ./node_modules/.bin/standard
 
@@ -11,9 +11,7 @@ node_modules: yarn.lock
 
 # Run the tests.
 test: node_modules
-	@$(mocha) \
-		--reporter spec \
-		--bail
+	@$(ava)
 
 lint: node_modules
 	$(standard)

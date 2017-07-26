@@ -1,10 +1,11 @@
 import {spy, stub} from 'sinon'
+import bodyParser from 'body-parser'
+import express from 'express'
 import delay from 'delay'
 import pify from 'pify'
 import test from 'ava'
-import server from './_server'
-import Analytics from '..'
-import {version} from '../package'
+import Analytics from '.'
+import {version} from './package'
 
 const noop = () => {}
 
@@ -16,10 +17,11 @@ const context = {
 }
 
 const metadata = { nodeVersion: process.versions.node }
+const port = 4063
 
 const createClient = options => {
   options = Object.assign({
-    host: `http://localhost:${server.port}`
+    host: `http://localhost:${port}`
   }, options)
 
   const client = new Analytics('key', options)
@@ -29,7 +31,20 @@ const createClient = options => {
 }
 
 test.before.cb(t => {
-  server.app.listen(server.port, t.end)
+  express()
+    .use(bodyParser.json())
+    .post('/v1/batch', (req, res) => {
+      const batch = req.body.batch
+
+      if (batch[0] === 'error') {
+        return res.status(400).json({
+          error: { message: 'error' }
+        })
+      }
+
+      res.json({})
+    })
+    .listen(port, t.end)
 })
 
 test('expose a constructor', t => {

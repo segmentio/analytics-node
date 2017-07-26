@@ -3,8 +3,8 @@
 
 const assert = require('assert')
 const program = require('commander')
-const Analytics = require('..')
-const pkg = require('../package')
+const Analytics = require('.')
+const pkg = require('./package')
 
 const run = (method, options) => {
   const writeKey = process.env.SEGMENT_WRITE_KEY || program.writeKey

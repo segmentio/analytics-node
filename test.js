@@ -143,6 +143,23 @@ test('enqueue - flush on first message', t => {
   t.true(client.flush.calledTwice)
 })
 
+test('enqueue - flush on identify or group message', t => {
+  const client = createClient({ flushAt: 10 })
+  spy(client, 'flush')
+
+  client.enqueue('identify', {})
+  t.true(client.flush.calledOnce)
+
+  client.enqueue('group', {})
+  t.true(client.flush.calledTwice)
+
+  client.enqueue('track', {})
+  client.enqueue('page', {})
+  client.enqueue('screen', {})
+  client.enqueue('alias', {})
+  t.true(client.flush.calledTwice)
+})
+
 test('enqueue - flush the queue if it hits the max length', t => {
   const client = createClient({
     flushAt: 1,

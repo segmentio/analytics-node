@@ -182,6 +182,11 @@ class Analytics {
       return
     }
 
+    if (type === 'identify' || type === 'group') {
+      this.flush()
+      return
+    }
+
     if (this.queue.length >= this.flushAt) {
       this.flush()
     }

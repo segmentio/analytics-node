@@ -10,9 +10,8 @@
     "client",
     "driver"
   ],
-  "main": "lib/index.js",
   "bin": {
-    "analytics": "bin/analytics"
+    "analytics": "cli.js"
   },
   "dependencies": {
     "@segment/loosely-validate-event": "^1.1.2",

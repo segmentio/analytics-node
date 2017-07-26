@@ -16,11 +16,9 @@
   },
   "dependencies": {
     "@segment/loosely-validate-event": "^1.1.2",
-    "clone": "^2.1.1",
     "commander": "^2.9.0",
     "crypto-token": "^1.0.1",
     "debug": "^2.6.2",
-    "lodash": "^4.17.4",
     "remove-trailing-slash": "^0.1.0",
     "superagent": "^3.5.0"
   },
@@ -35,7 +33,7 @@
     "standard": "^9.0.1"
   },
   "engines": {
-    "node": ">= 0.12.x"
+    "node": ">= 4"
   },
   "scripts": {
     "test": "make test"

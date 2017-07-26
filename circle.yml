@@ -11,12 +11,11 @@ dependencies:
   cache_directories:
     - ~/.yarn-cache
   override:
-    - make node_modules
+    - yarn
 
 test:
   override:
-    - make lint
-    - node_modules/.bin/nsp check
-    - nvm use 4; npm rebuild > /dev/null; make test
-    - nvm use 6; npm rebuild > /dev/null; make test
-    - nvm use 8; npm rebuild > /dev/null; make test
+    - npm run check-deps
+    - nvm use 4; npm rebuild &> /dev/null; npm test
+    - nvm use 6; npm rebuild &> /dev/null; npm test
+    - nvm use 8; npm rebuild &> /dev/null; npm test

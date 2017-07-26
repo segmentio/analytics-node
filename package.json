@@ -36,7 +36,9 @@
     "node": ">= 4"
   },
   "scripts": {
-    "test": "make test"
+    "test": "standard && ava",
+    "prepublish": "npm run check-deps",
+    "check-deps": "nsp check"
   },
   "standard": {
     "ignore": [

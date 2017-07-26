@@ -1,18 +1,38 @@
 {
   "name": "analytics-node",
-  "repository": "git://github.com/segmentio/analytics-node",
   "version": "2.4.1",
-  "description": "The hassle-free way to integrate analytics into any node application.",
-  "keywords": [
-    "analytics",
-    "segment.io",
-    "segmentio",
-    "client",
-    "driver"
-  ],
+  "description": "The hassle-free way to integrate analytics into any Node.js application",
+  "license": "MIT",
+  "repository": "segmentio/analytics-node",
+  "author": {
+    "name": "Segment",
+    "email": "tools+npm@segment.com",
+    "url": "segment.com"
+  },
   "bin": {
     "analytics": "cli.js"
   },
+  "engines": {
+    "node": ">=4"
+  },
+  "scripts": {
+    "test": "standard && ava",
+    "prepublish": "npm run check-deps",
+    "check-deps": "nsp check"
+  },
+  "files": [
+    "index.js",
+    "cli.js"
+  ],
+  "keywords": [
+    "analytics",
+    "stats",
+    "segment.io",
+    "segmentio",
+    "segment",
+    "client",
+    "driver"
+  ],
   "dependencies": {
     "@segment/loosely-validate-event": "^1.1.2",
     "commander": "^2.9.0",
@@ -30,19 +50,5 @@
     "pify": "^3.0.0",
     "sinon": "^2.3.8",
     "standard": "^9.0.1"
-  },
-  "engines": {
-    "node": ">= 4"
-  },
-  "scripts": {
-    "test": "standard && ava",
-    "prepublish": "npm run check-deps",
-    "check-deps": "nsp check"
-  },
-  "standard": {
-    "ignore": [
-      "analytics-node.js"
-    ]
-  },
-  "license": "MIT"
+  }
 }

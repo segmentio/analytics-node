@@ -51,6 +51,7 @@ class Analytics {
     this.host = removeSlash(options.host || 'https://api.segment.io')
     this.flushAt = Math.max(options.flushAt, 1) || 20
     this.flushInterval = options.flushInterval || 10000
+    this.flushed = false
   }
 
   /**
@@ -174,6 +175,12 @@ class Analytics {
     debug('%s: %o', type, message)
 
     this.queue.push({ message, callback })
+
+    if (!this.flushed) {
+      this.flushed = true
+      this.flush()
+      return
+    }
 
     if (this.queue.length >= this.flushAt) {
       this.flush()

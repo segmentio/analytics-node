@@ -26,6 +26,7 @@ const createClient = options => {
 
   const client = new Analytics('key', options)
   client.flush = pify(client.flush.bind(client))
+  client.flushed = true
 
   return client
 }
@@ -125,6 +126,21 @@ test('enqueue - don\'t modify the original message', t => {
   client.enqueue('type', message)
 
   t.deepEqual(message, { event: 'test' })
+})
+
+test('enqueue - flush on first message', t => {
+  const client = createClient({ flushAt: 2 })
+  client.flushed = false
+  spy(client, 'flush')
+
+  client.enqueue('type', {})
+  t.true(client.flush.calledOnce)
+
+  client.enqueue('type', {})
+  t.true(client.flush.calledOnce)
+
+  client.enqueue('type', {})
+  t.true(client.flush.calledTwice)
 })
 
 test('enqueue - flush the queue if it hits the max length', t => {

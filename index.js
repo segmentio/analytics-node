@@ -37,7 +37,7 @@ class Analytics {
    * @param {String} writeKey
    * @param {Object} [options] (optional)
    *   @property {Number} flushAt (default: 20)
-   *   @property {Number} flushAfter (default: 10000)
+   *   @property {Number} flushInterval (default: 10000)
    *   @property {String} host (default: 'https://api.segment.io')
    */
 
@@ -50,7 +50,7 @@ class Analytics {
     this.writeKey = writeKey
     this.host = removeSlash(options.host || 'https://api.segment.io')
     this.flushAt = Math.max(options.flushAt, 1) || 20
-    this.flushAfter = options.flushAfter || 10000
+    this.flushInterval = options.flushInterval || 10000
   }
 
   /**
@@ -179,8 +179,8 @@ class Analytics {
       this.flush()
     }
 
-    if (this.flushAfter && !this.timer) {
-      this.timer = setTimeout(this.flush.bind(this), this.flushAfter)
+    if (this.flushInterval && !this.timer) {
+      this.timer = setTimeout(this.flush.bind(this), this.flushInterval)
     }
   }
 

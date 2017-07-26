@@ -67,7 +67,7 @@ test('default options', t => {
   t.is(client.writeKey, 'key')
   t.is(client.host, 'https://api.segment.io')
   t.is(client.flushAt, 20)
-  t.is(client.flushAfter, 10000)
+  t.is(client.flushInterval, 10000)
 })
 
 test('remove trailing slashes from `host`', t => {
@@ -80,12 +80,12 @@ test('overwrite defaults with options', t => {
   const client = new Analytics('key', {
     host: 'a',
     flushAt: 1,
-    flushAfter: 2
+    flushInterval: 2
   })
 
   t.is(client.host, 'a')
   t.is(client.flushAt, 1)
-  t.is(client.flushAfter, 2)
+  t.is(client.flushInterval, 2)
 })
 
 test('keep the flushAt option above zero', t => {
@@ -130,7 +130,7 @@ test('enqueue - don\'t modify the original message', t => {
 test('enqueue - flush the queue if it hits the max length', t => {
   const client = createClient({
     flushAt: 1,
-    flushAfter: null
+    flushInterval: null
   })
 
   stub(client, 'flush')
@@ -141,7 +141,7 @@ test('enqueue - flush the queue if it hits the max length', t => {
 })
 
 test('enqueue - flush after a period of time', async t => {
-  const client = createClient({ flushAfter: 10 })
+  const client = createClient({ flushInterval: 10 })
   stub(client, 'flush')
 
   client.enqueue('type', {})
@@ -153,7 +153,7 @@ test('enqueue - flush after a period of time', async t => {
 })
 
 test('enqueue - don\'t reset an existing timer', async t => {
-  const client = createClient({ flushAfter: 10 })
+  const client = createClient({ flushInterval: 10 })
   stub(client, 'flush')
 
   client.enqueue('type', {})

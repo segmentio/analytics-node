@@ -8,8 +8,7 @@ dependencies:
     - nvm install 4
     - nvm install 6
     - nvm install 8
-  cache_directories:
-    - ~/.yarn-cache
+    - rm -rf node_modules
   override:
     - yarn
 

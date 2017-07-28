@@ -1,4 +1,29 @@
 
+v3.0.0 / 2017-07-27
+===================
+
+  * Flush on first message (#113)
+  * Rename flushAfter to flushInterval (#112)
+  * remove caching of dependencies on Circle CI
+  * improve readme
+  * rename README to readme
+  * add license
+  * disable npm package locks
+  * improve package.json
+  * moves files into root
+  * remove Makefile in favor of npm scripts
+  * remove yarn.lock
+  * remove History.md in favor of gh releases
+  * add editorconfig
+  * Convert to ES6 (#110)
+  * Remove continuous deployment (#109)
+  * Switch from Mocha to AVA (#108)
+  * Skip data in flush callbacks (#105)
+  * Reset timer on flush (#103)
+  * Remove superagent-retry module (#107)
+  * Remove browserify build (#104)
+  * Update README.md
+
 2.4.1 / 2017-05-05
 ==================
 

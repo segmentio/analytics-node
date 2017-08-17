@@ -43,6 +43,10 @@ test.before.cb(t => {
         })
       }
 
+      if (batch[0] === 'timeout') {
+        return setTimeout(() => res.end(), 5000)
+      }
+
       res.json({})
     })
     .listen(port, t.end)
@@ -244,6 +248,20 @@ test('flush - respond with an error', async t => {
   ]
 
   await t.throws(client.flush(), 'Bad Request')
+})
+
+test('flush - time out if configured', async t => {
+  const client = createClient({timeout: 500})
+  const callback = spy()
+
+  client.queue = [
+    {
+      message: 'timeout',
+      callback
+    }
+  ]
+
+  await t.throws(client.flush(), 'Timeout of 500ms exceeded')
 })
 
 test('identify - enqueue a message', t => {

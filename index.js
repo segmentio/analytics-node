@@ -6,7 +6,7 @@ const validate = require('@segment/loosely-validate-event')
 const request = require('superagent')
 const debug = require('debug')('analytics-node')
 const uid = require('crypto-token')
-const version = require('./package').version
+const version = require('./package.json').version
 
 const setImmediate = global.setImmediate || process.nextTick.bind(process)
 const noop = () => {}

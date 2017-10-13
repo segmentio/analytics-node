@@ -218,7 +218,7 @@ class Analytics {
     }
 
     const req = {
-      method: 'POSt',
+      method: 'POST',
       url: `${this.host}/v1/batch`,
       data
     }

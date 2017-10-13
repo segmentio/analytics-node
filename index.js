@@ -38,7 +38,6 @@ class Analytics {
     this.flushInterval = options.flushInterval || 10000
     this.flushed = false
 
-    // setup retries
     retries(axios, options.retryCount || 3)
   }
 

@@ -261,7 +261,7 @@ test('flush - time out if configured', async t => {
     }
   ]
 
-  await t.throws(client.flush(), 'Timeout of 500ms exceeded')
+  await t.throws(client.flush(), 'timeout of 500ms exceeded')
 })
 
 test('identify - enqueue a message', t => {

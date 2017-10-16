@@ -3,31 +3,15 @@
 const assert = require('assert')
 const removeSlash = require('remove-trailing-slash')
 const validate = require('@segment/loosely-validate-event')
-const request = require('superagent')
+const axios = require('axios')
+const retries = require('axios-retry')
+const ms = require('ms')
 const debug = require('debug')('analytics-node')
 const uid = require('crypto-token')
 const version = require('./package').version
 
 const setImmediate = global.setImmediate || process.nextTick.bind(process)
 const noop = () => {}
-
-/**
- * Get an error from a `res`.
- *
- * @param {Object} res
- * @return {String}
- */
-
-const error = res => {
-  if (!res.error) {
-    return
-  }
-
-  const body = res.body
-  const msg = (body.error && body.error.message) || `${res.status} ${res.text}`
-
-  return new Error(msg)
-}
 
 class Analytics {
   /**
@@ -49,11 +33,12 @@ class Analytics {
     this.queue = []
     this.writeKey = writeKey
     this.host = removeSlash(options.host || 'https://api.segment.io')
-    this.retryCount = options.retryCount || 3
     this.timeout = options.timeout || false
     this.flushAt = Math.max(options.flushAt, 1) || 20
     this.flushInterval = options.flushInterval || 10000
     this.flushed = false
+
+    retries(axios, options.retryCount || 3)
   }
 
   /**
@@ -224,20 +209,33 @@ class Analytics {
 
     debug('flush: %o', data)
 
-    request
-      .post(`${this.host}/v1/batch`)
-      .auth(this.writeKey, '')
-      .timeout(this.timeout)
-      .retry(this.retryCount)
-      .send(data)
-      .end((err, res) => {
-        err = err || error(res)
+    const done = err => {
+      callbacks.forEach(callback => callback(err))
+      callback(err, data)
 
-        callbacks.forEach(callback => callback(err))
-        callback(err, data)
+      debug('flushed: %o', data)
+    }
 
-        debug('flushed: %o', data)
-      })
+    const req = {
+      method: 'POST',
+      url: `${this.host}/v1/batch`,
+      data
+    }
+
+    if (this.timeout) {
+      req.timeout = typeof this.timeout === 'string' ? ms(this.timeout) : this.timeout
+    }
+
+    axios(req)
+    .then(() => done())
+    .catch(err => {
+      if (err.response) {
+        const error = new Error(err.response.statusText)
+        return done(error)
+      }
+
+      done(err)
+    })
   }
 }
 

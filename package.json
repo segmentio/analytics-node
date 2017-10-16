@@ -35,11 +35,13 @@
   ],
   "dependencies": {
     "@segment/loosely-validate-event": "^1.1.2",
+    "axios": "^0.16.2",
+    "axios-retry": "^3.0.1",
     "commander": "^2.9.0",
     "crypto-token": "^1.0.1",
     "debug": "^2.6.2",
-    "remove-trailing-slash": "^0.1.0",
-    "superagent": "^3.5.0"
+    "ms": "^2.0.0",
+    "remove-trailing-slash": "^0.1.0"
   },
   "devDependencies": {
     "ava": "^0.21.0",

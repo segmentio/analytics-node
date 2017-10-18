@@ -230,15 +230,15 @@ class Analytics {
     }
 
     axios(req)
-    .then(() => done())
-    .catch(err => {
-      if (err.response) {
-        const error = new Error(err.response.statusText)
-        return done(error)
-      }
+      .then(() => done())
+      .catch(err => {
+        if (err.response) {
+          const error = new Error(err.response.statusText)
+          return done(error)
+        }
 
-      done(err)
-    })
+        done(err)
+      })
   }
 }
 

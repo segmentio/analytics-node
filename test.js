@@ -2,6 +2,7 @@ import {spy, stub} from 'sinon'
 import bodyParser from 'body-parser'
 import express from 'express'
 import delay from 'delay'
+import auth from 'basic-auth'
 import pify from 'pify'
 import test from 'ava'
 import Analytics from '.'
@@ -36,6 +37,13 @@ test.before.cb(t => {
     .use(bodyParser.json())
     .post('/v1/batch', (req, res) => {
       const batch = req.body.batch
+
+      const { name: writeKey } = auth(req)
+      if (!writeKey) {
+        return res.status(400).json({
+          error: { message: 'missing write key' }
+        })
+      }
 
       if (batch[0] === 'error') {
         return res.status(400).json({

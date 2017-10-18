@@ -222,7 +222,10 @@ class Analytics {
       auth: {
         username: this.writeKey
       },
-      data
+      data,
+      headers: {
+        'user-agent': `analytics-node@${version}`
+      }
     }
 
     if (this.timeout) {

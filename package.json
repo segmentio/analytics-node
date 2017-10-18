@@ -39,7 +39,6 @@
     "axios-retry": "^3.0.1",
     "commander": "^2.9.0",
     "crypto-token": "^1.0.1",
-    "debug": "^2.6.2",
     "ms": "^2.0.0",
     "remove-trailing-slash": "^0.1.0"
   },

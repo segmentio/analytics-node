@@ -6,7 +6,6 @@ const validate = require('@segment/loosely-validate-event')
 const axios = require('axios')
 const retries = require('axios-retry')
 const ms = require('ms')
-const debug = require('debug')('analytics-node')
 const uid = require('crypto-token')
 const version = require('./package.json').version
 
@@ -159,8 +158,6 @@ class Analytics {
       message.messageId = `node-${uid(32)}`
     }
 
-    debug('%s: %o', type, message)
-
     this.queue.push({ message, callback })
 
     if (!this.flushed) {
@@ -207,13 +204,9 @@ class Analytics {
       sentAt: new Date()
     }
 
-    debug('flush: %o', data)
-
     const done = err => {
       callbacks.forEach(callback => callback(err))
       callback(err, data)
-
-      debug('flushed: %o', data)
     }
 
     const req = {

@@ -224,7 +224,7 @@ class Analytics {
       },
       data,
       headers: {
-        'user-agent': `analytics-node@${version}`
+        'user-agent': `analytics-node ${version}`
       }
     }
 

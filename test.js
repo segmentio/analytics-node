@@ -46,7 +46,7 @@ test.before.cb(t => {
       }
 
       const ua = req.headers['user-agent']
-      if (ua !== `analytics-node@${version}`) {
+      if (ua !== `analytics-node ${version}`) {
         return res.status(400).json({
           error: { message: 'invalid user-agent' }
         })

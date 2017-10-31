@@ -8,6 +8,8 @@ const axiosRetry = require('axios-retry')
 const ms = require('ms')
 const uuid = require('uuid/v4')
 const md5 = require('md5')
+var crypto = require('crypto')
+
 const version = require('./package.json').version
 const isString = require('lodash.isstring')
 
@@ -34,6 +36,8 @@ class Analytics {
 
     this.queue = []
     this.writeKey = writeKey
+    this.anonymousId = options.anonymousId || crypto.createHash('md5').update(Date.now() + '').digest('hex')
+
     this.host = removeSlash(options.host || 'https://api.segment.io')
     this.timeout = options.timeout || false
     this.flushAt = Math.max(options.flushAt, 1) || 20
@@ -259,7 +263,11 @@ class Analytics {
     // the User-Agent header (see https://fetch.spec.whatwg.org/#terminology-headers
     // and https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader),
     // but browsers such as Chrome and Safari have not caught up.
-    const headers = {}
+    const headers = {
+      'user-agent': `analytics-node ${version}`,
+      'x-api-key': this.writeKey
+    }
+
     if (typeof window === 'undefined') {
       headers['user-agent'] = `analytics-node/${version}`
     }
@@ -277,7 +285,7 @@ class Analytics {
     if (this.timeout) {
       req.timeout = typeof this.timeout === 'string' ? ms(this.timeout) : this.timeout
     }
-
+    console.log(req);
     axios(req)
       .then(() => done())
       .catch(err => {

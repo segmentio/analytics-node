@@ -274,7 +274,7 @@ class Analytics {
 
     const req = {
       method: 'POST',
-      url: `${this.host}/v1/batch`,
+      url: `${this.host}/v1/import`,
       auth: {
         username: this.writeKey
       },
@@ -285,7 +285,6 @@ class Analytics {
     if (this.timeout) {
       req.timeout = typeof this.timeout === 'string' ? ms(this.timeout) : this.timeout
     }
-    console.log(req);
     axios(req)
       .then(() => done())
       .catch(err => {

@@ -5,6 +5,10 @@ import delay from 'delay'
 import auth from 'basic-auth'
 import pify from 'pify'
 import test from 'ava'
+import axios from 'axios'
+import retries from 'axios-retry'
+import sleep from 'await-sleep'
+import uid from 'crypto-token'
 import Analytics from '.'
 import {version} from './package'
 
@@ -446,4 +450,51 @@ test('alias - require previousId and userId', t => {
       previousId: 'id'
     })
   })
+})
+
+test('e2e', async t => {
+  const id = uid(16)
+
+  // Segment Write Key for https://segment.com/segment-libraries/sources/analytics_node_e2e_test/overview
+  const analytics = new Analytics('wZqHyttfRO0KxEHyRTujWZQswgTDZx1N')
+  analytics.track({
+    userId: 'prateek',
+    event: 'E2E Test',
+    properties: {
+      id
+    }
+  })
+  analytics.flush()
+
+  // Give some time for events to be delivered from the API to destinations.
+  await sleep(5000)
+
+  const axiosClient = axios.create({
+    baseURL: 'https://api.runscope.com',
+    timeout: 10 * 1000,
+    headers: { 'Authorization': `Bearer ${process.env.RUNSCOPE_TOKEN}` }
+  })
+  retries(axiosClient, { retries: 3 })
+
+  // Runscope Bucket for https://www.runscope.com/stream/zfte7jmy76oz.
+  const messagesResponse = await axiosClient.get('buckets/zfte7jmy76oz/messages?count=10')
+  t.is(messagesResponse.status, 200)
+
+  let found = false
+
+  messagesResponse.data.data.forEach(async item => {
+    const response = await axiosClient.get('buckets/zfte7jmy76oz/messages/' + item.uuid)
+    t.is(response.status, 200)
+
+    const body = JSON.parse(response.data.data.request.body)
+    if (id === body.properties.id) {
+      found = true
+    }
+  })
+
+  if (found) {
+    t.fail()
+  } else {
+    t.pass()
+  }
 })

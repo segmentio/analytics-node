@@ -5,6 +5,9 @@ import delay from 'delay'
 import auth from 'basic-auth'
 import pify from 'pify'
 import test from 'ava'
+import axios from 'axios'
+import retries from 'axios-retry'
+import uid from 'crypto-token'
 import Analytics from '.'
 import {version} from './package'
 
@@ -447,3 +450,50 @@ test('alias - require previousId and userId', t => {
     })
   })
 })
+
+const { RUN_E2E_TESTS } = process.env
+
+if (RUN_E2E_TESTS) {
+  // An end to end to test that sends events to a Segment source, and verifies that a webhook
+  // connected to the source (configured manually via the app) is able to receive the data
+  // sent by this library.
+  // This is described in more detail at https://paper.dropbox.com/doc/analytics-node-E2E-Test-9oavh3DFcFBXuqCJBe1o9.
+  test('end to end test', async t => {
+    const id = uid(16)
+
+    // Segment Write Key for https://segment.com/segment-libraries/sources/analytics_node_e2e_test/overview.
+    // This source is configured to send events to a Runscope bucket used by this test.
+    const analytics = new Analytics('wZqHyttfRO0KxEHyRTujWZQswgTDZx1N')
+    analytics.track({
+      userId: 'prateek',
+      event: 'E2E Test',
+      properties: { id }
+    })
+    analytics.flush()
+
+    // Give some time for events to be delivered from the API to destinations.
+    await delay(5 * 1000) // 5 seconds.
+
+    const axiosClient = axios.create({
+      baseURL: 'https://api.runscope.com',
+      timeout: 10 * 1000,
+      headers: { Authorization: `Bearer ${process.env.RUNSCOPE_TOKEN}` }
+    })
+    retries(axiosClient, { retries: 3 })
+
+    // Runscope Bucket for https://www.runscope.com/stream/zfte7jmy76oz.
+    const messagesResponse = await axiosClient.get('buckets/zfte7jmy76oz/messages?count=10')
+    t.is(messagesResponse.status, 200)
+
+    const requests = messagesResponse.data.data.map(async item => {
+      const response = await axiosClient.get(`buckets/zfte7jmy76oz/messages/${item.uuid}`)
+      t.is(response.status, 200)
+      return JSON.parse(response.data.data.request.body)
+    })
+
+    const messages = await Promise.all(requests)
+
+    const message = messages.find(message => message.properties.id === id)
+    t.truthy(message)
+  })
+}

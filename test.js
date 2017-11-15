@@ -9,6 +9,7 @@ import axios from 'axios'
 import retries from 'axios-retry'
 import sleep from 'await-sleep'
 import uid from 'crypto-token'
+import retry from 'async-retry'
 import Analytics from '.'
 import {version} from './package'
 
@@ -452,7 +453,7 @@ test('alias - require previousId and userId', t => {
   })
 })
 
-test('e2e', async t => {
+test('e2e', retry(async t => {
   const id = uid(16)
 
   // Segment Write Key for https://segment.com/segment-libraries/sources/analytics_node_e2e_test/overview
@@ -497,4 +498,4 @@ test('e2e', async t => {
   } else {
     t.pass()
   }
-})
+}))

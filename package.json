@@ -43,7 +43,9 @@
     "remove-trailing-slash": "^0.1.0"
   },
   "devDependencies": {
+    "async-retry": "^1.1.4",
     "ava": "^0.21.0",
+    "babel-register": "^6.26.0",
     "basic-auth": "^2.0.0",
     "body-parser": "^1.17.1",
     "delay": "^2.0.0",
@@ -52,5 +54,8 @@
     "pify": "^3.0.0",
     "sinon": "^2.3.8",
     "standard": "^9.0.1"
+  },
+  "ava": {
+    "require": "babel-register"
   }
 }

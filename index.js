@@ -36,6 +36,7 @@ class Analytics {
     this.flushAt = Math.max(options.flushAt, 1) || 20
     this.flushInterval = options.flushInterval || 10000
     this.flushed = false
+    this.enabled = typeof options.enable === 'boolean' ? options.enable : true
 
     retries(axios, options.retryCount || 3)
   }
@@ -137,6 +138,10 @@ class Analytics {
   enqueue (type, message, callback) {
     callback = callback || noop
 
+    if (!this.enabled) {
+      return setImmediate(callback)
+    }
+
     message = Object.assign({}, message)
     message.type = type
     message.context = Object.assign({
@@ -184,6 +189,10 @@ class Analytics {
 
   flush (callback) {
     callback = callback || noop
+
+    if (!this.enabled) {
+      return setImmediate(callback)
+    }
 
     if (this.timer) {
       clearTimeout(this.timer)

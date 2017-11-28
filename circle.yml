@@ -6,13 +6,10 @@ machine:
 
 dependencies:
   pre:
-    - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 0.21.3
     - nvm install 4
     - nvm install 6
     - nvm install 8
     - rm -rf node_modules
-  override:
-    - yarn
 
 test:
   override:

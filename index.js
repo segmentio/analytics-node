@@ -8,6 +8,7 @@ const retries = require('axios-retry')
 const ms = require('ms')
 const uid = require('crypto-token')
 const version = require('./package.json').version
+const isString = require('lodash/isstring')
 
 const setImmediate = global.setImmediate || process.nextTick.bind(process)
 const noop = () => {}
@@ -156,6 +157,16 @@ class Analytics {
 
     if (!message.messageId) {
       message.messageId = `node-${uid(32)}`
+    }
+
+    // Historically this library has accepted strings and numbers as IDs.
+    // However, our spec only allows strings. To avoid breaking compatibility,
+    // we'll coerce these to strings if they aren't already.
+    if (message.anonymousId && !isString(message.anonymousId)) {
+      message.anonymousId = JSON.stringify(message.anonymousId)
+    }
+    if (message.userId && !isString(message.userId)) {
+      message.userId = JSON.stringify(message.userId)
     }
 
     this.queue.push({ message, callback })

@@ -141,6 +141,38 @@ test('enqueue - add a message to the queue', t => {
   })
 })
 
+test('enqueue - stringify userId', t => {
+  const client = createClient()
+
+  client.track({
+    userId: 10,
+    event: 'event'
+  }, noop)
+
+  t.is(client.queue.length, 1)
+
+  const item = client.queue.pop()
+
+  t.is(item.message.anonymousId, undefined)
+  t.is(item.message.userId, '10')
+})
+
+test('enqueue - stringify anonymousId', t => {
+  const client = createClient()
+
+  client.screen({
+    anonymousId: 157963456373623802,
+    name: 'screen name'
+  }, noop)
+
+  t.is(client.queue.length, 1)
+
+  const item = client.queue.pop()
+
+  t.is(item.message.userId, undefined)
+  t.is(item.message.anonymousId, '157963456373623800')
+})
+
 test('enqueue - don\'t modify the original message', t => {
   const client = createClient()
   const message = { event: 'test' }

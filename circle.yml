@@ -1,8 +1,6 @@
 machine:
   node:
     version: 6
-  environment:
-    RUN_E2E_TESTS: true
 
 dependencies:
   pre:

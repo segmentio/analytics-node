@@ -220,6 +220,15 @@ class Analytics {
       callback(err, data)
     }
 
+    // Don't set the user agent if we're not on a browser. The latest spec allows
+    // the User-Agent header (see https://fetch.spec.whatwg.org/#terminology-headers
+    // and https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader),
+    // but browsers such as Chrome and Safari have not caught up.
+    const headers = {}
+    if (typeof window === 'undefined') {
+      headers['user-agent'] = `analytics-node/${version}`
+    }
+
     const req = {
       method: 'POST',
       url: `${this.host}/v1/batch`,
@@ -227,9 +236,7 @@ class Analytics {
         username: this.writeKey
       },
       data,
-      headers: {
-        'user-agent': `analytics-node/${version}`
-      }
+      headers
     }
 
     if (this.timeout) {

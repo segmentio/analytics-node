@@ -503,6 +503,23 @@ test('alias - require previousId and userId', t => {
   })
 })
 
+test('isErrorRetryable', t => {
+  const client = createClient()
+
+  t.false(client._isErrorRetryable({}))
+
+  // ETIMEDOUT is retryable as per `is-retry-allowed` (used by axios-retry in `isNetworkError`).
+  t.true(client._isErrorRetryable({ code: 'ETIMEDOUT' }))
+
+  // ECONNABORTED is not retryable as per `is-retry-allowed` (used by axios-retry in `isNetworkError`).
+  t.false(client._isErrorRetryable({ code: 'ECONNABORTED' }))
+
+  t.true(client._isErrorRetryable({ response: { status: 500 } }))
+  t.true(client._isErrorRetryable({ response: { status: 429 } }))
+
+  t.false(client._isErrorRetryable({ response: { status: 200 } }))
+})
+
 const { RUN_E2E_TESTS } = process.env
 
 if (RUN_E2E_TESTS) {

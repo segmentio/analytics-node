@@ -28,6 +28,15 @@ client.track({
 
 Documentation is available at [https://segment.com/libraries/node](https://segment.com/libraries/node).
 
+## Generate Codecoverage Report
+
+npm install -g codecov nyc
+
+npm test
+
+## Upload generated report to codecov.io
+
+./node_modules/.bin/nyc report --reporter=lcov > coverage.lcov && codecov -t <codecov-token-for-repo>
 
 ## License
 

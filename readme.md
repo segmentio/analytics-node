@@ -38,7 +38,7 @@ npm test
 ## Upload generated report to codecov.io
 
 ```bash
-./node_modules/.bin/nyc report --reporter=lcov > coverage.lcov && codecov -t \<your-codecov-token-for-repo\>
+./node_modules/.bin/nyc report --reporter=lcov > coverage.lcov && codecov -t <your-codecov-token-for-repo>
 ```
 ## License
 

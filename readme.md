@@ -30,14 +30,16 @@ Documentation is available at [https://segment.com/libraries/node](https://segme
 
 ## Generate Codecoverage Report
 
+```bash
 npm install -g codecov nyc
 
 npm test
-
+```
 ## Upload generated report to codecov.io
 
+```bash
 ./node_modules/.bin/nyc report --reporter=lcov > coverage.lcov && codecov -t \<your-codecov-token-for-repo\>
-
+```
 ## License
 
 Copyright &copy; 2017 Segment Inc. \<friends@segment.com\>

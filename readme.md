@@ -22,6 +22,7 @@ client.track({
   userId: 'user id'
 });
 ```
+
 ## Documentation
 
 Documentation is available at [https://segment.com/libraries/node](https://segment.com/libraries/node).

@@ -23,6 +23,8 @@
   ],
   "scripts": {
      "test": "standard && nyc ava tap test.js",
+     "prepublish": "npm run check-deps",
+     "check-deps": "nsp check",
      "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov"
   },
   "files": [

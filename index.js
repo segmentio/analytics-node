@@ -4,7 +4,7 @@ const assert = require('assert')
 const removeSlash = require('remove-trailing-slash')
 const validate = require('@segment/loosely-validate-event')
 const axios = require('axios')
-const retries = require('axios-retry')
+const axiosRetry = require('axios-retry')
 const ms = require('ms')
 const uid = require('crypto-token')
 const version = require('./package.json').version
@@ -38,7 +38,10 @@ class Analytics {
     this.flushInterval = options.flushInterval || 10000
     this.flushed = false
 
-    retries(axios, options.retryCount || 3)
+    axiosRetry(axios, {
+      retries: options.retryCount || 3,
+      retryCondition: this._isErrorRetryable
+    })
   }
 
   /**
@@ -253,6 +256,30 @@ class Analytics {
 
         done(err)
       })
+  }
+
+  _isErrorRetryable (error) {
+    // Retry Network Errors.
+    if (axiosRetry.isNetworkError(error)) {
+      return true
+    }
+
+    if (!error.response) {
+      // Cannot determine if the request can be retried
+      return false
+    }
+
+    // Retry Server Errors (5xx).
+    if (error.response.status >= 500 && error.response.status <= 599) {
+      return true
+    }
+
+    // Retry if rate limited.
+    if (error.response.status === 429) {
+      return true
+    }
+
+    return false
   }
 }
 

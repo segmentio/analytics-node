@@ -6,7 +6,8 @@ const validate = require('@segment/loosely-validate-event')
 const axios = require('axios')
 const axiosRetry = require('axios-retry')
 const ms = require('ms')
-const uid = require('crypto-token')
+const uuid = require('uuid/v4')
+const md5 = require('md5')
 const version = require('./package.json').version
 const isString = require('lodash.isstring')
 
@@ -159,7 +160,11 @@ class Analytics {
     }
 
     if (!message.messageId) {
-      message.messageId = `node-${uid(32)}`
+      // We md5 the messaage to add more randomness. This is primarily meant
+      // for use in the browser where the uuid package falls back to Math.random()
+      // which is not a great source of randomness.
+      // Borrowed from analytics.js (https://github.com/segment-integrations/analytics.js-integration-segmentio/blob/a20d2a2d222aeb3ab2a8c7e72280f1df2618440e/lib/index.js#L255-L256).
+      message.messageId = `node-${md5(JSON.stringify(message))}-${uuid()}`
     }
 
     // Historically this library has accepted strings and numbers as IDs.

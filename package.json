@@ -17,7 +17,7 @@
   },
   "size-limit": [
     {
-      "limit": "150 KB",
+      "limit": "25 KB",
       "path": "index.js"
     }
   ],
@@ -47,7 +47,8 @@
     "axios": "^0.17.1",
     "axios-retry": "^3.0.1",
     "commander": "^2.9.0",
-    "crypto-token": "^1.0.1",
+    "uuid": "^3.2.1",
+    "md5": "^2.2.1",
     "lodash.isstring": "^4.0.1",
     "ms": "^2.0.0",
     "remove-trailing-slash": "^0.1.0"

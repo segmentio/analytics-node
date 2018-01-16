@@ -20,4 +20,4 @@ test:
     - nvm use 8; npm rebuild &> /dev/null; npm run testci
   post:
     - npm test
-    - bash <(curl -s https://codecov.io/bash)
+    - ./node_modules/.bin/nyc report --reporter=lcov > coverage.lcov && bash <(curl -s https://codecov.io/bash)

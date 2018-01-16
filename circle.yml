@@ -8,7 +8,7 @@ dependencies:
     - nvm install 4
     - nvm install 6
     - nvm install 8
-    - rm -rf node_modules
+    - rm -rf node_modules coverage .nyc_output coverage.lcov
   override:
     - yarn
 

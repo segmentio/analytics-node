@@ -22,12 +22,8 @@
     }
   ],
   "scripts": {
-    "size": "size-limit",
-    "test": "nyc ava tap test.js",
-    "testci": "standard && ava && npm run size",
-    "prepublish": "npm run check-deps",
-    "check-deps": "nsp check",
-    "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov"
+     "test": "standard && nyc ava tap test.js",
+     "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov"
   },
   "files": [
     "index.js",

@@ -8,7 +8,7 @@ dependencies:
     - nvm install 4
     - nvm install 6
     - nvm install 8
-    - rm -rf node_modules coverage .nyc_output coverage.lcov
+    - rm -rf 'node_modules coverage .nyc_output coverage.lcov'
   override:
     - yarn
 
@@ -19,5 +19,4 @@ test:
     - nvm use 6; npm rebuild &> /dev/null; npm run testci
     - nvm use 8; npm rebuild &> /dev/null; npm run testci
   post:
-    - npm test
-    - ./node_modules/.bin/nyc report --reporter=lcov > coverage.lcov && bash <(curl -s https://codecov.io/bash)
+    - npm run report-coverage

@@ -19,4 +19,5 @@ test:
     - nvm use 6; npm rebuild &> /dev/null; npm run testci
     - nvm use 8; npm rebuild &> /dev/null; npm run testci
   post:
+    - npm test
     - bash <(curl -s https://codecov.io/bash)

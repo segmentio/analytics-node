@@ -9,7 +9,6 @@ dependencies:
     - nvm install 6
     - nvm install 8
     - rm -rf node_modules
-
   override:
     - yarn
 

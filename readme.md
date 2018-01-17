@@ -23,10 +23,13 @@ client.track({
 });
 ```
 
+
 ## Documentation
 
 Documentation is available at [https://segment.com/libraries/node](https://segment.com/libraries/node).
 
+
 ## License
 
 Copyright &copy; 2017 Segment Inc. \<friends@segment.com\>
+

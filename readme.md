@@ -32,4 +32,3 @@ Documentation is available at [https://segment.com/libraries/node](https://segme
 ## License
 
 Copyright &copy; 2017 Segment Inc. \<friends@segment.com\>
-

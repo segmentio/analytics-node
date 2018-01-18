@@ -1,4 +1,11 @@
 
+v3.3.0-beta / 2018-01-18
+========================
+
+  * [Improvement](https://github.com/segmentio/analytics-node/pull/150): Replace `crypto-token` with `uuid` package. This also reduces the total size of the package in the browser by 80%. Note that this will change the structure of the generated `messageId` values.
+  * [Improvement](https://github.com/segmentio/analytics-node/pull/146): Improve retry logic to better handle server failures.
+  * [Improvement](https://github.com/segmentio/analytics-node/pull/144): Update the user agent format to be [RFC 7231](https://github.com/segmentio/analytics-node/pull/144) compliant.
+
 v3.0.0 / 2017-07-27
 ===================
 

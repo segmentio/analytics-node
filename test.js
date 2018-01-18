@@ -7,7 +7,7 @@ import pify from 'pify'
 import test from 'ava'
 import axios from 'axios'
 import retries from 'axios-retry'
-import uid from 'crypto-token'
+import uuid from 'uuid/v4'
 import Analytics from '.'
 import {version} from './package'
 
@@ -528,7 +528,7 @@ if (RUN_E2E_TESTS) {
   // sent by this library.
   // This is described in more detail at https://paper.dropbox.com/doc/analytics-node-E2E-Test-9oavh3DFcFBXuqCJBe1o9.
   test('end to end test', async t => {
-    const id = uid(16)
+    const id = uuid()
 
     // Segment Write Key for https://segment.com/segment-libraries/sources/analytics_node_e2e_test/overview.
     // This source is configured to send events to a Runscope bucket used by this test.

@@ -54,7 +54,7 @@
     "remove-trailing-slash": "^0.1.0"
   },
   "devDependencies": {
-    "ava": "^0.24.0",
+    "ava": "^0.25.0",
     "basic-auth": "^2.0.0",
     "body-parser": "^1.17.1",
     "codecov": "^3.0.0",

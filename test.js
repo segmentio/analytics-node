@@ -520,6 +520,23 @@ test('isErrorRetryable', t => {
   t.false(client._isErrorRetryable({ response: { status: 200 } }))
 })
 
+test.only('allows messages > 32kb', t => {
+  const client = createClient()
+
+  const event = {
+    userId: 1,
+    event: 'event',
+    properties: {}
+  }
+  for (var i = 0; i < 10000; i++) {
+    event.properties[i] = 'a'
+  }
+
+  t.notThrows(() => {
+    client.track(event, noop)
+  })
+})
+
 const { RUN_E2E_TESTS } = process.env
 
 if (RUN_E2E_TESTS) {

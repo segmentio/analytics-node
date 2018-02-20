@@ -44,7 +44,7 @@
   ],
   "dependencies": {
     "@segment/loosely-validate-event": "^1.1.2",
-    "axios": "^0.17.1",
+    "axios": "^0.18.0",
     "axios-retry": "^3.0.1",
     "commander": "^2.9.0",
     "uuid": "^3.2.1",

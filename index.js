@@ -24,7 +24,7 @@ class Analytics {
    *   @property {Number} flushAt (default: 20)
    *   @property {Number} flushInterval (default: 10000)
    *   @property {String} host (default: 'https://api.segment.io')
-   *   @property {Boolean} enabled (default: true)
+   *   @property {Boolean} enable (default: true)
    */
 
   constructor (writeKey, options) {
@@ -39,7 +39,7 @@ class Analytics {
     this.flushAt = Math.max(options.flushAt, 1) || 20
     this.flushInterval = options.flushInterval || 10000
     this.flushed = false
-    Object.defineProperty(this, 'enabled', {
+    Object.defineProperty(this, 'enable', {
       configurable: false,
       writable: false,
       enumerable: true,
@@ -149,7 +149,7 @@ class Analytics {
   enqueue (type, message, callback) {
     callback = callback || noop
 
-    if (!this.enabled) {
+    if (!this.enable) {
       return setImmediate(callback)
     }
 
@@ -215,7 +215,7 @@ class Analytics {
   flush (callback) {
     callback = callback || noop
 
-    if (!this.enabled) {
+    if (!this.enable) {
       return setImmediate(callback)
     }
 

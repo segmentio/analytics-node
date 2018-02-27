@@ -43,7 +43,7 @@ class Analytics {
       configurable: false,
       writable: false,
       enumerable: true,
-      value: options.enable === false ? options.enable : true
+      value: typeof options.enable === 'boolean' ? options.enable : true
     })
 
     axiosRetry(axios, {

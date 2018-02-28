@@ -357,9 +357,8 @@ test('flush - skip when client is disabled', async t => {
     }
   ]
 
-  const data = await client.flush()
+  await client.flush()
 
-  t.is(data, undefined)
   t.false(callback.called)
 })
 

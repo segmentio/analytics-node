@@ -2,7 +2,7 @@
 
 const assert = require('assert')
 const removeSlash = require('remove-trailing-slash')
-const validate = require('@segment/loosely-validate-event')
+const looselyValidate = require('@segment/loosely-validate-event')
 const axios = require('axios')
 const axiosRetry = require('axios-retry')
 const ms = require('ms')
@@ -52,6 +52,18 @@ class Analytics {
     })
   }
 
+  _validate (message, type) {
+    try {
+      looselyValidate(message, type)
+    } catch (e) {
+      if (e.message === 'Your message must be < 32kb.') {
+        console.log('Your message must be < 32kb. This is currently surfaced as a warning to allow clients to update. Versions released after August 1, 2018 will throw an error instead. Please update your code before then.', message)
+        return
+      }
+      throw e
+    }
+  }
+
   /**
    * Send an identify `message`.
    *
@@ -61,7 +73,7 @@ class Analytics {
    */
 
   identify (message, callback) {
-    validate(message, 'identify')
+    this._validate(message, 'identify')
     this.enqueue('identify', message, callback)
     return this
   }
@@ -75,7 +87,7 @@ class Analytics {
    */
 
   group (message, callback) {
-    validate(message, 'group')
+    this._validate(message, 'group')
     this.enqueue('group', message, callback)
     return this
   }
@@ -89,7 +101,7 @@ class Analytics {
    */
 
   track (message, callback) {
-    validate(message, 'track')
+    this._validate(message, 'track')
     this.enqueue('track', message, callback)
     return this
   }
@@ -103,7 +115,7 @@ class Analytics {
    */
 
   page (message, callback) {
-    validate(message, 'page')
+    this._validate(message, 'page')
     this.enqueue('page', message, callback)
     return this
   }
@@ -117,7 +129,7 @@ class Analytics {
    */
 
   screen (message, callback) {
-    validate(message, 'screen')
+    this._validate(message, 'screen')
     this.enqueue('screen', message, callback)
     return this
   }
@@ -131,7 +143,7 @@ class Analytics {
    */
 
   alias (message, callback) {
-    validate(message, 'alias')
+    this._validate(message, 'alias')
     this.enqueue('alias', message, callback)
     return this
   }

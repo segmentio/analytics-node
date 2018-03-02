@@ -24,6 +24,7 @@ class Analytics {
    *   @property {Number} flushAt (default: 20)
    *   @property {Number} flushInterval (default: 10000)
    *   @property {String} host (default: 'https://api.segment.io')
+   *   @property {Boolean} enable (default: true)
    */
 
   constructor (writeKey, options) {
@@ -38,6 +39,12 @@ class Analytics {
     this.flushAt = Math.max(options.flushAt, 1) || 20
     this.flushInterval = options.flushInterval || 10000
     this.flushed = false
+    Object.defineProperty(this, 'enable', {
+      configurable: false,
+      writable: false,
+      enumerable: true,
+      value: typeof options.enable === 'boolean' ? options.enable : true
+    })
 
     axiosRetry(axios, {
       retries: options.retryCount || 3,
@@ -154,6 +161,10 @@ class Analytics {
   enqueue (type, message, callback) {
     callback = callback || noop
 
+    if (!this.enable) {
+      return setImmediate(callback)
+    }
+
     message = Object.assign({}, message)
     message.type = type
     message.context = Object.assign({
@@ -215,6 +226,10 @@ class Analytics {
 
   flush (callback) {
     callback = callback || noop
+
+    if (!this.enable) {
+      return setImmediate(callback)
+    }
 
     if (this.timer) {
       clearTimeout(this.timer)

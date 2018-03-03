@@ -1,5 +1,11 @@
 
-v3.3.0-beta / 2018-01-18
+v3.3.0-beta.2 / 2018-03-02
+==========================
+
+  * [New](https://github.com/segmentio/analytics-node/pull/158): Add `enable` API to disable client from sending messages. This is useful for testing.
+  * [Improvement](https://github.com/segmentio/analytics-node/pull/154): Log when messages exceed our size limits.
+
+v3.3.0-beta.1 / 2018-01-18
 ========================
 
   * [Improvement](https://github.com/segmentio/analytics-node/pull/150): Replace `crypto-token` with `uuid` package. This also reduces the total size of the package in the browser by 80%. Note that this will change the structure of the generated `messageId` values.

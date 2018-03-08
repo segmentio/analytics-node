@@ -8,6 +8,14 @@ const axiosRetry = require('axios-retry')
 const ms = require('ms')
 const uuid = require('uuid/v4')
 const md5 = require('md5')
+const crypto = require('crypto')
+
+// Kinesis
+const { Kinesis } = require('aws-sdk')
+const RecordAggregator = require('aws-kinesis-agg/RecordAggregator')
+const aggregator = new RecordAggregator()
+const kinesis = new Kinesis()
+
 const version = require('./package.json').version
 const isString = require('lodash.isstring')
 
@@ -23,6 +31,7 @@ class Analytics {
    * @param {Object} [options] (optional)
    *   @property {Number} flushAt (default: 20)
    *   @property {Number} flushInterval (default: 10000)
+   *   @property {Number} flushMethod (default: 'http')
    *   @property {String} host (default: 'https://api.segment.io')
    *   @property {Boolean} enable (default: true)
    */
@@ -34,10 +43,13 @@ class Analytics {
 
     this.queue = []
     this.writeKey = writeKey
+    this.anonymousId = options.anonymousId || crypto.createHash('md5').update(Date.now() + '').digest('hex')
+
     this.host = removeSlash(options.host || 'https://api.segment.io')
     this.timeout = options.timeout || false
     this.flushAt = Math.max(options.flushAt, 1) || 20
     this.flushInterval = options.flushInterval || 10000
+    this.flushMethod = options.flushMethod || 'http'
     this.flushed = false
     Object.defineProperty(this, 'enable', {
       configurable: false,
@@ -255,18 +267,74 @@ class Analytics {
       callback(err, data)
     }
 
+    if (this.flushMethod === 'http') {
+      this.httpFlush(data, done)
+    } else if (this.flushMethod === 'kinesis') {
+      this.kinesisFlush(data, done)
+    } else {
+      done(new Error('Flush Method not available!'))
+    }
+
+  }
+
+  // Callback called by the aggregate function that send messages to Kinesis
+  sendMessageToKinesis (err, encodedMessage) {
+    const params = {
+      Data: encodedMessage.Data,
+      PartitionKey: encodedMessage.PartitionKey,
+      ExplicitHashKey: encodedMessage.ExplicitHashKey,
+      StreamName: this.host
+    }
+
+    kinesis.putRecord(params, function(err, data) {
+      if (err) console.log(err, err.stack);
+      else     console.log(data);
+    })
+  }
+
+  kinesisFlush (data, done) {
+    const kinesisMessages = data.batch.map((record) => {
+      var pk = (1.0 * Math.random()).toString().replace('.', '');
+      var ehk = (1.0 * Math.random()).toString().replace('.', '');
+
+      while (ehk[0] === '0' && ehk.length > 0) {
+        ehk = ehk.substring(1);
+      }
+
+      return {
+        'PartitionKey' : pk,
+        'ExplicitHashKey' : ehk,
+        'Data' : JSON.stringify(record)
+      };
+    });
+
+    // The callback is envoked when the number of records supplied
+    // exceeds the Kinesis maximum record size
+    aggregator.aggregateRecords(kinesisMessages, this.sendMessageToKinesis.bind(this))
+
+    // flush any final messages that were under the emission threshold
+    aggregator.flushBufferedRecords(this.sendMessageToKinesis.bind(this))
+
+    done()
+  }
+
+  httpFlush (data, done) {
     // Don't set the user agent if we're not on a browser. The latest spec allows
     // the User-Agent header (see https://fetch.spec.whatwg.org/#terminology-headers
     // and https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader),
     // but browsers such as Chrome and Safari have not caught up.
-    const headers = {}
+    const headers = {
+      'user-agent': `analytics-node ${version}`,
+      'x-api-key': this.writeKey
+    }
+
     if (typeof window === 'undefined') {
       headers['user-agent'] = `analytics-node/${version}`
     }
 
     const req = {
       method: 'POST',
-      url: `${this.host}/v1/batch`,
+      url: `${this.host}/v1/import`,
       auth: {
         username: this.writeKey
       },
@@ -277,7 +345,6 @@ class Analytics {
     if (this.timeout) {
       req.timeout = typeof this.timeout === 'string' ? ms(this.timeout) : this.timeout
     }
-
     axios(req)
       .then(() => done())
       .catch(err => {

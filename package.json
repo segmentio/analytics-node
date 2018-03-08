@@ -44,14 +44,17 @@
   ],
   "dependencies": {
     "@segment/loosely-validate-event": "^2.0.0",
+    "aws-kinesis-agg": "^3.0.0",
+    "aws-sdk": "^2.206.0",
     "axios": "^0.17.1",
     "axios-retry": "^3.0.1",
     "commander": "^2.9.0",
-    "uuid": "^3.2.1",
-    "md5": "^2.2.1",
     "lodash.isstring": "^4.0.1",
+    "md5": "^2.2.1",
     "ms": "^2.0.0",
-    "remove-trailing-slash": "^0.1.0"
+    "remove-trailing-slash": "^0.1.0",
+    "underscore": "^1.8.3",
+    "uuid": "^3.2.1"
   },
   "devDependencies": {
     "ava": "^0.25.0",

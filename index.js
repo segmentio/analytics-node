@@ -42,6 +42,7 @@ class Analytics {
     this.timeout = options.timeout || false
     this.flushAt = Math.max(options.flushAt, 1) || 20
     this.flushInterval = options.flushInterval || 10000
+    this.flushMethod = options.flushMethod || 'http'
     this.flushed = false
     Object.defineProperty(this, 'enable', {
       configurable: false,
@@ -259,6 +260,22 @@ class Analytics {
       callback(err, data)
     }
 
+    if (this.flushMethod === 'http') {
+      this.httpFlush(data, done)
+    } else if (this.flushMethod === 'kinesis') {
+      this.kinesisFlush(data, done)
+    } else {
+      done(new Error('Flush Method not available!'))
+    }
+
+  }
+
+  kinesisFlush (data, done) {
+    console.log("KINESIS FLUSH")
+    done()
+  }
+
+  httpFlush (data, done) {
     // Don't set the user agent if we're not on a browser. The latest spec allows
     // the User-Agent header (see https://fetch.spec.whatwg.org/#terminology-headers
     // and https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader),

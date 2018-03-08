@@ -8,7 +8,13 @@ const axiosRetry = require('axios-retry')
 const ms = require('ms')
 const uuid = require('uuid/v4')
 const md5 = require('md5')
-var crypto = require('crypto')
+const crypto = require('crypto')
+
+// Kinesis
+const { Kinesis } = require('aws-sdk')
+const RecordAggregator = require('aws-kinesis-agg/RecordAggregator')
+const aggregator = new RecordAggregator()
+const kinesis = new Kinesis()
 
 const version = require('./package.json').version
 const isString = require('lodash.isstring')
@@ -25,6 +31,7 @@ class Analytics {
    * @param {Object} [options] (optional)
    *   @property {Number} flushAt (default: 20)
    *   @property {Number} flushInterval (default: 10000)
+   *   @property {Number} flushMethod (default: 'http')
    *   @property {String} host (default: 'https://api.segment.io')
    *   @property {Boolean} enable (default: true)
    */
@@ -270,8 +277,44 @@ class Analytics {
 
   }
 
+  // Callback called by the aggregate function that send messages to Kinesis
+  sendMessageToKinesis (err, encodedMessage) {
+    const params = {
+      Data: encodedMessage.Data,
+      PartitionKey: encodedMessage.PartitionKey,
+      ExplicitHashKey: encodedMessage.ExplicitHashKey,
+      StreamName: this.host
+    }
+
+    kinesis.putRecord(params, function(err, data) {
+      if (err) console.log(err, err.stack);
+      else     console.log(data);
+    })
+  }
+
   kinesisFlush (data, done) {
-    console.log("KINESIS FLUSH")
+    const kinesisMessages = data.batch.map((record) => {
+      var pk = (1.0 * Math.random()).toString().replace('.', '');
+      var ehk = (1.0 * Math.random()).toString().replace('.', '');
+
+      while (ehk[0] === '0' && ehk.length > 0) {
+        ehk = ehk.substring(1);
+      }
+
+      return {
+        'PartitionKey' : pk,
+        'ExplicitHashKey' : ehk,
+        'Data' : JSON.stringify(record)
+      };
+    });
+
+    // The callback is envoked when the number of records supplied
+    // exceeds the Kinesis maximum record size
+    aggregator.aggregateRecords(kinesisMessages, this.sendMessageToKinesis.bind(this))
+
+    // flush any final messages that were under the emission threshold
+    aggregator.flushBufferedRecords(this.sendMessageToKinesis.bind(this))
+
     done()
   }
 

@@ -50,7 +50,6 @@
     "lodash.isstring": "^4.0.1",
     "md5": "^2.2.1",
     "ms": "^2.0.0",
-    "prettyjson": "^1.2.1",
     "remove-trailing-slash": "^0.1.0",
     "uuid": "^3.2.1"
   },

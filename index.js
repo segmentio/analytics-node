@@ -49,8 +49,8 @@ class Analytics {
     axiosRetry(axios, {
       retries: options.retryCount || 3,
       retryCondition: this._isErrorRetryable,
-      retryDelay: function(retryCount) {
-        return options.retryDelay || 500;
+      retryDelay: function (retryCount) {
+        return options.retryDelay || 500
       }
     })
   }

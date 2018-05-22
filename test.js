@@ -254,6 +254,22 @@ test('enqueue - don\'t reset an existing timer', async t => {
   t.true(client.flush.calledOnce)
 })
 
+test('enqueue - cancel timer when flushing at max length', async t => {
+  const client = createClient({ flushAt: 2, flushInterval: 10 })
+  client.flushed = false
+  spy(client, 'flush')
+
+  client.enqueue('type', {})
+  t.true(client.flush.calledOnce)
+
+  client.enqueue('type', {})
+  client.enqueue('type', {})
+  t.true(client.flush.calledTwice)
+
+  await delay(10)
+  t.true(client.flush.calledTwice)
+})
+
 test('enqueue - extend context', t => {
   const client = createClient()
 

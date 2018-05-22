@@ -211,6 +211,7 @@ class Analytics {
 
     if (this.queue.length >= this.flushAt) {
       this.flush()
+      return
     }
 
     if (this.flushInterval && !this.timer) {

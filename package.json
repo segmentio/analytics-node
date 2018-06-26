@@ -51,7 +51,7 @@
     "md5": "^2.2.1",
     "ms": "^2.0.0",
     "remove-trailing-slash": "^0.1.0",
-    "uuid": "^3.2.1"
+    "uuid": "3.2.1"
   },
   "devDependencies": {
     "ava": "^0.25.0",

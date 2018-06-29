@@ -46,7 +46,7 @@
     "@segment/loosely-validate-event": "^2.0.0",
     "axios": "^0.17.1",
     "axios-retry": "^3.0.2",
-    "commander": "^2.9.0",
+    "commander": "^2.16.0",
     "lodash.isstring": "^4.0.1",
     "md5": "^2.2.1",
     "ms": "^2.0.0",

@@ -576,7 +576,7 @@ if (RUN_E2E_TESTS) {
     const id = uuid()
 
     // Segment Write Key for https://segment.com/segment-libraries/sources/analytics_node_e2e_test/overview.
-    // This source is configured to send events to a Runscope bucket used by this test.
+    // This source is configured to send events to a webhook used by this test.
     const analytics = new Analytics('wZqHyttfRO0KxEHyRTujWZQswgTDZx1N')
     analytics.track({
       userId: 'prateek',
@@ -589,20 +589,19 @@ if (RUN_E2E_TESTS) {
     await delay(5 * 1000) // 5 seconds.
 
     const axiosClient = axios.create({
-      baseURL: 'https://api.runscope.com',
+      baseURL: 'https://webhook-e2e.segment.com',
       timeout: 10 * 1000,
-      headers: { Authorization: `Bearer ${process.env.RUNSCOPE_TOKEN}` }
+      auth: {
+        username: process.env.WEBHOOK_AUTH_USERNAME
+      }
     })
     retries(axiosClient, { retries: 3 })
 
-    // Runscope Bucket for https://www.runscope.com/stream/zfte7jmy76oz.
-    const messagesResponse = await axiosClient.get('buckets/zfte7jmy76oz/messages?count=10')
+    const messagesResponse = await axiosClient.get('buckets/node?limit=10')
     t.is(messagesResponse.status, 200)
 
-    const requests = messagesResponse.data.data.map(async item => {
-      const response = await axiosClient.get(`buckets/zfte7jmy76oz/messages/${item.uuid}`)
-      t.is(response.status, 200)
-      return JSON.parse(response.data.data.request.body)
+    const requests = messagesResponse.data.map(async item => {
+      return JSON.parse(item)
     })
 
     const messages = await Promise.all(requests)

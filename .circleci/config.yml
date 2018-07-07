@@ -48,11 +48,12 @@ jobs:
           key: yarn-dependency-cache-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-      - run: yarn test --tap | yarn run tap-xunit >> test-results.xml
+      - run: mkdir -p ~/reports
+      - run: yarn test --tap | yarn run tap-xunit >> /reports/ava.xml
       - store_test_results:
-          path: test-results.xml
+          path: ~/reports
       - store_artifacts:
-          path: test-results.xml
+          path: ~/reports
       - persist_to_workspace:
           root: .
           paths: [.]

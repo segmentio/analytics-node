@@ -24,10 +24,10 @@
   "scripts": {
     "size": "size-limit",
     "test": "standard && nyc ava",
-    "testci": "standard && nyc ava && npm run size",
     "prepublish": "npm run check-deps",
     "check-deps": "nsp check",
-    "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov"
+    "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
+    "np": "np --no-publish"
   },
   "files": [
     "index.js",
@@ -64,7 +64,8 @@
     "nyc": "^12.0.2",
     "pify": "^3.0.0",
     "sinon": "^6.0.0",
-    "standard": "^11.0.0",
-    "size-limit": "^0.14.0"
+    "size-limit": "^0.14.0",
+    "snyk": "^1.88.2",
+    "standard": "^11.0.0"
   }
 }

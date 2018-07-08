@@ -141,6 +141,19 @@ test('enqueue - add a message to the queue', t => {
   })
 })
 
+test('enqueue - snapshot', t => {
+  const client = createClient()
+
+  client.enqueue('type', {
+    timestamp: new Date('July 8, 2018 03:24:00'),
+    messageId: 'foo'
+  }, noop)
+
+  t.is(client.queue.length, 1)
+  const item = client.queue.pop()
+  t.snapshot(item.message)
+})
+
 test('enqueue - stringify userId', t => {
   const client = createClient()
 

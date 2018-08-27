@@ -22,12 +22,14 @@
     }
   ],
   "scripts": {
+    "dependencies": "yarn",
     "size": "size-limit",
     "test": "standard && nyc ava",
     "prepublish": "npm run check-deps",
     "check-deps": "nsp check",
     "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
-    "np": "np --no-publish"
+    "np": "np --no-publish",
+    "release": "yarn run np"
   },
   "files": [
     "index.js",

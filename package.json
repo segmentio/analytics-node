@@ -24,7 +24,7 @@
   "scripts": {
     "dependencies": "yarn",
     "size": "size-limit",
-    "test": "standard && nyc ava",
+    "test": "standard && nyc ava && .buildscript/e2e.sh",
     "prepublish": "npm run check-deps",
     "check-deps": "nsp check",
     "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",

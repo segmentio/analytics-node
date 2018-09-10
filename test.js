@@ -5,9 +5,6 @@ import delay from 'delay'
 import auth from 'basic-auth'
 import pify from 'pify'
 import test from 'ava'
-import axios from 'axios'
-import retries from 'axios-retry'
-import uuid from 'uuid/v4'
 import Analytics from '.'
 import {version} from './package'
 
@@ -564,49 +561,3 @@ test('allows messages > 32kb', t => {
     client.track(event, noop)
   })
 })
-
-const { RUN_E2E_TESTS } = process.env
-
-if (RUN_E2E_TESTS) {
-  // An end to end to test that sends events to a Segment source, and verifies that a webhook
-  // connected to the source (configured manually via the app) is able to receive the data
-  // sent by this library.
-  // This is described in more detail at https://paper.dropbox.com/doc/analytics-node-E2E-Test-9oavh3DFcFBXuqCJBe1o9.
-  test('end to end test', async t => {
-    const id = uuid()
-
-    // Segment Write Key for https://segment.com/segment-libraries/sources/analytics_node_e2e_test/overview.
-    // This source is configured to send events to a webhook used by this test.
-    const analytics = new Analytics('wZqHyttfRO0KxEHyRTujWZQswgTDZx1N')
-    analytics.track({
-      userId: 'prateek',
-      event: 'E2E Test',
-      properties: { id }
-    })
-    analytics.flush()
-
-    // Give some time for events to be delivered from the API to destinations.
-    await delay(5 * 1000) // 5 seconds.
-
-    const axiosClient = axios.create({
-      baseURL: 'https://webhook-e2e.segment.com',
-      timeout: 10 * 1000,
-      auth: {
-        username: process.env.WEBHOOK_AUTH_USERNAME
-      }
-    })
-    retries(axiosClient, { retries: 3 })
-
-    const messagesResponse = await axiosClient.get('buckets/node?limit=10')
-    t.is(messagesResponse.status, 200)
-
-    const requests = messagesResponse.data.map(async item => {
-      return JSON.parse(item)
-    })
-
-    const messages = await Promise.all(requests)
-
-    const message = messages.find(message => message.properties.id === id)
-    t.truthy(message)
-  })
-}

@@ -1,17 +1,50 @@
 #!/usr/bin/env node
 'use strict'
 
-const assert = require('assert')
 const program = require('commander')
 const Analytics = require('.')
 const pkg = require('./package')
 
-const run = (method, options) => {
-  const writeKey = process.env.SEGMENT_WRITE_KEY || program.writeKey
-  assert(writeKey, 'You need to define your write key via the $SEGMENT_WRITE_KEY environment variable or the --write-key flag.')
+const toObject = str => JSON.parse(str)
 
+program
+  .version(pkg.version)
+  .option('-w, --writeKey <key>', 'the Segment write key to use')
+  .option('-t, --type <type>', 'the Segment message type')
+
+  .option('-u, --userId <id>', 'the user id to send the event as')
+  .option('-a, --anonymousId <id>', 'the anonymous user id to send the event as')
+  .option('-c, --context <context>', 'additional context for the event (JSON-encoded)', toObject)
+
+  .option('-e, --event <event>', 'the event name to send with the event')
+  .option('-p, --properties <properties>', 'the event properties to send (JSON-encoded)', toObject)
+
+  .option('-n, --name <name>', 'name of the screen or page to send with the message')
+  .option('-t, --traits <traits>', 'the identify/group traits to send (JSON-encoded)', toObject)
+  .option('-g, --groupId <groupId>', 'the group id')
+
+program.parse(process.argv)
+
+if (program.args.length !== 0) {
+  program.help()
+}
+
+const writeKey = program.writeKey
+const type = program.type
+
+const userId = program.userId
+const anonymousId = program.anonymousId
+const context = program.context
+
+const event = program.event
+const properties = program.properties
+const name = program.name
+const traits = program.traits
+const groupId = program.groupId
+
+const run = (method, args) => {
   const analytics = new Analytics(writeKey, { flushAt: 1 })
-  analytics[method](options, err => {
+  analytics[method](args, err => {
     if (err) {
       console.error(err.stack)
       process.exit(1)
@@ -19,102 +52,51 @@ const run = (method, options) => {
   })
 }
 
-const toDate = str => new Date(str)
-const toObject = str => JSON.parse(str)
-
-program
-  .version(pkg.version)
-  .option('-w, --write-key <key>', 'the segment write key to use')
-
-program
-  .command('track <event>')
-  .description('track a user event')
-  .option('-u, --user <id>', 'the user id to send the event as')
-  .option('-a, --anonymous <id>', 'the anonymous user id to send the event as')
-  .option('-p, --properties <data>', 'the event properties to send (JSON-encoded)', toObject)
-  .option('-t, --timestamp <date>', 'the date of the event', toDate)
-  .option('-c, --context <data>', 'additional context for the event (JSON-encoded)', toObject)
-  .action((event, options) => {
+switch (type) {
+  case 'track':
     run('track', {
       event,
-      userId: options.user,
-      anonymousId: options.anonymous,
-      properties: options.properties,
-      timestamp: options.timestamp,
-      context: options.context
+      properties,
+      userId,
+      anonymousId,
+      context
     })
-  })
-
-program
-  .command('page')
-  .description('track a page view')
-  .option('-u, --user <id>', 'the user id to send the event as')
-  .option('-n, --name <name>', 'the name of the page')
-  .option('-C, --category <category>', 'the category of the page')
-  .option('-p, --properties <data>', 'attributes of the page (JSON-encoded)', toObject)
-  .option('-t, --timestamp <date>', 'the date of the event', toDate)
-  .option('-c, --context <data>', 'additional context for the event (JSON-encoded)', toObject)
-  .action(options => {
+    break
+  case 'page':
     run('page', {
-      userId: options.user,
-      name: options.name,
-      category: options.category,
-      properties: options.properties,
-      timestamp: options.timestamp,
-      context: options.context
+      name,
+      properties,
+      userId,
+      anonymousId,
+      context
     })
-  })
-
-program
-  .command('identify')
-  .description('identify a user')
-  .option('-u, --user <id>', 'the user id to send the event as')
-  .option('-T, --traits <data>', 'the user traits to send (JSON-encoded)', toObject)
-  .option('-t, --timestamp <date>', 'the date of the event', toDate)
-  .option('-c, --context <data>', 'additional context for the event (JSON-encoded)', toObject)
-  .action(options => {
+    break
+  case 'screen':
+    run('screen', {
+      name,
+      properties,
+      userId,
+      anonymousId,
+      context
+    })
+    break
+  case 'identify':
     run('identify', {
-      userId: options.user,
-      traits: options.traits,
-      timestamp: options.timestamp,
-      context: options.context
+      traits,
+      userId,
+      anonymousId,
+      context
     })
-  })
-
-program
-  .command('group')
-  .description('identify a group of users')
-  .option('-u, --user <id>', 'the user id to send the event as')
-  .option('-a, --anonymous <id>', 'the anonymous id to associate with this group')
-  .option('-g, --group <id>', 'the group id to associate this user with')
-  .option('-T, --traits <data>', 'attributes about the group (JSON-encoded)', toObject)
-  .option('-t, --timestamp <date>', 'the date of the event', toDate)
-  .option('-c, --context <data>', 'additional context for the event (JSON-encoded)', toObject)
-  .action(options => {
+    break
+  case 'group':
     run('group', {
-      userId: options.user,
-      anonymousId: options.anonymous,
-      groupId: options.group,
-      traits: options.traits,
-      timestamp: options.timestamp,
-      context: options.context
+      groupId,
+      traits,
+      userId,
+      anonymousId,
+      context
     })
-  })
-
-program
-  .command('alias')
-  .description('remap a user to a new id')
-  .option('-u, --user <id>', 'the user id to send the event as')
-  .option('-p, --previous <id>', 'the previous user id (to add the alias for)')
-  .action(options => {
-    run('alias', {
-      userId: options.user,
-      previousId: options.previous
-    })
-  })
-
-program.parse(process.argv)
-
-if (program.args.length === 0) {
-  program.help()
+    break
+  default:
+    console.error('invalid type:', type)
 }

@@ -32,6 +32,19 @@ workflows:
           context: snyk
           requires:
             - test
+  scheduled_e2e_test:
+    triggers:
+      - schedule:
+          cron: "15 * * * *"
+          filters:
+            branches:
+              only:
+                - master
+                - scheduled_e2e_testing
+    jobs:
+      - test-node6
+      - test-node8
+      - test-node10
 
 version: 2
 jobs:

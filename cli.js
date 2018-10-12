@@ -10,6 +10,7 @@ const toObject = str => JSON.parse(str)
 program
   .version(pkg.version)
   .option('-w, --writeKey <key>', 'the Segment write key to use')
+  .option('-h, --host <host>', 'the Segment API hostname to use')
   .option('-t, --type <type>', 'the Segment message type')
 
   .option('-u, --userId <id>', 'the user id to send the event as')
@@ -30,6 +31,7 @@ if (program.args.length !== 0) {
 }
 
 const writeKey = program.writeKey
+const host = program.host
 const type = program.type
 
 const userId = program.userId
@@ -43,7 +45,7 @@ const traits = program.traits
 const groupId = program.groupId
 
 const run = (method, args) => {
-  const analytics = new Analytics(writeKey, { flushAt: 1 })
+  const analytics = new Analytics(writeKey, { host, flushAt: 1 })
   analytics[method](args, err => {
     if (err) {
       console.error(err.stack)

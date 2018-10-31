@@ -166,14 +166,14 @@ class Analytics {
       return setImmediate(callback)
     }
 
-    message = Object.assign({}, message)
+    message = Object.assign({
+      context: {}
+    }, message)
     message.type = type
-    message.context = Object.assign({
-      library: {
-        name: 'analytics-node',
-        version
-      }
-    }, message.context)
+    message.context.library = Object.assign({
+      name: 'analytics-node',
+      version
+    }, message.context.library)
 
     message._metadata = Object.assign({
       nodeVersion: process.versions.node

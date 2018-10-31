@@ -138,6 +138,28 @@ test('enqueue - add a message to the queue', t => {
   })
 })
 
+// This functionality is utilized by Segment Typewriter.
+test('enqueue a message with library context fields', t => {
+  const client = createClient()
+
+  client.enqueue('type', {
+    context: {
+      library: {
+        'foo': 'bar'
+      }
+    }
+  })
+
+  const item = client.queue.pop()
+
+  t.deepEqual(item.message.context, {
+    library: {
+      ...context.library,
+      'foo': 'bar'
+    }
+  })
+})
+
 test('enqueue - stringify userId', t => {
   const client = createClient()
 

@@ -7,10 +7,7 @@
   "author": {
     "name": "Segment",
     "email": "tools+npm@segment.com",
-    "url": "segment.com"
-  },
-  "bin": {
-    "analytics": "cli.js"
+    "url": "https://segment.com"
   },
   "engines": {
     "node": ">=4"
@@ -32,8 +29,7 @@
     "release": "yarn run np"
   },
   "files": [
-    "index.js",
-    "cli.js"
+    "index.js"
   ],
   "keywords": [
     "analytics",
@@ -48,7 +44,6 @@
     "@segment/loosely-validate-event": "^2.0.0",
     "axios": "^0.17.1",
     "axios-retry": "^3.0.2",
-    "commander": "^2.9.0",
     "lodash.isstring": "^4.0.1",
     "md5": "^2.2.1",
     "ms": "^2.0.0",
@@ -60,6 +55,7 @@
     "basic-auth": "^2.0.0",
     "body-parser": "^1.17.1",
     "codecov": "^3.0.0",
+    "commander": "^2.9.0",
     "delay": "^3.0.0",
     "express": "^4.15.2",
     "nsp": "^3.1.0",

@@ -23,7 +23,7 @@
     "size": "size-limit",
     "test": "standard && nyc ava && .buildscript/e2e.sh",
     "prepublish": "npm run check-deps",
-    "check-deps": "nsp check",
+    "check-deps": "npm audit --audit-level high",
     "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
     "np": "np --no-publish",
     "release": "yarn run np"
@@ -51,14 +51,13 @@
     "uuid": "^3.2.1"
   },
   "devDependencies": {
-    "ava": "^0.25.0",
+    "ava": "^1.2.1",
     "basic-auth": "^2.0.0",
     "body-parser": "^1.17.1",
-    "codecov": "^3.0.0",
+    "codecov": "^3.2.0",
     "commander": "^2.9.0",
     "delay": "^3.0.0",
     "express": "^4.15.2",
-    "nsp": "^3.1.0",
     "nyc": "^12.0.2",
     "pify": "^3.0.0",
     "sinon": "^6.0.0",

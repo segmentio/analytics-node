@@ -280,7 +280,7 @@ test('enqueue - skip when client is disabled', async t => {
 test('flush - don\'t fail when queue is empty', async t => {
   const client = createClient()
 
-  await t.notThrows(client.flush())
+  await t.notThrows(client.flush)
 })
 
 test('flush - send messages', async t => {
@@ -326,7 +326,7 @@ test('flush - respond with an error', async t => {
     }
   ]
 
-  await t.throws(client.flush(), 'Bad Request')
+  await t.throwsAsync(client.flush, 'Bad Request')
 })
 
 test('flush - time out if configured', async t => {
@@ -340,7 +340,7 @@ test('flush - time out if configured', async t => {
     }
   ]
 
-  await t.throws(client.flush(), 'timeout of 500ms exceeded')
+  await t.throwsAsync(client.flush, 'timeout of 500ms exceeded')
 })
 
 test('flush - skip when client is disabled', async t => {

@@ -24,6 +24,7 @@ program
   .option('-n, --name <name>', 'name of the screen or page to send with the message')
   .option('-t, --traits <traits>', 'the identify/group traits to send (JSON-encoded)', toObject)
   .option('-g, --groupId <groupId>', 'the group id')
+  .option('-pid, --previousId <previousId>', 'the previous id')
 
   .parse(process.argv)
 
@@ -45,6 +46,7 @@ const properties = program.properties
 const name = program.name
 const traits = program.traits
 const groupId = program.groupId
+const previousId = program.previousId
 
 const run = (method, args) => {
   const analytics = new Analytics(writeKey, { host, flushAt: 1 })
@@ -106,6 +108,16 @@ switch (type) {
       integrations
     })
     break
+  case 'alias':
+    run('alias', {
+      previousId,
+      userId,
+      anonymousId,
+      context,
+      integrations
+    })
+    break
   default:
     console.error('invalid type:', type)
+    process.exit(1)
 }

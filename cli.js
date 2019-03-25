@@ -16,6 +16,7 @@ program
   .option('-u, --userId <id>', 'the user id to send the event as')
   .option('-a, --anonymousId <id>', 'the anonymous user id to send the event as')
   .option('-c, --context <context>', 'additional context for the event (JSON-encoded)', toObject)
+  .option('-i, --integrations <integrations>', 'additional integrations for the event (JSON-encoded)', toObject)
 
   .option('-e, --event <event>', 'the event name to send with the event')
   .option('-p, --properties <properties>', 'the event properties to send (JSON-encoded)', toObject)
@@ -24,7 +25,7 @@ program
   .option('-t, --traits <traits>', 'the identify/group traits to send (JSON-encoded)', toObject)
   .option('-g, --groupId <groupId>', 'the group id')
 
-program.parse(process.argv)
+  .parse(process.argv)
 
 if (program.args.length !== 0) {
   program.help()
@@ -37,6 +38,7 @@ const type = program.type
 const userId = program.userId
 const anonymousId = program.anonymousId
 const context = program.context
+const integrations = program.integrations
 
 const event = program.event
 const properties = program.properties
@@ -61,7 +63,8 @@ switch (type) {
       properties,
       userId,
       anonymousId,
-      context
+      context,
+      integrations
     })
     break
   case 'page':
@@ -70,7 +73,8 @@ switch (type) {
       properties,
       userId,
       anonymousId,
-      context
+      context,
+      integrations
     })
     break
   case 'screen':
@@ -79,7 +83,8 @@ switch (type) {
       properties,
       userId,
       anonymousId,
-      context
+      context,
+      integrations
     })
     break
   case 'identify':
@@ -87,7 +92,8 @@ switch (type) {
       traits,
       userId,
       anonymousId,
-      context
+      context,
+      integrations
     })
     break
   case 'group':
@@ -96,7 +102,8 @@ switch (type) {
       traits,
       userId,
       anonymousId,
-      context
+      context,
+      integrations
     })
     break
   default:

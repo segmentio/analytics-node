@@ -1,4 +1,4 @@
-import {spy, stub} from 'sinon'
+import { spy, stub } from 'sinon'
 import bodyParser from 'body-parser'
 import express from 'express'
 import delay from 'delay'
@@ -6,7 +6,7 @@ import auth from 'basic-auth'
 import pify from 'pify'
 import test from 'ava'
 import Analytics from '.'
-import {version} from './package'
+import { version } from './package'
 
 const noop = () => {}
 
@@ -266,7 +266,7 @@ test('enqueue - extend context', t => {
 })
 
 test('enqueue - skip when client is disabled', async t => {
-  const client = createClient({enable: false})
+  const client = createClient({ enable: false })
   stub(client, 'flush')
 
   const callback = spy()
@@ -330,7 +330,7 @@ test('flush - respond with an error', async t => {
 })
 
 test('flush - time out if configured', async t => {
-  const client = createClient({timeout: 500})
+  const client = createClient({ timeout: 500 })
   const callback = spy()
 
   client.queue = [
@@ -344,7 +344,7 @@ test('flush - time out if configured', async t => {
 })
 
 test('flush - skip when client is disabled', async t => {
-  const client = createClient({enable: false})
+  const client = createClient({ enable: false })
   const callback = spy()
 
   client.queue = [

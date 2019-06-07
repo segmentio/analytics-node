@@ -2,9 +2,9 @@ workflows:
   version: 2
   multi-test:
     jobs:
-      - test-node6
       - test-node8
       - test-node10
+      - test-node12
   test_and_publish:
     jobs:
       - test:
@@ -42,9 +42,9 @@ workflows:
                 - master
                 - scheduled_e2e_testing
     jobs:
-      - test-node6
       - test-node8
       - test-node10
+      - test-node12
 
 version: 2
 jobs:
@@ -66,10 +66,6 @@ jobs:
           root: .
           paths: [.]
 
-  test-node6:
-    <<: *node-base-test
-    docker:
-      - image: circleci/node:6-browsers
   test-node8:
     <<: *node-base-test
     docker:
@@ -78,6 +74,10 @@ jobs:
     <<: *node-base-test
     docker:
       - image: circleci/node:10-browsers
+  test-node12:
+    <<: *node-base-test
+    docker:
+      - image: circleci/node:12-browsers
   test:
     <<: *node-base-test
     docker:

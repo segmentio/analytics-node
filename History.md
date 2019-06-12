@@ -1,3 +1,14 @@
+v3.4.0-beta.1 / 2019-06-12
+==========================
+
+  * Upgrade dependencies ([#174](https://github.com/segmentio/analytics-node/pull/174), [#175](https://github.com/segmentio/analytics-node/pull/175), [#176](https://github.com/segmentio/analytics-node/pull/176), [#178](https://github.com/segmentio/analytics-node/pull/178), [#179](https://github.com/segmentio/analytics-node/pull/179), [#211](https://github.com/segmentio/analytics-node/pull/211), [#212](https://github.com/segmentio/analytics-node/pull/212))
+  * [Improvement](https://github.com/segmentio/analytics-node/pull/194): Add ability to override host/api url
+  * [BREAKING CHANGE](https://github.com/segmentio/analytics-node/pull/195): remove cli from published package
+
+v3.3.0 / 2018-04-24
+===================
+
+  * Promote `v3.3.0-beta.2` to stable
 
 v3.3.0-beta.2 / 2018-03-02
 ==========================

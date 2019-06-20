@@ -105,6 +105,7 @@ jobs:
       - run: yarn run snyk test --severity-threshold=high
       - run: yarn run snyk monitor
   publish:
+    context: npm
     docker:
       - image: circleci/node:10-browsers
     steps:

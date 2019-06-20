@@ -6,13 +6,13 @@ workflows:
       - test-node10
       - test-node12
   test_and_publish:
-    context: npm
     jobs:
       - test:
           filters:
             tags:
               only: /.*/
       - publish:
+          context: npm
           requires:
             - test
           filters:

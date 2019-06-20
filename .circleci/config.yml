@@ -6,6 +6,7 @@ workflows:
       - test-node10
       - test-node12
   test_and_publish:
+    context: npm
     jobs:
       - test:
           filters:
@@ -105,7 +106,6 @@ jobs:
       - run: yarn run snyk test --severity-threshold=high
       - run: yarn run snyk monitor
   publish:
-    context: npm
     docker:
       - image: circleci/node:10-browsers
     steps:

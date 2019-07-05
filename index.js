@@ -155,7 +155,7 @@ class Analytics {
    *
    * @param {String} type
    * @param {Object} message
-   * @param {Functino} [callback] (optional)
+   * @param {Function} [callback] (optional)
    * @api private
    */
 

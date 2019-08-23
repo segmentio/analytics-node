@@ -50,6 +50,8 @@ workflows:
 version: 2
 jobs:
   validate-config:
+    docker:
+      - image: node
     steps:
       - run:
         - >

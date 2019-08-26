@@ -2,7 +2,7 @@ workflows:
   version: 2
   validate-config:
     jobs:
-      - yarn run circle-lint
+      - circle-lint
   multi-test:
     jobs:
       - test-node8
@@ -52,6 +52,10 @@ workflows:
 
 version: 2
 jobs:
+  circle-lint:
+    docker:
+      - image: node
+    run: yarn run circle-lint
   node-base-test: &node-base-test
     working_directory: ~/analytics-node
     docker:

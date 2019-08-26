@@ -53,6 +53,7 @@ workflows:
 version: 2
 jobs:
   circle-lint:
+    working_directory: ~/analytics-node
     docker:
       - image: node
     steps:

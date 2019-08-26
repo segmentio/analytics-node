@@ -55,7 +55,8 @@ jobs:
   circle-lint:
     docker:
       - image: node
-    run: yarn run circle-lint
+    steps:
+      - run: yarn run circle-lint
   node-base-test: &node-base-test
     working_directory: ~/analytics-node
     docker:

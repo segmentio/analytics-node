@@ -205,7 +205,7 @@ class Analytics {
 
     if (!this.flushed) {
       this.flushed = true
-      this.flush()
+      this.flush(callback)
       return
     }
 

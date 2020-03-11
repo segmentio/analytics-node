@@ -21,10 +21,12 @@ class Analytics {
    *
    * @param {String} writeKey
    * @param {Object} [options] (optional)
-   *   @property {Number} flushAt (default: 20)
-   *   @property {Number} flushInterval (default: 10000)
-   *   @property {String} host (default: 'https://api.segment.io')
-   *   @property {Boolean} enable (default: true)
+   *   @property {Number} [flushAt] (default: 20)
+   *   @property {Number} [flushInterval] (default: 10000)
+   *   @property {String} [host] (default: 'https://api.segment.io')
+   *   @property {Boolean} [enable] (default: true)
+   *   @property {Object} [axiosConfig] (optional)
+   *   @property {Object} [axiosInstance] (default: axios.create(options.axiosConfig))
    */
 
   constructor (writeKey, options) {
@@ -35,6 +37,11 @@ class Analytics {
     this.queue = []
     this.writeKey = writeKey
     this.host = removeSlash(options.host || 'https://api.segment.io')
+    let axiosInstance = options.axiosInstance
+    if (axiosInstance == null) {
+      axiosInstance = axios.create(options.axiosConfig)
+    }
+    this.axiosInstance = axiosInstance
     this.timeout = options.timeout || false
     this.flushAt = Math.max(options.flushAt, 1) || 20
     this.flushInterval = options.flushInterval || 10000
@@ -46,7 +53,7 @@ class Analytics {
       value: typeof options.enable === 'boolean' ? options.enable : true
     })
 
-    axiosRetry(axios, {
+    axiosRetry(axiosInstance, {
       retries: options.retryCount || 3,
       retryCondition: this._isErrorRetryable,
       retryDelay: axiosRetry.exponentialDelay
@@ -125,7 +132,7 @@ class Analytics {
    * Send a screen `message`.
    *
    * @param {Object} message
-   * @param {Function} fn (optional)
+   * @param {Function} [callback] (optional)
    * @return {Analytics}
    */
 
@@ -279,7 +286,7 @@ class Analytics {
       req.timeout = typeof this.timeout === 'string' ? ms(this.timeout) : this.timeout
     }
 
-    axios(req)
+    this.axiosInstance.request(req)
       .then(() => done())
       .catch(err => {
         if (err.response) {

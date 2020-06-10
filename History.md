@@ -1,3 +1,10 @@
+v3.4.1-beta.2 / 2020-06-10
+==========================
+* Update lodash (#222) (#221) from segmentio/dependabot/npm_and_yarn/lodash-4.17.11 8e9a91d
+* Fix typo (#220)
+* Update axios (#218)
+
+
 v3.4.1-beta.1 / 2019-06-20
 ==========================
 

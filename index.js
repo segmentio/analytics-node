@@ -210,7 +210,7 @@ class Analytics {
     }
 
     if (this.queue.length >= this.flushAt) {
-      this.flush()
+      this.flush(callback)
     }
 
     if (this.flushInterval && !this.timer) {

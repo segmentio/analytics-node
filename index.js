@@ -267,7 +267,7 @@ class Analytics {
 
     const req = {
       method: 'POST',
-      url: `${this.host}/v1/batch`,
+      url: `${this.host}`,
       auth: {
         username: this.writeKey
       },

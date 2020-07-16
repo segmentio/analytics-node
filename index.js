@@ -35,6 +35,7 @@ class Analytics {
     this.queue = []
     this.writeKey = writeKey
     this.host = removeSlash(options.host || 'https://api.segment.io')
+    this.path = removeSlash(options.path || '/v1/batch')
     this.timeout = options.timeout || false
     this.flushAt = Math.max(options.flushAt, 1) || 20
     this.flushInterval = options.flushInterval || 10000
@@ -267,7 +268,7 @@ class Analytics {
 
     const req = {
       method: 'POST',
-      url: `${this.host}`,
+      url: `${this.host}${this.path}`,
       auth: {
         username: this.writeKey
       },

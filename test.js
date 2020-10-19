@@ -72,6 +72,12 @@ test.before.cb(t => {
         })
       }
 
+      if (batch[0] === 'axios-retry-forever') {
+        return res.status(503).json({
+          error: { message: 'Service Unavailable' }
+        })
+      }
+
       res.json({})
     })
     .listen(port, t.end)
@@ -584,6 +590,20 @@ test('ensure that failed requests are retried', async t => {
   ]
 
   await t.notThrows(client.flush())
+})
+
+test('ensure that failed requests are not retried forever', async t => {
+  const client = createClient()
+  const callback = spy()
+
+  client.queue = [
+    {
+      message: 'axios-retry-forever',
+      callback
+    }
+  ]
+
+  await t.throws(client.flush())
 })
 
 test('ensure other axios clients are not impacted by axios-retry', async t => {

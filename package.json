@@ -22,7 +22,7 @@
     "circle-lint": ".buildscript/circle.sh",
     "dependencies": "yarn",
     "size": "size-limit",
-    "test": "standard && nyc ava && .buildscript/e2e.sh",
+    "test": "standard && nyc ava --timeout=20s&& .buildscript/e2e.sh",
     "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
     "np": "np --no-publish",
     "release": "yarn run np"

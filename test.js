@@ -36,7 +36,6 @@ const createClient = options => {
 
 test.before.cb(t => {
   let count = 0
-  
   express()
     .use(bodyParser.json())
     .post('/v1/batch', (req, res) => {

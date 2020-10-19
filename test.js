@@ -19,6 +19,8 @@ const context = {
 
 const metadata = { nodeVersion: process.versions.node }
 const port = 4063
+const separateAxiosClientPort = 4064
+const retryCount = 5
 
 const createClient = options => {
   options = Object.assign({
@@ -33,6 +35,8 @@ const createClient = options => {
 }
 
 test.before.cb(t => {
+  let count = 0
+  
   express()
     .use(bodyParser.json())
     .post('/v1/batch', (req, res) => {
@@ -60,6 +64,13 @@ test.before.cb(t => {
 
       if (batch[0] === 'timeout') {
         return setTimeout(() => res.end(), 5000)
+      }
+
+      if (batch[0] === 'axios-retry') {
+        if (count++ === retryCount) return res.json({})
+        return res.status(503).json({
+          error: { message: 'Service Unavailable' }
+        })
       }
 
       res.json({})
@@ -560,4 +571,50 @@ test('allows messages > 32kb', t => {
   t.notThrows(() => {
     client.track(event, noop)
   })
+})
+
+test('ensure that failed requests are retried', async t => {
+  const client = createClient({ retryCount: retryCount })
+  const callback = spy()
+
+  client.queue = [
+    {
+      message: 'axios-retry',
+      callback
+    }
+  ]
+
+  await t.notThrows(client.flush())
+})
+
+test('ensure other axios clients are not impacted by axios-retry', async t => {
+  let client = createClient() // eslint-disable-line
+  const axios = require('axios')
+
+  let callCounter = 0
+
+  // Client will return a successful response for any requests beyond the first
+  let server = express()
+    .use(bodyParser.json())
+    .get('/v1/anotherEndpoint', (req, res) => {
+      if (callCounter > 0) {
+        res.status(200).send('Ok')
+      } else {
+        callCounter++
+        res.status(503).send('Service down')
+      }
+    })
+    .listen(separateAxiosClientPort)
+
+  await axios.get(`http://localhost:${separateAxiosClientPort}/v1/anotherEndpoint`)
+    .then(response => {
+      t.fail()
+    })
+    .catch(error => {
+      if (error) {
+        t.pass()
+      }
+    })
+
+  server.close()
 })

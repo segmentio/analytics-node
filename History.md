@@ -1,3 +1,8 @@
+v3.4.1-beta.3 / 2020-10-26
+==========================
+* Update axios to fix the infinite retry bug (#255) 
+* Use a local instance of axios to prevent client options leaking to other contexts (#255)
+
 v3.4.1-beta.2 / 2020-06-10
 ==========================
 * Update lodash (#222) (#221) from segmentio/dependabot/npm_and_yarn/lodash-4.17.11 8e9a91d

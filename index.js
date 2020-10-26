@@ -45,8 +45,8 @@ class Analytics {
       enumerable: true,
       value: typeof options.enable === 'boolean' ? options.enable : true
     })
-
-    axiosRetry(axios, {
+    this.axiosClient = axios.create()
+    axiosRetry(this.axiosClient, {
       retries: options.retryCount || 3,
       retryCondition: this._isErrorRetryable,
       retryDelay: axiosRetry.exponentialDelay
@@ -279,7 +279,7 @@ class Analytics {
       req.timeout = typeof this.timeout === 'string' ? ms(this.timeout) : this.timeout
     }
 
-    axios(req)
+    this.axiosClient(req)
       .then(() => done())
       .catch(err => {
         if (err.response) {

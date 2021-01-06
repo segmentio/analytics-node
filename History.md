@@ -1,3 +1,8 @@
+v3.5.0 / 2021-1-5
+==========================
+* Update axios to fix the Server-Side Request Forgery vulnerability  (#259) 
+
+
 v3.4.1-beta.3 / 2020-10-26
 ==========================
 * Update axios to fix the infinite retry bug (#255) 

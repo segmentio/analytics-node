@@ -60,6 +60,7 @@
   "resolutions": {
     "kind-of": "^6.0.3",
     "lodash": "^4.17.19",
-    "set-value": "^2.0.1"
+    "set-value": "^2.0.1",
+    "yargs-parser": "^13.1.2"
   }
 }

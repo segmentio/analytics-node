@@ -26,9 +26,6 @@ workflows:
   static_analysis:
     jobs:
       - test
-      - size:
-          requires:
-            - test
       - coverage:
           requires:
             - test
@@ -100,13 +97,6 @@ jobs:
       - checkout
       - attach_workspace: { at: . }
       - run: yarn run report-coverage
-  size:
-    docker:
-      - image: circleci/node:10-browsers
-    steps:
-      - checkout
-      - attach_workspace: { at: . }
-      - run: yarn run size
   snyk:
     docker:
       - image: circleci/node:10-browsers

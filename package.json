@@ -12,16 +12,9 @@
   "engines": {
     "node": ">=4"
   },
-  "size-limit": [
-    {
-      "limit": "25 KB",
-      "path": "index.js"
-    }
-  ],
   "scripts": {
     "circle-lint": ".buildscript/circle.sh",
     "dependencies": "yarn",
-    "size": "size-limit",
     "test": "standard && nyc ava --timeout=20s&& .buildscript/e2e.sh",
     "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
     "np": "np --no-publish",
@@ -61,7 +54,6 @@
     "nyc": "^14.1.1",
     "pify": "^4.0.1",
     "sinon": "^7.3.2",
-    "size-limit": "^4.9.1",
     "snyk": "^1.437.3",
     "standard": "^16.0.3"
   }

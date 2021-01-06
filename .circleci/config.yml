@@ -26,9 +26,6 @@ workflows:
   static_analysis:
     jobs:
       - test
-      - size:
-          requires:
-            - test
       - coverage:
           requires:
             - test

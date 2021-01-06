@@ -174,7 +174,7 @@ test('enqueue - stringify anonymousId', t => {
   const client = createClient()
 
   client.screen({
-    anonymousId: 157963456373623802,
+    anonymousId: 157963456,
     name: 'screen name'
   }, noop)
 
@@ -184,7 +184,7 @@ test('enqueue - stringify anonymousId', t => {
 
   t.is(item.message.userId, undefined)
   // v8 will lose precision for big numbers.
-  t.is(item.message.anonymousId, '157963456373623800')
+  t.is(item.message.anonymousId, '157963456')
 })
 
 test('enqueue - stringify ids handles strings', t => {
@@ -569,7 +569,7 @@ test('allows messages > 32kb', t => {
     event: 'event',
     properties: {}
   }
-  for (var i = 0; i < 10000; i++) {
+  for (let i = 0; i < 10000; i++) {
     event.properties[i] = 'a'
   }
 
@@ -613,7 +613,7 @@ test('ensure other axios clients are not impacted by axios-retry', async t => {
   let callCounter = 0
 
   // Client will return a successful response for any requests beyond the first
-  let server = express()
+  const server = express()
     .use(bodyParser.json())
     .get('/v1/anotherEndpoint', (req, res) => {
       if (callCounter > 0) {

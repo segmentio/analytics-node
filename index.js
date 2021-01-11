@@ -214,7 +214,7 @@ class Analytics {
     }
 
     if (this.flushInterval && !this.timer) {
-      this.timer = setTimeout(this.flush.bind(this), this.flushInterval)
+      this.timer = setTimeout(this.flush.bind(this, callback), this.flushInterval)
     }
   }
 

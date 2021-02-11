@@ -256,7 +256,7 @@ class Analytics {
       callback(err, data)
     }
 
-    // Don't set the user agent if we're not on a browser. The latest spec allows
+    // Don't set the user agent if we're on a browser. The latest spec allows
     // the User-Agent header (see https://fetch.spec.whatwg.org/#terminology-headers
     // and https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader),
     // but browsers such as Chrome and Safari have not caught up.

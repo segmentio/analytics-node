@@ -37,6 +37,7 @@ class Analytics {
     this.queue = []
     this.writeKey = writeKey
     this.host = removeSlash(options.host || 'https://api.segment.io')
+    this.path = removeSlash(options.path || '/v1/batch')
     let axiosInstance = options.axiosInstance
     if (axiosInstance == null) {
       axiosInstance = axios.create(options.axiosConfig)
@@ -52,8 +53,8 @@ class Analytics {
       enumerable: true,
       value: typeof options.enable === 'boolean' ? options.enable : true
     })
-
-    axiosRetry(axiosInstance, {
+    this.axiosClient = axios.create()
+    axiosRetry(this.axiosClient, {
       retries: options.retryCount || 3,
       retryCondition: this._isErrorRetryable,
       retryDelay: axiosRetry.exponentialDelay
@@ -263,7 +264,7 @@ class Analytics {
       callback(err, data)
     }
 
-    // Don't set the user agent if we're not on a browser. The latest spec allows
+    // Don't set the user agent if we're on a browser. The latest spec allows
     // the User-Agent header (see https://fetch.spec.whatwg.org/#terminology-headers
     // and https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader),
     // but browsers such as Chrome and Safari have not caught up.
@@ -274,7 +275,7 @@ class Analytics {
 
     const req = {
       method: 'POST',
-      url: `${this.host}/v1/batch`,
+      url: `${this.host}${this.path}`,
       auth: {
         username: this.writeKey
       },
@@ -286,7 +287,7 @@ class Analytics {
       req.timeout = typeof this.timeout === 'string' ? ms(this.timeout) : this.timeout
     }
 
-    this.axiosInstance.request(req)
+    this.axiosClient(req)
       .then(() => done())
       .catch(err => {
         if (err.response) {

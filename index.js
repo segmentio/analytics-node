@@ -205,16 +205,16 @@ class Analytics {
 
     if (!this.flushed) {
       this.flushed = true
-      this.flush()
+      this.flush(callback)
       return
     }
 
     if (this.queue.length >= this.flushAt) {
-      this.flush()
+      this.flush(callback)
     }
 
     if (this.flushInterval && !this.timer) {
-      this.timer = setTimeout(this.flush.bind(this), this.flushInterval)
+      this.timer = setTimeout(this.flush.bind(this, callback), this.flushInterval)
     }
   }
 

@@ -21,10 +21,12 @@ class Analytics {
    *
    * @param {String} writeKey
    * @param {Object} [options] (optional)
-   *   @property {Number} flushAt (default: 20)
-   *   @property {Number} flushInterval (default: 10000)
-   *   @property {String} host (default: 'https://api.segment.io')
-   *   @property {Boolean} enable (default: true)
+   *   @property {Number} [flushAt] (default: 20)
+   *   @property {Number} [flushInterval] (default: 10000)
+   *   @property {String} [host] (default: 'https://api.segment.io')
+   *   @property {Boolean} [enable] (default: true)
+   *   @property {Object} [axiosConfig] (optional)
+   *   @property {Object} [axiosInstance] (default: axios.create(options.axiosConfig))
    */
 
   constructor (writeKey, options) {
@@ -35,6 +37,12 @@ class Analytics {
     this.queue = []
     this.writeKey = writeKey
     this.host = removeSlash(options.host || 'https://api.segment.io')
+    this.path = removeSlash(options.path || '/v1/batch')
+    let axiosInstance = options.axiosInstance
+    if (axiosInstance == null) {
+      axiosInstance = axios.create(options.axiosConfig)
+    }
+    this.axiosInstance = axiosInstance
     this.timeout = options.timeout || false
     this.flushAt = Math.max(options.flushAt, 1) || 20
     this.flushInterval = options.flushInterval || 10000
@@ -125,7 +133,7 @@ class Analytics {
    * Send a screen `message`.
    *
    * @param {Object} message
-   * @param {Function} fn (optional)
+   * @param {Function} [callback] (optional)
    * @return {Analytics}
    */
 
@@ -256,7 +264,7 @@ class Analytics {
       callback(err, data)
     }
 
-    // Don't set the user agent if we're not on a browser. The latest spec allows
+    // Don't set the user agent if we're on a browser. The latest spec allows
     // the User-Agent header (see https://fetch.spec.whatwg.org/#terminology-headers
     // and https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader),
     // but browsers such as Chrome and Safari have not caught up.
@@ -267,7 +275,7 @@ class Analytics {
 
     const req = {
       method: 'POST',
-      url: `${this.host}/v1/batch`,
+      url: `${this.host}${this.path}`,
       auth: {
         username: this.writeKey
       },

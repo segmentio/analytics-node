@@ -62,15 +62,7 @@ class Analytics {
   }
 
   _validate (message, type) {
-    try {
-      looselyValidate(message, type)
-    } catch (e) {
-      if (e.message === 'Your message must be < 32kb.') {
-        console.log('Your message must be < 32kb. This is currently surfaced as a warning to allow clients to update. Versions released after August 1, 2018 will throw an error instead. Please update your code before then.', message)
-        return
-      }
-      throw e
-    }
+    looselyValidate(message, type)
   }
 
   /**

@@ -53,8 +53,7 @@ class Analytics {
       enumerable: true,
       value: typeof options.enable === 'boolean' ? options.enable : true
     })
-    this.axiosClient = axios.create()
-    axiosRetry(this.axiosClient, {
+    axiosRetry(this.axiosInstance, {
       retries: options.retryCount || 3,
       retryCondition: this._isErrorRetryable,
       retryDelay: axiosRetry.exponentialDelay

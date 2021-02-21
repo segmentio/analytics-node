@@ -273,12 +273,9 @@ class Analytics {
     }
 
     const req = {
-      method: 'POST',
-      url: `${this.host}${this.path}`,
       auth: {
         username: this.writeKey
       },
-      data,
       headers
     }
 
@@ -286,7 +283,7 @@ class Analytics {
       req.timeout = typeof this.timeout === 'string' ? ms(this.timeout) : this.timeout
     }
 
-    this.axiosClient(req)
+    this.axiosInstance.post(`${this.host}${this.path}`, data, req)
       .then(() => done())
       .catch(err => {
         if (err.response) {

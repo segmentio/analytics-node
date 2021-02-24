@@ -1,3 +1,12 @@
+v4.0.0 / 2021-2-17
+==========================
+* BREAKING: throws error when message is over 32kb #268
+* Allow passing in Axios instance in options #270
+* Fix data parameter always undefined on callback for track method #231
+* Allow to update endpoint to send batch events #246
+* Vulnerability fixes #264, #243, #263, #226, #227, #228, #247, #248, #252, #253, #257, #261
+* Fixed a typo to reflect actual code behaviour #233
+
 v3.5.0 / 2021-1-5
 ==========================
 * Update axios to fix the Server-Side Request Forgery vulnerability  (#259) 

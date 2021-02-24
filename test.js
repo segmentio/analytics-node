@@ -561,7 +561,7 @@ test('isErrorRetryable', t => {
   t.false(client._isErrorRetryable({ response: { status: 200 } }))
 })
 
-test('allows messages > 32kb', t => {
+test('dont allow messages > 32kb', t => {
   const client = createClient()
 
   const event = {
@@ -573,7 +573,7 @@ test('allows messages > 32kb', t => {
     event.properties[i] = 'a'
   }
 
-  t.notThrows(() => {
+  t.throws(() => {
     client.track(event, noop)
   })
 })

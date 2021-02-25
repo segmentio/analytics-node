@@ -1,3 +1,7 @@
+v4.0.1 / 2021-2-24
+==========================
+* Fixed an issue where the optional axiosInstance passed as an option was ignored
+
 v4.0.0 / 2021-2-17
 ==========================
 * BREAKING: throws error when message is over 32kb #268

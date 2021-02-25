@@ -53,8 +53,7 @@ class Analytics {
       enumerable: true,
       value: typeof options.enable === 'boolean' ? options.enable : true
     })
-    this.axiosClient = axios.create()
-    axiosRetry(this.axiosClient, {
+    axiosRetry(this.axiosInstance, {
       retries: options.retryCount || 3,
       retryCondition: this._isErrorRetryable,
       retryDelay: axiosRetry.exponentialDelay
@@ -266,12 +265,9 @@ class Analytics {
     }
 
     const req = {
-      method: 'POST',
-      url: `${this.host}${this.path}`,
       auth: {
         username: this.writeKey
       },
-      data,
       headers
     }
 
@@ -279,7 +275,7 @@ class Analytics {
       req.timeout = typeof this.timeout === 'string' ? ms(this.timeout) : this.timeout
     }
 
-    this.axiosClient(req)
+    this.axiosInstance.post(`${this.host}${this.path}`, data, req)
       .then(() => done())
       .catch(err => {
         if (err.response) {

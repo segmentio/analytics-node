@@ -45,6 +45,7 @@ class Analytics {
     this.axiosInstance = axiosInstance
     this.timeout = options.timeout || false
     this.flushAt = Math.max(options.flushAt, 1) || 20
+    this.maxQueueSize = options.maxQueueSize || 1024 * 32 // defaults to 32kb
     this.flushInterval = options.flushInterval || 10000
     this.flushed = false
     Object.defineProperty(this, 'enable', {
@@ -208,7 +209,9 @@ class Analytics {
       return
     }
 
-    if (this.queue.length >= this.flushAt) {
+    const hasReachedFlushAt = this.queue.length >= this.flushAt
+    const hasReachedQueueSize = this.queue.reduce((acc, item) => acc + JSON.stringify(item).length, 0) >= this.maxQueueSize
+    if (hasReachedFlushAt || hasReachedQueueSize) {
       this.flush(callback)
     }
 

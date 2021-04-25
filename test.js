@@ -375,6 +375,38 @@ test('flush - skip when client is disabled', async t => {
   t.false(callback.called)
 })
 
+test('flush - flush when reaches max payload size', async t => {
+  const client = createClient({ flushAt: 1000 })
+  client.flush = spy()
+
+  // each of these messages when stringified to json has 220-ish bytes
+  // to satisfy our default limit of 1024*32 bytes we need less than 150 of those messages
+  const event = {
+    userId: 1,
+    event: 'event'
+  }
+  for (let i = 0; i < 150; i++) {
+    client.track(event)
+  }
+
+  t.true(client.flush.called)
+})
+
+test('flush - wont flush when no flush condition has meet', async t => {
+  const client = createClient({ flushAt: 1000, maxQueueSize: 1024 * 1000 })
+  client.flush = spy()
+
+  const event = {
+    userId: 1,
+    event: 'event'
+  }
+  for (let i = 0; i < 150; i++) {
+    client.track(event)
+  }
+
+  t.false(client.flush.called)
+})
+
 test('identify - enqueue a message', t => {
   const client = createClient()
   stub(client, 'enqueue')

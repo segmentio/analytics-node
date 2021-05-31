@@ -275,7 +275,7 @@ class Analytics {
       req.timeout = typeof this.timeout === 'string' ? ms(this.timeout) : this.timeout
     }
 
-    this.axiosInstance.post(`${this.host}${this.path}`, data, req)
+    return this.axiosInstance.post(`${this.host}${this.path}`, data, req)
       .then(() => done())
       .catch(err => {
         if (err.response) {

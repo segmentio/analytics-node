@@ -380,12 +380,12 @@ test('flush - flush when reaches max payload size', async t => {
   client.flush = spy()
 
   // each of these messages when stringified to json has 220-ish bytes
-  // to satisfy our default limit of 1024*32 bytes we need less than 150 of those messages
+  // to satisfy our default limit of 1024*500 bytes we need less than 2600 of those messages
   const event = {
     userId: 1,
     event: 'event'
   }
-  for (let i = 0; i < 150; i++) {
+  for (let i = 0; i < 2600; i++) {
     client.track(event)
   }
 

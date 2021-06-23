@@ -5,7 +5,6 @@ workflows:
       - circle-lint
   multi-test:
     jobs:
-      - test-node8
       - test-node10
       - test-node12
   test_and_publish:
@@ -43,7 +42,6 @@ workflows:
                 - master
                 - scheduled_e2e_testing
     jobs:
-      - test-node8
       - test-node10
       - test-node12
 
@@ -74,10 +72,6 @@ jobs:
           root: .
           paths: [.]
 
-  test-node8:
-    <<: *node-base-test
-    docker:
-      - image: circleci/node:8-browsers
   test-node10:
     <<: *node-base-test
     docker:

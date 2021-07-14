@@ -60,7 +60,7 @@ class Analytics {
       axiosRetry(this.axiosInstance, {
         retries: options.retryCount || 3,
         retryDelay: axiosRetry.exponentialDelay,
-        ...(options.axiosRetryConfig || {}),
+        ...options.axiosRetryConfig,
         // retryCondition is below optional config to ensure it does not get overridden
         retryCondition: this._isErrorRetryable
       })

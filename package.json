@@ -1,6 +1,6 @@
 {
   "name": "analytics-node",
-  "version": "4.0.1",
+  "version": "5.0.0",
   "description": "The hassle-free way to integrate analytics into any Node.js application",
   "license": "MIT",
   "repository": "segmentio/analytics-node",

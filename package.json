@@ -1,6 +1,6 @@
 {
   "name": "analytics-node",
-  "version": "4.0.1",
+  "version": "5.0.0",
   "description": "The hassle-free way to integrate analytics into any Node.js application",
   "license": "MIT",
   "repository": "segmentio/analytics-node",
@@ -52,6 +52,7 @@
     "delay": "^4.2.0",
     "express": "^4.15.2",
     "husky": "^3.0.4",
+    "np": "^7.5.0",
     "nyc": "^15.1.0",
     "pify": "^4.0.1",
     "sinon": "^7.3.2",

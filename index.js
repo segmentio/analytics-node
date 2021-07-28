@@ -27,6 +27,8 @@ class Analytics {
    *   @property {Boolean} [enable] (default: true)
    *   @property {Object} [axiosConfig] (optional)
    *   @property {Object} [axiosInstance] (default: axios.create(options.axiosConfig))
+   *   @property {Object} [axiosRetryConfig] (optional)
+   *   @property {Number} [retryCount] (default: 3)
    */
 
   constructor (writeKey, options) {
@@ -54,11 +56,15 @@ class Analytics {
       enumerable: true,
       value: typeof options.enable === 'boolean' ? options.enable : true
     })
-    axiosRetry(this.axiosInstance, {
-      retries: options.retryCount || 3,
-      retryCondition: this._isErrorRetryable,
-      retryDelay: axiosRetry.exponentialDelay
-    })
+    if (options.retryCount !== 0) {
+      axiosRetry(this.axiosInstance, {
+        retries: options.retryCount || 3,
+        retryDelay: axiosRetry.exponentialDelay,
+        ...options.axiosRetryConfig,
+        // retryCondition is below optional config to ensure it does not get overridden
+        retryCondition: this._isErrorRetryable
+      })
+    }
   }
 
   _validate (message, type) {

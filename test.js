@@ -1,15 +1,12 @@
-import {spy, stub} from 'sinon'
+import { spy, stub } from 'sinon'
 import bodyParser from 'body-parser'
 import express from 'express'
 import delay from 'delay'
 import auth from 'basic-auth'
 import pify from 'pify'
 import test from 'ava'
-import axios from 'axios'
-import retries from 'axios-retry'
-import uuid from 'uuid/v4'
 import Analytics from '.'
-import {version} from './package'
+import { version } from './package'
 
 const noop = () => {}
 
@@ -22,6 +19,8 @@ const context = {
 
 const metadata = { nodeVersion: process.versions.node }
 const port = 4063
+const separateAxiosClientPort = 4064
+const retryCount = 5
 
 const createClient = options => {
   options = Object.assign({
@@ -36,6 +35,7 @@ const createClient = options => {
 }
 
 test.before.cb(t => {
+  let count = 0
   express()
     .use(bodyParser.json())
     .post('/v1/batch', (req, res) => {
@@ -63,6 +63,19 @@ test.before.cb(t => {
 
       if (batch[0] === 'timeout') {
         return setTimeout(() => res.end(), 5000)
+      }
+
+      if (batch[0] === 'axios-retry') {
+        if (count++ === retryCount) return res.json({})
+        return res.status(503).json({
+          error: { message: 'Service Unavailable' }
+        })
+      }
+
+      if (batch[0] === 'axios-retry-forever') {
+        return res.status(503).json({
+          error: { message: 'Service Unavailable' }
+        })
       }
 
       res.json({})
@@ -285,7 +298,7 @@ test('enqueue - extend context', t => {
 })
 
 test('enqueue - skip when client is disabled', async t => {
-  const client = createClient({enable: false})
+  const client = createClient({ enable: false })
   stub(client, 'flush')
 
   const callback = spy()
@@ -349,7 +362,7 @@ test('flush - respond with an error', async t => {
 })
 
 test('flush - time out if configured', async t => {
-  const client = createClient({timeout: 500})
+  const client = createClient({ timeout: 500 })
   const callback = spy()
 
   client.queue = [
@@ -363,7 +376,7 @@ test('flush - time out if configured', async t => {
 })
 
 test('flush - skip when client is disabled', async t => {
-  const client = createClient({enable: false})
+  const client = createClient({ enable: false })
   const callback = spy()
 
   client.queue = [
@@ -376,6 +389,38 @@ test('flush - skip when client is disabled', async t => {
   await client.flush()
 
   t.false(callback.called)
+})
+
+test('flush - flush when reaches max payload size', async t => {
+  const client = createClient({ flushAt: 1000 })
+  client.flush = spy()
+
+  // each of these messages when stringified to json has 220-ish bytes
+  // to satisfy our default limit of 1024*500 bytes we need less than 2600 of those messages
+  const event = {
+    userId: 1,
+    event: 'event'
+  }
+  for (let i = 0; i < 2600; i++) {
+    client.track(event)
+  }
+
+  t.true(client.flush.called)
+})
+
+test('flush - wont flush when no flush condition has meet', async t => {
+  const client = createClient({ flushAt: 1000, maxQueueSize: 1024 * 1000 })
+  client.flush = spy()
+
+  const event = {
+    userId: 1,
+    event: 'event'
+  }
+  for (let i = 0; i < 150; i++) {
+    client.track(event)
+  }
+
+  t.false(client.flush.called)
 })
 
 test('identify - enqueue a message', t => {
@@ -564,7 +609,7 @@ test('isErrorRetryable', t => {
   t.false(client._isErrorRetryable({ response: { status: 200 } }))
 })
 
-test('allows messages > 32kb', t => {
+test('dont allow messages > 32kb', t => {
   const client = createClient()
 
   const event = {
@@ -576,54 +621,91 @@ test('allows messages > 32kb', t => {
     event.properties[i] = 'a'
   }
 
-  t.notThrows(() => {
+  t.throws(() => {
     client.track(event, noop)
   })
 })
 
-const { RUN_E2E_TESTS } = process.env
+test('ensure that failed requests are retried', async t => {
+  const client = createClient({ retryCount: retryCount })
+  const callback = spy()
 
-if (RUN_E2E_TESTS) {
-  // An end to end to test that sends events to a Segment source, and verifies that a webhook
-  // connected to the source (configured manually via the app) is able to receive the data
-  // sent by this library.
-  // This is described in more detail at https://paper.dropbox.com/doc/analytics-node-E2E-Test-9oavh3DFcFBXuqCJBe1o9.
-  test('end to end test', async t => {
-    const id = uuid()
+  client.queue = [
+    {
+      message: 'axios-retry',
+      callback
+    }
+  ]
 
-    // Segment Write Key for https://segment.com/segment-libraries/sources/analytics_node_e2e_test/overview.
-    // This source is configured to send events to a Runscope bucket used by this test.
-    const analytics = new Analytics('wZqHyttfRO0KxEHyRTujWZQswgTDZx1N')
-    analytics.track({
-      userId: 'prateek',
-      event: 'E2E Test',
-      properties: { id }
-    })
-    analytics.flush()
+  await t.notThrows(client.flush())
+})
 
-    // Give some time for events to be delivered from the API to destinations.
-    await delay(5 * 1000) // 5 seconds.
+test('ensure that failed requests are not retried forever', async t => {
+  const client = createClient()
+  const callback = spy()
 
-    const axiosClient = axios.create({
-      baseURL: 'https://api.runscope.com',
-      timeout: 10 * 1000,
-      headers: { Authorization: `Bearer ${process.env.RUNSCOPE_TOKEN}` }
-    })
-    retries(axiosClient, { retries: 3 })
+  client.queue = [
+    {
+      message: 'axios-retry-forever',
+      callback
+    }
+  ]
 
-    // Runscope Bucket for https://www.runscope.com/stream/zfte7jmy76oz.
-    const messagesResponse = await axiosClient.get('buckets/zfte7jmy76oz/messages?count=10')
-    t.is(messagesResponse.status, 200)
+  await t.throws(client.flush())
+})
 
-    const requests = messagesResponse.data.data.map(async item => {
-      const response = await axiosClient.get(`buckets/zfte7jmy76oz/messages/${item.uuid}`)
-      t.is(response.status, 200)
-      return JSON.parse(response.data.data.request.body)
-    })
-
-    const messages = await Promise.all(requests)
-
-    const message = messages.find(message => message.properties.id === id)
-    t.truthy(message)
+test('ensure we can pass our own axios instance', async t => {
+  const axios = require('axios')
+  const myAxiosInstance = axios.create()
+  const stubAxiosPost = stub(myAxiosInstance, 'post').resolves()
+  const client = createClient({
+    axiosInstance: myAxiosInstance,
+    host: 'https://my-dummy-host.com',
+    path: '/test/path'
   })
-}
+
+  const callback = spy()
+  client.queue = [
+    {
+      message: 'something',
+      callback
+    }
+  ]
+
+  client.flush()
+
+  t.true(stubAxiosPost.called)
+  t.true(stubAxiosPost.alwaysCalledWith('https://my-dummy-host.com/test/path'))
+})
+
+test('ensure other axios clients are not impacted by axios-retry', async t => {
+  let client = createClient() // eslint-disable-line
+  const axios = require('axios')
+
+  let callCounter = 0
+
+  // Client will return a successful response for any requests beyond the first
+  let server = express()
+    .use(bodyParser.json())
+    .get('/v1/anotherEndpoint', (req, res) => {
+      if (callCounter > 0) {
+        res.status(200).send('Ok')
+      } else {
+        callCounter++
+        res.status(503).send('Service down')
+      }
+    })
+    .listen(separateAxiosClientPort)
+
+  await axios.get(`http://localhost:${separateAxiosClientPort}/v1/anotherEndpoint`)
+    .then(response => {
+      t.fail()
+    })
+    .catch(error => {
+      if (error) {
+        t.pass()
+      }
+    })
+
+  server.close()
+})

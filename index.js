@@ -6,7 +6,7 @@ const looselyValidate = require('@segment/loosely-validate-event')
 const axios = require('axios')
 const axiosRetry = require('axios-retry')
 const ms = require('ms')
-const uuid = require('uuid/v4')
+const { v4: uuid } = require('uuid')
 const md5 = require('md5')
 const version = require('./package.json').version
 const isString = require('lodash.isstring')
@@ -21,10 +21,14 @@ class Analytics {
    *
    * @param {String} writeKey
    * @param {Object} [options] (optional)
-   *   @property {Number} flushAt (default: 20)
-   *   @property {Number} flushInterval (default: 10000)
-   *   @property {String} host (default: 'https://api.segment.io')
-   *   @property {Boolean} enable (default: true)
+   *   @property {Number} [flushAt] (default: 20)
+   *   @property {Number} [flushInterval] (default: 10000)
+   *   @property {String} [host] (default: 'https://api.segment.io')
+   *   @property {Boolean} [enable] (default: true)
+   *   @property {Object} [axiosConfig] (optional)
+   *   @property {Object} [axiosInstance] (default: axios.create(options.axiosConfig))
+   *   @property {Object} [axiosRetryConfig] (optional)
+   *   @property {Number} [retryCount] (default: 3)
    */
 
   constructor (writeKey, options) {
@@ -35,8 +39,15 @@ class Analytics {
     this.queue = []
     this.writeKey = writeKey
     this.host = removeSlash(options.host || 'https://api.segment.io')
+    this.path = removeSlash(options.path || '/v1/batch')
+    let axiosInstance = options.axiosInstance
+    if (axiosInstance == null) {
+      axiosInstance = axios.create(options.axiosConfig)
+    }
+    this.axiosInstance = axiosInstance
     this.timeout = options.timeout || false
     this.flushAt = Math.max(options.flushAt, 1) || 20
+    this.maxQueueSize = options.maxQueueSize || 1024 * 500 // defaults to 500kb
     this.flushInterval = options.flushInterval || 10000
     this.flushed = false
     Object.defineProperty(this, 'enable', {
@@ -45,24 +56,19 @@ class Analytics {
       enumerable: true,
       value: typeof options.enable === 'boolean' ? options.enable : true
     })
-
-    axiosRetry(axios, {
-      retries: options.retryCount || 3,
-      retryCondition: this._isErrorRetryable,
-      retryDelay: axiosRetry.exponentialDelay
-    })
+    if (options.retryCount !== 0) {
+      axiosRetry(this.axiosInstance, {
+        retries: options.retryCount || 3,
+        retryDelay: axiosRetry.exponentialDelay,
+        ...options.axiosRetryConfig,
+        // retryCondition is below optional config to ensure it does not get overridden
+        retryCondition: this._isErrorRetryable
+      })
+    }
   }
 
   _validate (message, type) {
-    try {
-      looselyValidate(message, type)
-    } catch (e) {
-      if (e.message === 'Your message must be < 32kb.') {
-        console.log('Your message must be < 32kb. This is currently surfaced as a warning to allow clients to update. Versions released after August 1, 2018 will throw an error instead. Please update your code before then.', message)
-        return
-      }
-      throw e
-    }
+    looselyValidate(message, type)
   }
 
   /**
@@ -125,7 +131,7 @@ class Analytics {
    * Send a screen `message`.
    *
    * @param {Object} message
-   * @param {Function} fn (optional)
+   * @param {Function} [callback] (optional)
    * @return {Analytics}
    */
 
@@ -155,7 +161,7 @@ class Analytics {
    *
    * @param {String} type
    * @param {Object} message
-   * @param {Functino} [callback] (optional)
+   * @param {Function} [callback] (optional)
    * @api private
    */
 
@@ -205,17 +211,19 @@ class Analytics {
 
     if (!this.flushed) {
       this.flushed = true
-      this.flush()
+      this.flush(callback)
       return
     }
 
-    if (this.queue.length >= this.flushAt) {
-      this.flush()
+    const hasReachedFlushAt = this.queue.length >= this.flushAt
+    const hasReachedQueueSize = this.queue.reduce((acc, item) => acc + JSON.stringify(item).length, 0) >= this.maxQueueSize
+    if (hasReachedFlushAt || hasReachedQueueSize) {
+      this.flush(callback)
       return
     }
 
     if (this.flushInterval && !this.timer) {
-      this.timer = setTimeout(this.flush.bind(this), this.flushInterval)
+      this.timer = setTimeout(this.flush.bind(this, callback), this.flushInterval)
     }
   }
 
@@ -257,7 +265,7 @@ class Analytics {
       callback(err, data)
     }
 
-    // Don't set the user agent if we're not on a browser. The latest spec allows
+    // Don't set the user agent if we're on a browser. The latest spec allows
     // the User-Agent header (see https://fetch.spec.whatwg.org/#terminology-headers
     // and https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader),
     // but browsers such as Chrome and Safari have not caught up.
@@ -267,12 +275,9 @@ class Analytics {
     }
 
     const req = {
-      method: 'POST',
-      url: `${this.host}/v1/batch`,
       auth: {
         username: this.writeKey
       },
-      data,
       headers
     }
 
@@ -280,7 +285,7 @@ class Analytics {
       req.timeout = typeof this.timeout === 'string' ? ms(this.timeout) : this.timeout
     }
 
-    axios(req)
+    return this.axiosInstance.post(`${this.host}${this.path}`, data, req)
       .then(() => done())
       .catch(err => {
         if (err.response) {

@@ -1,37 +1,28 @@
 {
   "name": "analytics-node",
-  "version": "3.3.0",
+  "version": "5.0.0",
   "description": "The hassle-free way to integrate analytics into any Node.js application",
   "license": "MIT",
   "repository": "segmentio/analytics-node",
   "author": {
     "name": "Segment",
     "email": "tools+npm@segment.com",
-    "url": "segment.com"
-  },
-  "bin": {
-    "analytics": "cli.js"
+    "url": "https://segment.com"
   },
   "engines": {
     "node": ">=4"
   },
-  "size-limit": [
-    {
-      "limit": "25 KB",
-      "path": "index.js"
-    }
-  ],
   "scripts": {
-    "size": "size-limit",
-    "test": "standard && nyc ava",
-    "testci": "standard && nyc ava && npm run size",
-    "prepublish": "npm run check-deps",
-    "check-deps": "nsp check",
-    "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov"
+    "circle-lint": ".buildscript/circle.sh",
+    "dependencies": "yarn",
+    "test": "standard && nyc ava --timeout=20s&& .buildscript/e2e.sh",
+    "coverage": "nyc npm run test",
+    "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
+    "np": "np --no-publish",
+    "release": "yarn run np"
   },
   "files": [
-    "index.js",
-    "cli.js"
+    "index.js"
   ],
   "keywords": [
     "analytics",
@@ -44,27 +35,34 @@
   ],
   "dependencies": {
     "@segment/loosely-validate-event": "^2.0.0",
-    "axios": "^0.17.1",
+    "axios": "^0.21.1",
     "axios-retry": "^3.0.2",
-    "commander": "^2.9.0",
     "lodash.isstring": "^4.0.1",
     "md5": "^2.2.1",
     "ms": "^2.0.0",
     "remove-trailing-slash": "^0.1.0",
-    "uuid": "^3.2.1"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "ava": "^0.25.0",
-    "basic-auth": "^2.0.0",
+    "basic-auth": "^2.0.1",
     "body-parser": "^1.17.1",
-    "codecov": "^3.0.0",
-    "delay": "^2.0.0",
+    "codecov": "^3.8.1",
+    "commander": "^2.9.0",
+    "delay": "^4.2.0",
     "express": "^4.15.2",
-    "nsp": "^3.1.0",
-    "nyc": "^11.4.1",
-    "pify": "^3.0.0",
-    "sinon": "^5.0.0",
-    "standard": "^11.0.0",
-    "size-limit": "^0.14.0"
+    "husky": "^3.0.4",
+    "np": "^7.5.0",
+    "nyc": "^15.1.0",
+    "pify": "^4.0.1",
+    "sinon": "^7.3.2",
+    "snyk": "^1.171.1",
+    "standard": "^12.0.1"
+  },
+  "resolutions": {
+    "kind-of": "^6.0.3",
+    "lodash": "^4.17.19",
+    "set-value": "^2.0.1",
+    "yargs-parser": "^13.1.2"
   }
 }

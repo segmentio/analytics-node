@@ -289,10 +289,12 @@ class Analytics {
       .catch(err => {
         if (err.response) {
           const error = new Error(err.response.statusText)
-          return done(error)
+          done(error)
+          return Promise.reject(error)
         }
 
         done(err)
+        return Promise.reject(err)
       })
   }
 

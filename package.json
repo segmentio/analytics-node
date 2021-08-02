@@ -15,7 +15,7 @@
   "scripts": {
     "circle-lint": ".buildscript/circle.sh",
     "dependencies": "yarn",
-    "test": "standard && nyc ava --timeout=20s&& .buildscript/e2e.sh",
+    "test": "standard && nyc ava --timeout=20s && .buildscript/e2e.sh",
     "coverage": "nyc npm run test",
     "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
     "np": "np --no-publish",
@@ -44,7 +44,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "ava": "^0.25.0",
+    "ava": "^3.15.0",
     "basic-auth": "^2.0.1",
     "body-parser": "^1.17.1",
     "codecov": "^3.8.1",

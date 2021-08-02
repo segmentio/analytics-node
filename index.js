@@ -290,11 +290,11 @@ class Analytics {
         if (err.response) {
           const error = new Error(err.response.statusText)
           done(error)
-          return Promise.reject(error)
+          throw error
         }
 
         done(err)
-        return Promise.reject(err)
+        throw err
       })
   }
 

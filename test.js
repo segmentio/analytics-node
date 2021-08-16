@@ -267,7 +267,7 @@ test('enqueue - don\'t reset an existing timer', async t => {
   t.true(client.flush.calledOnce)
 })
 
-test('enqueue - cancel timer when flushing at max length', async t => {
+test('enqueue - prevent flushing through time interval when already flushed by flushAt', async t => {
   const client = createClient({ flushAt: 2, flushInterval: 10 })
   client.flushed = false
   spy(client, 'flush')

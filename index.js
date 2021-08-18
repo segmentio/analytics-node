@@ -219,6 +219,7 @@ class Analytics {
     const hasReachedQueueSize = this.queue.reduce((acc, item) => acc + JSON.stringify(item).length, 0) >= this.maxQueueSize
     if (hasReachedFlushAt || hasReachedQueueSize) {
       this.flush(callback)
+      return
     }
 
     if (this.flushInterval && !this.timer) {

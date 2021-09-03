@@ -238,7 +238,8 @@ class Analytics {
     callback = callback || noop
 
     if (!this.enable) {
-      return setImmediate(callback)
+      setImmediate(callback)
+      return Promise.resolve()
     }
 
     if (this.timer) {
@@ -247,7 +248,8 @@ class Analytics {
     }
 
     if (!this.queue.length) {
-      return setImmediate(callback)
+      setImmediate(callback)
+      return Promise.resolve()
     }
 
     const items = this.queue.splice(0, this.flushAt)
@@ -286,14 +288,19 @@ class Analytics {
     }
 
     return this.axiosInstance.post(`${this.host}${this.path}`, data, req)
-      .then(() => done())
+      .then(() => {
+        done()
+        return Promise.resolve(data)
+      })
       .catch(err => {
         if (err.response) {
           const error = new Error(err.response.statusText)
-          return done(error)
+          done(error)
+          throw error
         }
 
         done(err)
+        throw err
       })
   }
 

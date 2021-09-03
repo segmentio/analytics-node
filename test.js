@@ -3,7 +3,6 @@ import bodyParser from 'body-parser'
 import express from 'express'
 import delay from 'delay'
 import auth from 'basic-auth'
-import pify from 'pify'
 import test from 'ava'
 import Analytics from '.'
 import { version } from './package'
@@ -28,7 +27,6 @@ const createClient = options => {
   }, options)
 
   const client = new Analytics('key', options)
-  client.flush = pify(client.flush.bind(client))
   client.flushed = true
 
   return client

@@ -240,7 +240,7 @@ test.serial('enqueue - flush should only call callback once', async t => {
   const spyPost = Sinon.spy(client.axiosInstance, 'post')
 
   spy(client, 'flush')
-  const callback = spy(function MySale() {})
+  const callback = spy()
 
   client.enqueue('type', {}, callback)
 

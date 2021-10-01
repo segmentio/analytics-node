@@ -1,4 +1,4 @@
-import { spy, stub } from 'sinon'
+import Sinon, { spy } from 'sinon'
 import bodyParser from 'body-parser'
 import express from 'express'
 import delay from 'delay'
@@ -81,6 +81,10 @@ test.before.cb(t => {
       res.json({})
     })
     .listen(port, t.end)
+})
+
+test.after(() => {
+  Sinon.restore()
 })
 
 test('expose a constructor', t => {
@@ -230,13 +234,61 @@ test('enqueue - flush on first message', t => {
   t.true(client.flush.calledTwice)
 })
 
+test.serial('enqueue - flush should only call callback once', async t => {
+  const client = createClient({ flushAt: 1 })
+
+  const spyPost = Sinon.spy(client.axiosInstance, 'post')
+
+  spy(client, 'flush')
+  const callback = spy(function MySale() {})
+
+  client.enqueue('type', {}, callback)
+
+  await delay(100)
+
+  t.true(client.flush.calledOnce)
+  t.true(spyPost.calledOnce)
+  t.true(callback.calledOnce)
+})
+
+test.serial('enqueue - message callbacks should receive data as parameter when a success call happens', async t => {
+  const client = createClient({ flushAt: 1 })
+  const callback = spy()
+
+  spy(client, 'flush')
+  client.enqueue('type', {}, callback)
+
+  await delay(100)
+
+  t.true(client.flush.calledOnce)
+  t.true(callback.called)
+  t.is(callback.args[0].length, 2)
+})
+
+test.serial('enqueue - message callbacks should receive data as parameter when an error call happens', async t => {
+  const callback = spy()
+
+  const client = createClient({ flushAt: 2 })
+
+  const stubPost = Sinon.stub(client.axiosInstance, 'post')
+  stubPost.rejects({ response: { statusText: 'Unknown Internet Error' } })
+
+  client.enqueue('type', {}, callback)
+
+  await t.throws(client.flush(), 'Unknown Internet Error')
+
+  await delay(100)
+  t.true(callback.called)
+  t.not(callback.args[0][0], undefined)
+})
+
 test('enqueue - flush the queue if it hits the max length', t => {
   const client = createClient({
     flushAt: 1,
     flushInterval: null
   })
 
-  stub(client, 'flush')
+  Sinon.spy(client, 'flush')
 
   client.enqueue('type', {})
 
@@ -245,7 +297,7 @@ test('enqueue - flush the queue if it hits the max length', t => {
 
 test('enqueue - flush after a period of time', async t => {
   const client = createClient({ flushInterval: 10 })
-  stub(client, 'flush')
+  Sinon.spy(client, 'flush')
 
   client.enqueue('type', {})
 
@@ -257,7 +309,7 @@ test('enqueue - flush after a period of time', async t => {
 
 test('enqueue - don\'t reset an existing timer', async t => {
   const client = createClient({ flushInterval: 10 })
-  stub(client, 'flush')
+  Sinon.spy(client, 'flush')
 
   client.enqueue('type', {})
   await delay(5)
@@ -281,9 +333,9 @@ test('enqueue - extend context', t => {
   t.deepEqual(actualContext, expectedContext)
 })
 
-test('enqueue - skip when client is disabled', async t => {
+test.serial('enqueue - skip when client is disabled', async t => {
   const client = createClient({ enable: false })
-  stub(client, 'flush')
+  Sinon.spy(client, 'flush')
 
   const callback = spy()
   client.enqueue('type', {}, callback)
@@ -409,7 +461,7 @@ test('flush - wont flush when no flush condition has meet', async t => {
 
 test('identify - enqueue a message', t => {
   const client = createClient()
-  stub(client, 'enqueue')
+  Sinon.stub(client, 'enqueue')
 
   const message = { userId: 'id' }
   client.identify(message, noop)
@@ -420,7 +472,7 @@ test('identify - enqueue a message', t => {
 
 test('identify - require a userId or anonymousId', t => {
   const client = createClient()
-  stub(client, 'enqueue')
+  Sinon.stub(client, 'enqueue')
 
   t.throws(() => client.identify(), 'You must pass a message object.')
   t.throws(() => client.identify({}), 'You must pass either an "anonymousId" or a "userId".')
@@ -430,7 +482,7 @@ test('identify - require a userId or anonymousId', t => {
 
 test('group - enqueue a message', t => {
   const client = createClient()
-  stub(client, 'enqueue')
+  Sinon.stub(client, 'enqueue')
 
   const message = {
     groupId: 'id',
@@ -445,7 +497,7 @@ test('group - enqueue a message', t => {
 
 test('group - require a groupId and either userId or anonymousId', t => {
   const client = createClient()
-  stub(client, 'enqueue')
+  Sinon.stub(client, 'enqueue')
 
   t.throws(() => client.group(), 'You must pass a message object.')
   t.throws(() => client.group({}), 'You must pass either an "anonymousId" or a "userId".')
@@ -468,7 +520,7 @@ test('group - require a groupId and either userId or anonymousId', t => {
 
 test('track - enqueue a message', t => {
   const client = createClient()
-  stub(client, 'enqueue')
+  Sinon.stub(client, 'enqueue')
 
   const message = {
     userId: 1,
@@ -483,7 +535,7 @@ test('track - enqueue a message', t => {
 
 test('track - require event and either userId or anonymousId', t => {
   const client = createClient()
-  stub(client, 'enqueue')
+  Sinon.stub(client, 'enqueue')
 
   t.throws(() => client.track(), 'You must pass a message object.')
   t.throws(() => client.track({}), 'You must pass either an "anonymousId" or a "userId".')
@@ -506,7 +558,7 @@ test('track - require event and either userId or anonymousId', t => {
 
 test('page - enqueue a message', t => {
   const client = createClient()
-  stub(client, 'enqueue')
+  Sinon.stub(client, 'enqueue')
 
   const message = { userId: 'id' }
   client.page(message, noop)
@@ -517,7 +569,7 @@ test('page - enqueue a message', t => {
 
 test('page - require either userId or anonymousId', t => {
   const client = createClient()
-  stub(client, 'enqueue')
+  Sinon.stub(client, 'enqueue')
 
   t.throws(() => client.page(), 'You must pass a message object.')
   t.throws(() => client.page({}), 'You must pass either an "anonymousId" or a "userId".')
@@ -527,7 +579,7 @@ test('page - require either userId or anonymousId', t => {
 
 test('screen - enqueue a message', t => {
   const client = createClient()
-  stub(client, 'enqueue')
+  Sinon.stub(client, 'enqueue')
 
   const message = { userId: 'id' }
   client.screen(message, noop)
@@ -538,7 +590,7 @@ test('screen - enqueue a message', t => {
 
 test('screen - require either userId or anonymousId', t => {
   const client = createClient()
-  stub(client, 'enqueue')
+  Sinon.stub(client, 'enqueue')
 
   t.throws(() => client.screen(), 'You must pass a message object.')
   t.throws(() => client.screen({}), 'You must pass either an "anonymousId" or a "userId".')
@@ -548,7 +600,7 @@ test('screen - require either userId or anonymousId', t => {
 
 test('alias - enqueue a message', t => {
   const client = createClient()
-  stub(client, 'enqueue')
+  Sinon.stub(client, 'enqueue')
 
   const message = {
     userId: 'id',
@@ -563,7 +615,7 @@ test('alias - enqueue a message', t => {
 
 test('alias - require previousId and userId', t => {
   const client = createClient()
-  stub(client, 'enqueue')
+  Sinon.stub(client, 'enqueue')
 
   t.throws(() => client.alias(), 'You must pass a message object.')
   t.throws(() => client.alias({}), 'You must pass a "userId".')
@@ -641,7 +693,7 @@ test('ensure that failed requests are not retried forever', async t => {
 test('ensure we can pass our own axios instance', async t => {
   const axios = require('axios')
   const myAxiosInstance = axios.create()
-  const stubAxiosPost = stub(myAxiosInstance, 'post').resolves()
+  const stubAxiosPost = Sinon.stub(myAxiosInstance, 'post').resolves()
   const client = createClient({
     axiosInstance: myAxiosInstance,
     host: 'https://my-dummy-host.com',

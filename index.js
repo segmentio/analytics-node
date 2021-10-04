@@ -1,18 +1,18 @@
-'use strict'
+"use strict";
 
-const assert = require('assert')
-const removeSlash = require('remove-trailing-slash')
-const looselyValidate = require('@segment/loosely-validate-event')
-const axios = require('axios')
-const axiosRetry = require('axios-retry')
-const ms = require('ms')
-const { v4: uuid } = require('uuid')
-const md5 = require('md5')
-const version = require('./package.json').version
-const isString = require('lodash.isstring')
+const assert = require("assert");
+const removeSlash = require("remove-trailing-slash");
+const looselyValidate = require("@segment/loosely-validate-event");
+const axios = require("axios");
+const axiosRetry = require("axios-retry");
+const ms = require("ms");
+const { v4: uuid } = require("uuid");
+const md5 = require("md5");
+const version = require("./package.json").version;
+const isString = require("lodash.isstring");
 
-const setImmediate = global.setImmediate || process.nextTick.bind(process)
-const noop = () => {}
+const setImmediate = global.setImmediate || process.nextTick.bind(process);
+const noop = () => {};
 
 class Analytics {
   /**
@@ -31,44 +31,44 @@ class Analytics {
    *   @property {Number} [retryCount] (default: 3)
    */
 
-  constructor (writeKey, options) {
-    options = options || {}
+  constructor(writeKey, options) {
+    options = options || {};
 
-    assert(writeKey, 'You must pass your Segment project\'s write key.')
+    assert(writeKey, "You must pass your Segment project's write key.");
 
-    this.queue = []
-    this.writeKey = writeKey
-    this.host = removeSlash(options.host || 'https://api.segment.io')
-    this.path = removeSlash(options.path || '/v1/batch')
-    let axiosInstance = options.axiosInstance
+    this.queue = [];
+    this.writeKey = writeKey;
+    this.host = removeSlash(options.host || "https://api.segment.io");
+    this.path = removeSlash(options.path || "/v1/batch");
+    let axiosInstance = options.axiosInstance;
     if (axiosInstance == null) {
-      axiosInstance = axios.create(options.axiosConfig)
+      axiosInstance = axios.create(options.axiosConfig);
     }
-    this.axiosInstance = axiosInstance
-    this.timeout = options.timeout || false
-    this.flushAt = Math.max(options.flushAt, 1) || 20
-    this.maxQueueSize = options.maxQueueSize || 1024 * 500 // defaults to 500kb
-    this.flushInterval = options.flushInterval || 10000
-    this.flushed = false
-    Object.defineProperty(this, 'enable', {
+    this.axiosInstance = axiosInstance;
+    this.timeout = options.timeout || false;
+    this.flushAt = Math.max(options.flushAt, 1) || 20;
+    this.maxQueueSize = options.maxQueueSize || 1024 * 500; // defaults to 500kb
+    this.flushInterval = options.flushInterval || 10000;
+    this.flushed = false;
+    Object.defineProperty(this, "enable", {
       configurable: false,
       writable: false,
       enumerable: true,
-      value: typeof options.enable === 'boolean' ? options.enable : true
-    })
+      value: typeof options.enable === "boolean" ? options.enable : true,
+    });
     if (options.retryCount !== 0) {
       axiosRetry(this.axiosInstance, {
         retries: options.retryCount || 3,
         retryDelay: axiosRetry.exponentialDelay,
         ...options.axiosRetryConfig,
         // retryCondition is below optional config to ensure it does not get overridden
-        retryCondition: this._isErrorRetryable
-      })
+        retryCondition: this._isErrorRetryable,
+      });
     }
   }
 
-  _validate (message, type) {
-    looselyValidate(message, type)
+  _validate(message, type) {
+    looselyValidate(message, type);
   }
 
   /**
@@ -79,10 +79,10 @@ class Analytics {
    * @return {Analytics}
    */
 
-  identify (message, callback) {
-    this._validate(message, 'identify')
-    this.enqueue('identify', message, callback)
-    return this
+  identify(message, callback) {
+    this._validate(message, "identify");
+    this.enqueue("identify", message, callback);
+    return this;
   }
 
   /**
@@ -93,10 +93,10 @@ class Analytics {
    * @return {Analytics}
    */
 
-  group (message, callback) {
-    this._validate(message, 'group')
-    this.enqueue('group', message, callback)
-    return this
+  group(message, callback) {
+    this._validate(message, "group");
+    this.enqueue("group", message, callback);
+    return this;
   }
 
   /**
@@ -107,10 +107,10 @@ class Analytics {
    * @return {Analytics}
    */
 
-  track (message, callback) {
-    this._validate(message, 'track')
-    this.enqueue('track', message, callback)
-    return this
+  track(message, callback) {
+    this._validate(message, "track");
+    this.enqueue("track", message, callback);
+    return this;
   }
 
   /**
@@ -121,10 +121,10 @@ class Analytics {
    * @return {Analytics}
    */
 
-  page (message, callback) {
-    this._validate(message, 'page')
-    this.enqueue('page', message, callback)
-    return this
+  page(message, callback) {
+    this._validate(message, "page");
+    this.enqueue("page", message, callback);
+    return this;
   }
 
   /**
@@ -135,10 +135,10 @@ class Analytics {
    * @return {Analytics}
    */
 
-  screen (message, callback) {
-    this._validate(message, 'screen')
-    this.enqueue('screen', message, callback)
-    return this
+  screen(message, callback) {
+    this._validate(message, "screen");
+    this.enqueue("screen", message, callback);
+    return this;
   }
 
   /**
@@ -149,10 +149,10 @@ class Analytics {
    * @return {Analytics}
    */
 
-  alias (message, callback) {
-    this._validate(message, 'alias')
-    this.enqueue('alias', message, callback)
-    return this
+  alias(message, callback) {
+    this._validate(message, "alias");
+    this.enqueue("alias", message, callback);
+    return this;
   }
 
   /**
@@ -165,28 +165,34 @@ class Analytics {
    * @api private
    */
 
-  enqueue (type, message, callback) {
-    callback = callback || noop
+  enqueue(type, message, callback) {
+    callback = callback || noop;
 
     if (!this.enable) {
-      return setImmediate(callback)
+      return setImmediate(callback);
     }
 
-    message = Object.assign({}, message)
-    message.type = type
-    message.context = Object.assign({
-      library: {
-        name: 'analytics-node',
-        version
-      }
-    }, message.context)
+    message = Object.assign({}, message);
+    message.type = type;
+    message.context = Object.assign(
+      {
+        library: {
+          name: "analytics-node",
+          version,
+        },
+      },
+      message.context
+    );
 
-    message._metadata = Object.assign({
-      nodeVersion: process.versions.node
-    }, message._metadata)
+    message._metadata = Object.assign(
+      {
+        nodeVersion: process.versions.node,
+      },
+      message._metadata
+    );
 
     if (!message.timestamp) {
-      message.timestamp = new Date()
+      message.timestamp = new Date();
     }
 
     if (!message.messageId) {
@@ -194,36 +200,41 @@ class Analytics {
       // for use in the browser where the uuid package falls back to Math.random()
       // which is not a great source of randomness.
       // Borrowed from analytics.js (https://github.com/segment-integrations/analytics.js-integration-segmentio/blob/a20d2a2d222aeb3ab2a8c7e72280f1df2618440e/lib/index.js#L255-L256).
-      message.messageId = `node-${md5(JSON.stringify(message))}-${uuid()}`
+      message.messageId = `node-${md5(JSON.stringify(message))}-${uuid()}`;
     }
 
     // Historically this library has accepted strings and numbers as IDs.
     // However, our spec only allows strings. To avoid breaking compatibility,
     // we'll coerce these to strings if they aren't already.
     if (message.anonymousId && !isString(message.anonymousId)) {
-      message.anonymousId = JSON.stringify(message.anonymousId)
+      message.anonymousId = JSON.stringify(message.anonymousId);
     }
     if (message.userId && !isString(message.userId)) {
-      message.userId = JSON.stringify(message.userId)
+      message.userId = JSON.stringify(message.userId);
     }
 
-    this.queue.push({ message, callback })
+    this.queue.push({ message, callback });
 
     if (!this.flushed) {
-      this.flushed = true
-      this.flush(callback)
-      return
+      this.flushed = true;
+      this.flush(callback);
+      return;
     }
 
-    const hasReachedFlushAt = this.queue.length >= this.flushAt
-    const hasReachedQueueSize = this.queue.reduce((acc, item) => acc + JSON.stringify(item).length, 0) >= this.maxQueueSize
+    const hasReachedFlushAt = this.queue.length >= this.flushAt;
+    const hasReachedQueueSize =
+      this.queue.reduce((acc, item) => acc + JSON.stringify(item).length, 0) >=
+      this.maxQueueSize;
     if (hasReachedFlushAt || hasReachedQueueSize) {
-      this.flush(callback)
-      return
+      this.flush(callback);
+      return;
     }
 
     if (this.flushInterval && !this.timer) {
-      this.timer = setTimeout(this.flush.bind(this, callback), this.flushInterval)
+      this.timer = setTimeout(
+        this.flush.bind(this, callback),
+        this.flushInterval
+      );
     }
   }
 
@@ -234,92 +245,94 @@ class Analytics {
    * @return {Analytics}
    */
 
-  flush (callback) {
-    callback = callback || noop
+  flush(callback) {
+    callback = callback || noop;
 
     if (!this.enable) {
-      return setImmediate(callback)
+      return setImmediate(callback);
     }
 
     if (this.timer) {
-      clearTimeout(this.timer)
-      this.timer = null
+      clearTimeout(this.timer);
+      this.timer = null;
     }
 
     if (!this.queue.length) {
-      return setImmediate(callback)
+      return setImmediate(callback);
     }
 
-    const items = this.queue.splice(0, this.flushAt)
-    const callbacks = items.map(item => item.callback)
-    const messages = items.map(item => item.message)
+    const items = this.queue.splice(0, this.flushAt);
+    const callbacks = items.map((item) => item.callback);
+    const messages = items.map((item) => item.message);
 
     const data = {
       batch: messages,
       timestamp: new Date(),
-      sentAt: new Date()
-    }
+      sentAt: new Date(),
+    };
 
-    const done = err => {
-      callbacks.forEach(callback => callback(err))
-      callback(err, data)
-    }
+    const done = (err) => {
+      callbacks.forEach((callback) => callback(err));
+      callback(err, data);
+    };
 
     // Don't set the user agent if we're on a browser. The latest spec allows
     // the User-Agent header (see https://fetch.spec.whatwg.org/#terminology-headers
     // and https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader),
     // but browsers such as Chrome and Safari have not caught up.
-    const headers = {}
-    if (typeof window === 'undefined') {
-      headers['user-agent'] = `analytics-node/${version}`
+    const headers = {};
+    if (typeof window === "undefined") {
+      headers["user-agent"] = `analytics-node/${version}`;
     }
 
     const req = {
       auth: {
-        username: this.writeKey
+        username: this.writeKey,
       },
-      headers
-    }
+      headers,
+    };
 
     if (this.timeout) {
-      req.timeout = typeof this.timeout === 'string' ? ms(this.timeout) : this.timeout
+      req.timeout =
+        typeof this.timeout === "string" ? ms(this.timeout) : this.timeout;
     }
 
-    return this.axiosInstance.post(`${this.host}${this.path}`, data, req)
+    return this.axiosInstance
+      .post(`${this.host}${this.path}`, data, req)
       .then(() => done())
-      .catch(err => {
+      .catch((err) => {
         if (err.response) {
-          const error = new Error(err.response.statusText)
-          return done(error)
+          const error = new Error(err.response.statusText);
+          return done(error);
         }
 
-        done(err)
-      })
+        done(err);
+      });
   }
 
-  _isErrorRetryable (error) {
+  _isErrorRetryable(error) {
     // Retry Network Errors.
     if (axiosRetry.isNetworkError(error)) {
-      return true
+      return true;
     }
 
     if (!error.response) {
       // Cannot determine if the request can be retried
-      return false
+      return false;
     }
 
     // Retry Server Errors (5xx).
     if (error.response.status >= 500 && error.response.status <= 599) {
-      return true
+      return true;
     }
 
     // Retry if rate limited.
     if (error.response.status === 429) {
-      return true
+      return true;
     }
 
-    return false
+    return false;
   }
 }
 
-module.exports = Analytics
+module.exports = Analytics;

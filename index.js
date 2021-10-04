@@ -23,7 +23,7 @@ class Analytics {
    * @param {Object} [options] (optional)
    *   @property {Number} [flushAt] (default: 20)
    *   @property {Number} [flushInterval] (default: 10000)
-   *   @property {String} [host] (default: 'https://api.segment.io')
+   *   @property {String} [host] (default: 'https://api.dreamdata.io')
    *   @property {Boolean} [enable] (default: true)
    *   @property {Object} [axiosConfig] (optional)
    *   @property {Object} [axiosInstance] (default: axios.create(options.axiosConfig))
@@ -38,7 +38,7 @@ class Analytics {
 
     this.queue = [];
     this.writeKey = writeKey;
-    this.host = removeSlash(options.host || "https://api.segment.io");
+    this.host = removeSlash(options.host || "https://api.dreamdata.io");
     this.path = removeSlash(options.path || "/v1/batch");
     let axiosInstance = options.axiosInstance;
     if (axiosInstance == null) {

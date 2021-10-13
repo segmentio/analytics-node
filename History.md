@@ -1,3 +1,10 @@
+# v5.1.0 / 2021-9-13
+
+- Added options for axiosRetryConfig, disable axiosRetry if retryCount is 0 (#285)
+- Optimize timer scheduling (#172)
+- Update Axios to fix a ReDoS vulnerability (#295)
+- Automated dependency upgrades
+
 # v5.0.0 / 2021-7-16
 
 - BREAKING: Dropping support for Node 8.0!

@@ -1,3 +1,7 @@
+# v5.1.1 / 2021-10-20
+
+- `axios-retry` update
+
 # v5.1.0 / 2021-9-13
 
 - Added options for axiosRetryConfig, disable axiosRetry if retryCount is 0 (#285)

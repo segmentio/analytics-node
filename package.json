@@ -1,6 +1,6 @@
 {
   "name": "analytics-node",
-  "version": "5.1.0",
+  "version": "5.1.2",
   "description": "The hassle-free way to integrate analytics into any Node.js application",
   "license": "MIT",
   "repository": "segmentio/analytics-node",
@@ -36,7 +36,7 @@
   "dependencies": {
     "@segment/loosely-validate-event": "^2.0.0",
     "axios": "^0.21.4",
-    "axios-retry": "^3.0.2",
+    "axios-retry": "3.2.0",
     "lodash.isstring": "^4.0.1",
     "md5": "^2.2.1",
     "ms": "^2.0.0",

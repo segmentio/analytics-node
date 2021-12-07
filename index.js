@@ -211,19 +211,19 @@ class Analytics {
 
     if (!this.flushed) {
       this.flushed = true
-      this.flush(callback)
+      this.flush()
       return
     }
 
     const hasReachedFlushAt = this.queue.length >= this.flushAt
     const hasReachedQueueSize = this.queue.reduce((acc, item) => acc + JSON.stringify(item).length, 0) >= this.maxQueueSize
     if (hasReachedFlushAt || hasReachedQueueSize) {
-      this.flush(callback)
+      this.flush()
       return
     }
 
     if (this.flushInterval && !this.timer) {
-      this.timer = setTimeout(this.flush.bind(this, callback), this.flushInterval)
+      this.timer = setTimeout(this.flush.bind(this), this.flushInterval)
     }
   }
 
@@ -263,7 +263,7 @@ class Analytics {
     }
 
     const done = err => {
-      callbacks.forEach(callback => callback(err))
+      callbacks.forEach(callback => callback(err, data))
       callback(err, data)
     }
 

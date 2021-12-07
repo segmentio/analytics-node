@@ -1,4 +1,4 @@
-import { spy, stub } from 'sinon'
+import Sinon, { spy, stub } from 'sinon'
 import bodyParser from 'body-parser'
 import express from 'express'
 import delay from 'delay'
@@ -79,6 +79,10 @@ test.before.cb(t => {
       res.json({})
     })
     .listen(port, t.end)
+})
+
+test.after(() => {
+  Sinon.restore()
 })
 
 test('expose a constructor', t => {

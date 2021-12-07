@@ -79,9 +79,9 @@ class Analytics {
    * @return {Analytics}
    */
 
-  identify (message, callback) {
+  async identify (message, callback) {
     this._validate(message, 'identify')
-    this.enqueue('identify', message, callback)
+    await this.enqueue('identify', message, callback)
     return this
   }
 
@@ -93,9 +93,9 @@ class Analytics {
    * @return {Analytics}
    */
 
-  group (message, callback) {
+  async group (message, callback) {
     this._validate(message, 'group')
-    this.enqueue('group', message, callback)
+    await this.enqueue('group', message, callback)
     return this
   }
 
@@ -107,9 +107,9 @@ class Analytics {
    * @return {Analytics}
    */
 
-  track (message, callback) {
+  async track (message, callback) {
     this._validate(message, 'track')
-    this.enqueue('track', message, callback)
+    await this.enqueue('track', message, callback)
     return this
   }
 
@@ -121,9 +121,9 @@ class Analytics {
    * @return {Analytics}
    */
 
-  page (message, callback) {
+  async page (message, callback) {
     this._validate(message, 'page')
-    this.enqueue('page', message, callback)
+    await this.enqueue('page', message, callback)
     return this
   }
 
@@ -135,9 +135,9 @@ class Analytics {
    * @return {Analytics}
    */
 
-  screen (message, callback) {
+  async screen (message, callback) {
     this._validate(message, 'screen')
-    this.enqueue('screen', message, callback)
+    await this.enqueue('screen', message, callback)
     return this
   }
 
@@ -149,9 +149,9 @@ class Analytics {
    * @return {Analytics}
    */
 
-  alias (message, callback) {
+  async alias (message, callback) {
     this._validate(message, 'alias')
-    this.enqueue('alias', message, callback)
+    await this.enqueue('alias', message, callback)
     return this
   }
 
@@ -211,19 +211,19 @@ class Analytics {
 
     if (!this.flushed) {
       this.flushed = true
-      this.flush(callback)
+      await this.flush()
       return
     }
 
     const hasReachedFlushAt = this.queue.length >= this.flushAt
     const hasReachedQueueSize = this.queue.reduce((acc, item) => acc + JSON.stringify(item).length, 0) >= this.maxQueueSize
     if (hasReachedFlushAt || hasReachedQueueSize) {
-      this.flush(callback)
+      await this.flush()
       return
     }
 
     if (this.flushInterval && !this.timer) {
-      this.timer = setTimeout(this.flush.bind(this, callback), this.flushInterval)
+      this.timer = setTimeout(await this.flush.bind(this), this.flushInterval)
     }
   }
 

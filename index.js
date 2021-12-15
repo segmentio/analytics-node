@@ -263,7 +263,7 @@ class Analytics {
     }
 
     const done = err => {
-      callbacks.forEach(callback => callback(err))
+      callbacks.forEach(callback => callback(err, data))
       callback(err, data)
     }
 

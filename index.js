@@ -165,7 +165,7 @@ class Analytics {
    * @api private
    */
 
-  enqueue (type, message, callback) {
+  async enqueue (type, message, callback) {
     callback = callback || noop
 
     if (!this.enable) {

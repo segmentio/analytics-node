@@ -249,7 +249,7 @@ test('enqueue - flush after a period of time', async t => {
   const client = createClient({ flushInterval: 10 })
   stub(client, 'flush')
 
-  client.enqueue('type', {})
+  await client.enqueue('type', {})
 
   t.false(client.flush.called)
   await delay(20)
@@ -436,12 +436,17 @@ test('identify - enqueue a message', t => {
   t.deepEqual(client.enqueue.firstCall.args, ['identify', message, noop])
 })
 
-test('identify - require a userId or anonymousId', t => {
+test('identify - require a userId or anonymousId', async t => {
   const client = createClient()
   stub(client, 'enqueue')
 
-  t.throws(() => client.identify(), 'You must pass a message object.')
-  t.throws(() => client.identify({}), 'You must pass either an "anonymousId" or a "userId".')
+  await client.identify().catch((err) => {
+    t.deepEqual(err.message, 'You must pass a message object.')
+  })
+  await client.identify({}).catch((err) => {
+    t.deepEqual(err.message, 'You must pass either an "anonymousId" or a "userId".')
+  })
+
   t.notThrows(() => client.identify({ userId: 'id' }))
   t.notThrows(() => client.identify({ anonymousId: 'id' }))
 })
@@ -461,14 +466,23 @@ test('group - enqueue a message', t => {
   t.deepEqual(client.enqueue.firstCall.args, ['group', message, noop])
 })
 
-test('group - require a groupId and either userId or anonymousId', t => {
+test('group - require a groupId and either userId or anonymousId', async t => {
   const client = createClient()
   stub(client, 'enqueue')
 
-  t.throws(() => client.group(), 'You must pass a message object.')
-  t.throws(() => client.group({}), 'You must pass either an "anonymousId" or a "userId".')
-  t.throws(() => client.group({ userId: 'id' }), 'You must pass a "groupId".')
-  t.throws(() => client.group({ anonymousId: 'id' }), 'You must pass a "groupId".')
+  await client.group().catch((err) => {
+    t.deepEqual(err.message, 'You must pass a message object.')
+  })
+  await client.group({}).catch((err) => {
+    t.deepEqual(err.message, 'You must pass either an "anonymousId" or a "userId".')
+  })
+  await client.group({ userId: 'id' }).catch((err) => {
+    t.deepEqual(err.message, 'You must pass a "groupId".')
+  })
+  await client.group({ anonymousId: 'id' }).catch((err) => {
+    t.deepEqual(err.message, 'You must pass a "groupId".')
+  })
+
   t.notThrows(() => {
     client.group({
       groupId: 'id',
@@ -499,14 +513,23 @@ test('track - enqueue a message', t => {
   t.deepEqual(client.enqueue.firstCall.args, ['track', message, noop])
 })
 
-test('track - require event and either userId or anonymousId', t => {
+test('track - require event and either userId or anonymousId', async t => {
   const client = createClient()
   stub(client, 'enqueue')
 
-  t.throws(() => client.track(), 'You must pass a message object.')
-  t.throws(() => client.track({}), 'You must pass either an "anonymousId" or a "userId".')
-  t.throws(() => client.track({ userId: 'id' }), 'You must pass an "event".')
-  t.throws(() => client.track({ anonymousId: 'id' }), 'You must pass an "event".')
+  await client.track().catch((err) => {
+    t.deepEqual(err.message, 'You must pass a message object.')
+  })
+  await client.track({}).catch((err) => {
+    t.deepEqual(err.message, 'You must pass either an "anonymousId" or a "userId".')
+  })
+  await client.track({ userId: 'id' }).catch((err) => {
+    t.deepEqual(err.message, 'You must pass an "event".')
+  })
+  await client.track({ anonymousId: 'id' }).catch((err) => {
+    t.deepEqual(err.message, 'You must pass an "event".')
+  })
+
   t.notThrows(() => {
     client.track({
       userId: 'id',
@@ -533,12 +556,17 @@ test('page - enqueue a message', t => {
   t.deepEqual(client.enqueue.firstCall.args, ['page', message, noop])
 })
 
-test('page - require either userId or anonymousId', t => {
+test('page - require either userId or anonymousId', async t => {
   const client = createClient()
   stub(client, 'enqueue')
 
-  t.throws(() => client.page(), 'You must pass a message object.')
-  t.throws(() => client.page({}), 'You must pass either an "anonymousId" or a "userId".')
+  await client.page().catch((err) => {
+    t.deepEqual(err.message, 'You must pass a message object.')
+  })
+  await client.page({}).catch((err) => {
+    t.deepEqual(err.message, 'You must pass either an "anonymousId" or a "userId".')
+  })
+
   t.notThrows(() => client.page({ userId: 'id' }))
   t.notThrows(() => client.page({ anonymousId: 'id' }))
 })
@@ -554,12 +582,17 @@ test('screen - enqueue a message', t => {
   t.deepEqual(client.enqueue.firstCall.args, ['screen', message, noop])
 })
 
-test('screen - require either userId or anonymousId', t => {
+test('screen - require either userId or anonymousId', async t => {
   const client = createClient()
   stub(client, 'enqueue')
 
-  t.throws(() => client.screen(), 'You must pass a message object.')
-  t.throws(() => client.screen({}), 'You must pass either an "anonymousId" or a "userId".')
+  await client.screen().catch((err) => {
+    t.deepEqual(err.message, 'You must pass a message object.')
+  })
+  await client.screen({}).catch((err) => {
+    t.deepEqual(err.message, 'You must pass either an "anonymousId" or a "userId".')
+  })
+
   t.notThrows(() => client.screen({ userId: 'id' }))
   t.notThrows(() => client.screen({ anonymousId: 'id' }))
 })
@@ -579,13 +612,20 @@ test('alias - enqueue a message', t => {
   t.deepEqual(client.enqueue.firstCall.args, ['alias', message, noop])
 })
 
-test('alias - require previousId and userId', t => {
+test('alias - require previousId and userId', async t => {
   const client = createClient()
   stub(client, 'enqueue')
 
-  t.throws(() => client.alias(), 'You must pass a message object.')
-  t.throws(() => client.alias({}), 'You must pass a "userId".')
-  t.throws(() => client.alias({ userId: 'id' }), 'You must pass a "previousId".')
+  await client.alias().catch((err) => {
+    t.deepEqual(err.message, 'You must pass a message object.')
+  })
+  await client.alias({}).catch((err) => {
+    t.deepEqual(err.message, 'You must pass a "userId".')
+  })
+  await client.alias({ userId: 'id' }).catch((err) => {
+    t.deepEqual(err.message, 'You must pass a "previousId".')
+  })
+
   t.notThrows(() => {
     client.alias({
       userId: 'id',
@@ -611,7 +651,7 @@ test('isErrorRetryable', t => {
   t.false(client._isErrorRetryable({ response: { status: 200 } }))
 })
 
-test('dont allow messages > 32kb', t => {
+test('dont allow messages > 32kb', async t => {
   const client = createClient()
 
   const event = {
@@ -623,8 +663,8 @@ test('dont allow messages > 32kb', t => {
     event.properties[i] = 'a'
   }
 
-  t.throws(() => {
-    client.track(event, noop)
+  await client.track(event, noop).catch((err) => {
+    t.deepEqual(err.message, 'Your message must be < 32kb.')
   })
 })
 

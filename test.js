@@ -274,11 +274,11 @@ test('enqueue - prevent flushing through time interval when already flushed by f
   client.flushed = false
   spy(client, 'flush')
 
-  client.enqueue('type', {})
+  await client.enqueue('type', {})
   t.true(client.flush.calledOnce)
 
-  client.enqueue('type', {})
-  client.enqueue('type', {})
+  await client.enqueue('type', {})
+  await client.enqueue('type', {})
   t.true(client.flush.calledTwice)
 
   await delay(10)

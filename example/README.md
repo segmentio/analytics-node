@@ -5,7 +5,7 @@
  # Segment Integration
 
 Refer the following documentation on integrating Segment analytics into your nodebackend CRUD APIs with Slack Integraton(Posting events to Slack Channel)
- - [https://segment.com/docs/connections/sources/catalog/libraries/server/node/](http://aqicn.org)
+ - [Segement Analytics with NodeJs](https://segment.com/docs/connections/sources/catalog/libraries/server/node/)
  - [Segment Connection Destinations](https://segment.com/docs/connections/destinations/)
  - [Slack Webhooks integration](https://api.slack.com/messaging/webhooks)
 

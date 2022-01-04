@@ -12,7 +12,12 @@ Refer the following documentation on integrating Segment analytics into your nod
 
 ## Available Scripts
 
-In the project directory, you can run:
+In the project directory, you need to create a .env file at the root level with the YOUR_WRITE_API_KEY for Segment integration and PORT on which you will running the API locally. 
+
+```
+YOUR_WRITE_API_KEY=xxxxxxxxxxxxxxxxx
+PORT=3000
+```
 
 ### `npm install`
 

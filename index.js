@@ -263,8 +263,10 @@ class Analytics {
     }
 
     const done = err => {
-      callbacks.forEach(callback => callback(err, data))
-      callback(err, data)
+      setImmediate(() => {
+        callbacks.forEach(callback => callback(err, data))
+        callback(err, data)
+      })
     }
 
     // Don't set the user agent if we're on a browser. The latest spec allows

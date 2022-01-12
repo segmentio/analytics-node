@@ -344,9 +344,11 @@ test('flush - send messages', async t => {
   t.deepEqual(data.batch, ['a', 'b'])
   t.true(data.timestamp instanceof Date)
   t.true(data.sentAt instanceof Date)
-  t.true(callbackA.calledOnce)
-  t.true(callbackB.calledOnce)
-  t.false(callbackC.called)
+  setImmediate(() => {
+    t.true(callbackA.calledOnce)
+    t.true(callbackB.calledOnce)
+    t.false(callbackC.called)
+  })
 })
 
 test('flush - respond with an error', async t => {

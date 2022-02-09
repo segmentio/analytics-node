@@ -1,6 +1,6 @@
 # analytics-node [![CircleCI](https://circleci.com/gh/segmentio/analytics-node.svg?style=svg&circle-token=68654e8cd0fcd16b1f3ae9943a1d8e20e36ae6c5)](https://circleci.com/gh/segmentio/analytics-node)
 
-A Node.js client for [Segment](https://segment.com) — The hassle-free way to integrate analytics into any application.
+A Node.js client for [Segment](https://segment.com) — The hassle-free way to integrate analytics into any application. 
 
 <div align="center">
   <img src="https://user-images.githubusercontent.com/16131737/53616724-d409f180-3b98-11e9-9d39-553c958ecf99.png"/>

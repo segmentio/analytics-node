@@ -48,7 +48,7 @@ const traits = program.traits
 const groupId = program.groupId
 const previousId = program.previousId
 
-const run = async(method, args) => {
+const run = async (method, args) => {
   const analytics = new Analytics(writeKey, { host, flushAt: 1 })
   await analytics[method](args, err => {
     if (err) {

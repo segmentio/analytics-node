@@ -48,9 +48,9 @@ const traits = program.traits
 const groupId = program.groupId
 const previousId = program.previousId
 
-const run = (method, args) => {
+const run = async(method, args) => {
   const analytics = new Analytics(writeKey, { host, flushAt: 1 })
-  analytics[method](args, err => {
+  await analytics[method](args, err => {
     if (err) {
       console.error(err.stack)
       process.exit(1)

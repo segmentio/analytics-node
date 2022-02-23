@@ -299,6 +299,10 @@ class Analytics {
       .catch(err => {
         if (err.response) {
           const error = new Error(err.response.statusText)
+          done(error)
+          if (!this.noUnhandledRejection) {
+            throw error
+          }
         }
 
         done(err)

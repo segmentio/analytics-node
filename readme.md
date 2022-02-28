@@ -30,7 +30,7 @@ Analytics helps you measure your users, product, and business. It unlocks insigh
 
     For example, you can capture data on any app:
     ```js
-    analytics.track('Order Completed', { price: 99.84 })
+    analytics.track({ userId: '019mr8mf4r', event: 'Order Completed', properties: { price: 99.84 }});
     ```
     Then, query the resulting data in SQL:
     ```sql

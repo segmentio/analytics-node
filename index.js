@@ -49,7 +49,7 @@ class Analytics {
     this.flushAt = Math.max(options.flushAt, 1) || 20
     this.maxQueueSize = options.maxQueueSize || 1024 * 450 // 500kb is the API limit, if we approach the limit i.e., 450kb, we'll flush
     this.flushInterval = options.flushInterval || 10000
-    this.flushed = false
+    this.flushed = true // initial state is an empty queue (flushed)
     Object.defineProperty(this, 'enable', {
       configurable: false,
       writable: false,
@@ -252,7 +252,9 @@ class Analytics {
       return Promise.resolve()
     }
 
-    const items = this.queue.splice(0, this.flushAt)
+    //const items = this.queue.splice(0, this.flushAt)
+    // flush entire queue
+    const items = this.queue.splice(0)
     const callbacks = items.map(item => item.callback)
     const messages = items.map(item => item.message)
 

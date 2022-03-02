@@ -252,7 +252,7 @@ class Analytics {
       return Promise.resolve()
     }
 
-    //const items = this.queue.splice(0, this.flushAt)
+    // const items = this.queue.splice(0, this.flushAt)
     // flush entire queue
     const items = this.queue.splice(0)
     const callbacks = items.map(item => item.callback)

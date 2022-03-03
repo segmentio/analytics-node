@@ -99,6 +99,12 @@ test('create a queue', t => {
   t.deepEqual(client.queue, [])
 })
 
+test('queue is marked as fludhed by default', t => {
+  const client = createClient()
+
+  t.deepEqual(true, client.flushed)
+})
+
 test('default options', t => {
   const client = new Analytics('key')
 
@@ -317,7 +323,7 @@ test('flush - don\'t fail when queue is empty', async t => {
   await t.notThrows(client.flush())
 })
 
-test('flush - send messages', async t => {
+test('flush - send all queued messages', async t => {
   const client = createClient({ flushAt: 2 })
 
   const callbackA = spy()
@@ -341,7 +347,7 @@ test('flush - send messages', async t => {
 
   const data = await client.flush()
   t.deepEqual(Object.keys(data), ['batch', 'timestamp', 'sentAt'])
-  t.deepEqual(data.batch, ['a', 'b'])
+  t.deepEqual(data.batch, ['a', 'b', 'c'])
   t.true(data.timestamp instanceof Date)
   t.true(data.sentAt instanceof Date)
   setImmediate(() => {

@@ -29,7 +29,7 @@ class Analytics {
    *   @property {Object} [axiosInstance] (default: axios.create(options.axiosConfig))
    *   @property {Object} [axiosRetryConfig] (optional)
    *   @property {Number} [retryCount] (default: 3)
-   *   @property {Boolean} [noUnhandledRejection] (default: false)
+   *   @property {Boolean} [noUnhandledRejection] (default: true)
    */
 
   constructor (writeKey, options) {
@@ -51,7 +51,7 @@ class Analytics {
     this.maxQueueSize = options.maxQueueSize || 1024 * 450 // 500kb is the API limit, if we approach the limit i.e., 450kb, we'll flush
     this.flushInterval = options.flushInterval || 10000
     this.flushed = false
-    this.noUnhandledRejection = options.noUnhandledRejection || false
+    this.noUnhandledRejection = options.noUnhandledRejection || true
     Object.defineProperty(this, 'enable', {
       configurable: false,
       writable: false,

@@ -10,6 +10,7 @@ const { v4: uuid } = require('uuid')
 const md5 = require('md5')
 const version = require('./package.json').version
 const isString = require('lodash.isstring')
+const asyncLib = require('async')
 
 const setImmediate = global.setImmediate || process.nextTick.bind(process)
 const noop = () => {}
@@ -36,7 +37,9 @@ class Analytics {
 
     assert(writeKey, 'You must pass your Segment project\'s write key.')
 
+    // TODO: rename to buffer
     this.queue = []
+
     this.writeKey = writeKey
     this.host = removeSlash(options.host || 'https://api.segment.io')
     this.path = removeSlash(options.path || '/v1/batch')
@@ -65,6 +68,66 @@ class Analytics {
         retryCondition: this._isErrorRetryable
       })
     }
+
+    const self = this
+    /**
+     * Worker: tries to send messages to Segment.io API
+     */
+    const asyncWorker = (items, callback) => {
+      console.log(items)
+      const callbacks = items.map(item => item.callback)
+      const messages = items.map(item => item.message)
+
+      const data = {
+        batch: messages,
+        timestamp: new Date(),
+        sentAt: new Date()
+      }
+
+      const done = err => {
+        setImmediate(() => {
+          callbacks.forEach(callback => callback(err, data))
+          callback(err, data)
+        })
+      }
+
+      // Don't set the user agent if we're on a browser. The latest spec allows
+      // the User-Agent header (see https://fetch.spec.whatwg.org/#terminology-headers
+      // and https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader),
+      // but browsers such as Chrome and Safari have not caught up.
+      const headers = {}
+      if (typeof window === 'undefined') {
+        headers['user-agent'] = `analytics-node/${version}`
+      }
+
+      const req = {
+        auth: {
+          username: self.writeKey
+        },
+        headers
+      }
+
+      if (self.timeout) {
+        req.timeout = typeof self.timeout === 'string' ? ms(self.timeout) : self.timeout
+      }
+      return self.axiosInstance.post(`${self.host}${self.path}`, data, req)
+        .then(() => {
+          done()
+          return Promise.resolve(data)
+        })
+        .catch(err => {
+          if (err.response) {
+            const error = new Error(err.response.statusText)
+            done(error)
+            throw error
+          }
+
+          done(err)
+          throw err
+        })
+    }
+    const concurrency = 2
+    this.asyncQueue = asyncLib.queue(asyncWorker, concurrency)
   }
 
   _validate (message, type) {
@@ -247,63 +310,11 @@ class Analytics {
       this.timer = null
     }
 
-    if (!this.queue.length) {
-      setImmediate(callback)
-      return Promise.resolve()
-    }
+    // push all pending messages
+    this.asyncQueue.push(this.queue.splice(0))
 
-    const items = this.queue.splice(0, this.flushAt)
-    const callbacks = items.map(item => item.callback)
-    const messages = items.map(item => item.message)
-
-    const data = {
-      batch: messages,
-      timestamp: new Date(),
-      sentAt: new Date()
-    }
-
-    const done = err => {
-      setImmediate(() => {
-        callbacks.forEach(callback => callback(err, data))
-        callback(err, data)
-      })
-    }
-
-    // Don't set the user agent if we're on a browser. The latest spec allows
-    // the User-Agent header (see https://fetch.spec.whatwg.org/#terminology-headers
-    // and https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader),
-    // but browsers such as Chrome and Safari have not caught up.
-    const headers = {}
-    if (typeof window === 'undefined') {
-      headers['user-agent'] = `analytics-node/${version}`
-    }
-
-    const req = {
-      auth: {
-        username: this.writeKey
-      },
-      headers
-    }
-
-    if (this.timeout) {
-      req.timeout = typeof this.timeout === 'string' ? ms(this.timeout) : this.timeout
-    }
-
-    return this.axiosInstance.post(`${this.host}${this.path}`, data, req)
-      .then(() => {
-        done()
-        return Promise.resolve(data)
-      })
-      .catch(err => {
-        if (err.response) {
-          const error = new Error(err.response.statusText)
-          done(error)
-          throw error
-        }
-
-        done(err)
-        throw err
-      })
+    // return the promise given by 'drain'
+    return this.asyncQueue.drain(callback)
   }
 
   _isErrorRetryable (error) {

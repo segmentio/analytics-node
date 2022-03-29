@@ -37,9 +37,7 @@ class Analytics {
 
     assert(writeKey, 'You must pass your Segment project\'s write key.')
 
-    // TODO: rename to buffer
     this.queue = []
-
     this.writeKey = writeKey
     this.host = removeSlash(options.host || 'https://api.segment.io')
     this.path = removeSlash(options.path || '/v1/batch')
@@ -69,27 +67,8 @@ class Analytics {
       })
     }
 
-    const self = this
-    /**
-     * Worker: tries to send messages to Segment.io API
-     */
-    const asyncWorker = (items, callback) => {
-      console.log(items)
-      const callbacks = items.map(item => item.callback)
-      const messages = items.map(item => item.message)
-
-      const data = {
-        batch: messages,
-        timestamp: new Date(),
-        sentAt: new Date()
-      }
-
-      const done = err => {
-        setImmediate(() => {
-          callbacks.forEach(callback => callback(err, data))
-          callback(err, data)
-        })
-      }
+    const asyncWorker = this.asyncWorker = async (data, callback) => {
+      callback = callback || noop
 
       // Don't set the user agent if we're on a browser. The latest spec allows
       // the User-Agent header (see https://fetch.spec.whatwg.org/#terminology-headers
@@ -102,30 +81,18 @@ class Analytics {
 
       const req = {
         auth: {
-          username: self.writeKey
+          username: this.writeKey
         },
         headers
       }
 
-      if (self.timeout) {
-        req.timeout = typeof self.timeout === 'string' ? ms(self.timeout) : self.timeout
+      if (this.timeout) {
+        req.timeout = typeof this.timeout === 'string' ? ms(this.timeout) : this.timeout
       }
-      return self.axiosInstance.post(`${self.host}${self.path}`, data, req)
-        .then(() => {
-          done()
-          return Promise.resolve(data)
-        })
-        .catch(err => {
-          if (err.response) {
-            const error = new Error(err.response.statusText)
-            done(error)
-            throw error
-          }
-
-          done(err)
-          throw err
-        })
+      await this.axiosInstance.post(`${this.host}${this.path}`, data, req)
+      callback()
     }
+
     const concurrency = 2
     this.asyncQueue = asyncLib.queue(asyncWorker, concurrency)
   }
@@ -297,7 +264,7 @@ class Analytics {
    * @return {Analytics}
    */
 
-  flush (callback) {
+  async flush (callback) {
     callback = callback || noop
 
     if (!this.enable) {
@@ -310,11 +277,42 @@ class Analytics {
       this.timer = null
     }
 
-    // push all pending messages
-    this.asyncQueue.push(this.queue.splice(0))
+    if (!this.queue.length) {
+      setImmediate(callback)
+      return Promise.resolve()
+    }
 
-    // return the promise given by 'drain'
-    return this.asyncQueue.drain(callback)
+    const items = this.queue.splice(0, this.flushAt)
+    const callbacks = items.map(item => item.callback)
+    const messages = items.map(item => item.message)
+
+    const data = {
+      batch: messages,
+      timestamp: new Date(),
+      sentAt: new Date()
+    }
+
+    const done = err => {
+      setImmediate(() => {
+        callbacks.forEach(callback => callback(err, data))
+        callback(err, data)
+      })
+    }
+
+    try {
+      await this.asyncQueue.pushAsync(data, done)
+      await this.asyncQueue.drain()
+      return data
+    } catch (err) {
+      if (err && err.response) {
+        const error = new Error(err.response.statusText)
+        done(error)
+        throw error
+      }
+
+      done(err)
+      throw err
+    }
   }
 
   _isErrorRetryable (error) {

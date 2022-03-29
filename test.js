@@ -676,7 +676,7 @@ test('ensure we can pass our own axios instance', async t => {
     }
   ]
 
-  client.flush()
+  await client.flush()
 
   t.true(stubAxiosPost.called)
   t.true(stubAxiosPost.alwaysCalledWith('https://my-dummy-host.com/test/path'))

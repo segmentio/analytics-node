@@ -89,7 +89,8 @@ class Analytics {
       if (this.timeout) {
         req.timeout = typeof this.timeout === 'string' ? ms(this.timeout) : this.timeout
       }
-      await this.axiosInstance.post(`${this.host}${this.path}`, data, req)
+
+      await axiosInstance.post(`${this.host}${this.path}`, data, req)
       callback()
     }
 
@@ -301,7 +302,9 @@ class Analytics {
 
     try {
       await this.asyncQueue.pushAsync(data, done)
-      await this.asyncQueue.drain()
+      if (this.asyncQueue.length()) {
+        await this.asyncQueue.drain()
+      }
       return data
     } catch (err) {
       if (err && err.response) {
@@ -337,6 +340,10 @@ class Analytics {
     }
 
     return false
+  }
+
+  close () {
+    this.asyncQueue.kill()
   }
 }
 

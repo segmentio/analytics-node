@@ -3,11 +3,11 @@
   "version": "6.0.0",
   "description": "The hassle-free way to integrate analytics into any Node.js application",
   "license": "MIT",
-  "repository": "segmentio/analytics-node",
+  "repository": "dreamdata-io/analytics-node",
   "author": {
-    "name": "Segment",
-    "email": "tools+npm@segment.com",
-    "url": "https://segment.com"
+    "name": "Dreamdata",
+    "email": "developer@dreamdata.io",
+    "url": "https://www.dreamdata.io"
   },
   "engines": {
     "node": ">=4"
@@ -27,9 +27,9 @@
   "keywords": [
     "analytics",
     "stats",
-    "segment.io",
-    "segmentio",
-    "segment",
+    "dreamdata.io",
+    "dreamdataio",
+    "dreamdata",
     "client",
     "driver"
   ],

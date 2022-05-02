@@ -34,7 +34,7 @@ class Analytics {
   constructor (writeKey, options) {
     options = options || {}
 
-    assert(writeKey, 'You must pass your Segment project\'s write key.')
+    assert(writeKey, 'You must pass your Dreamdata project\'s write key.')
 
     this.queue = []
     this.writeKey = writeKey
@@ -176,7 +176,7 @@ class Analytics {
     message.type = type
     message.context = Object.assign({
       library: {
-        name: 'analytics-node',
+        name: '@dreamdata/analytics',
         version
       }
     }, message.context)
@@ -275,7 +275,7 @@ class Analytics {
     // but browsers such as Chrome and Safari have not caught up.
     const headers = {}
     if (typeof window === 'undefined') {
-      headers['user-agent'] = `analytics-node/${version}`
+      headers['user-agent'] = `@dreamdata/analytics/${version}`
     }
 
     const req = {

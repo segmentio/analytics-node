@@ -64,6 +64,9 @@ client.track({
 });
 ```
 
+## Notes
+
+Defining ```sentAt``` in the payload will cause the specified ```timestamp``` to be ignored
 
 ## Documentation
 

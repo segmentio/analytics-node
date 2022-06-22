@@ -318,26 +318,6 @@ class Analytics {
       done(err)
       throw err
     }
-
-    return this.axiosInstance.post(`${this.host}${this.path}`, data, req)
-      .then(() => {
-        done()
-        return Promise.resolve(data)
-      })
-      .catch(err => {
-        if (typeof this.errorHandler === 'function') {
-          return this.errorHandler(err)
-        }
-
-        if (err.response) {
-          const error = new Error(err.response.statusText)
-          done(error)
-          throw error
-        }
-
-        done(err)
-        throw err
-      })
   }
 
   _isErrorRetryable (error) {

@@ -1,7 +1,7 @@
 # v6.0.0 / 2021-11-19
 
-Change flush threshold from 500kb to 450kb #311
-Breaking: Flush now properly returns a Promise #288
+- Change flush threshold from 500kb to 450kb #311
+- Breaking: Flush now properly returns a Promise #288
 
 
 # v5.1.1 / 2021-10-20

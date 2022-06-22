@@ -365,6 +365,22 @@ test('flush - respond with an error', async t => {
   await t.throws(client.flush(), 'Bad Request')
 })
 
+test('flush - do not throw on axios failure if errorHandler option is specified', async t => {
+  const errorHandler = spy()
+  const client = createClient({ errorHandler })
+  const callback = spy()
+
+  client.queue = [
+    {
+      message: 'error',
+      callback
+    }
+  ]
+
+  await t.notThrows(client.flush())
+  t.true(errorHandler.calledOnce)
+})
+
 test('flush - time out if configured', async t => {
   const client = createClient({ timeout: 500 })
   const callback = spy()

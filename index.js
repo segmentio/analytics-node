@@ -309,6 +309,9 @@ class Analytics {
       }
       return data
     } catch (err) {
+      if (typeof this.errorHandler === 'function') {
+        return this.errorHandler(err)
+      }
       if (err && err.response) {
         const error = new Error(err.response.statusText)
         done(error)

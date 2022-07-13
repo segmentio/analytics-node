@@ -1,3 +1,13 @@
+# v6.1.0 / 2022-06-30
+
+- Add an errorHandler property to constructor options (#342)
+- Add sentAt note to readme (#340)
+- Update library axios to 0.27.2 (#339)
+- Update code snippet to match analyics-code API (#321)
+- Error thrown in callback function is caught by flush's promise .catch() (#317)
+- Fix callback called twice (#315)
+- Automated dependency upgrades
+
 # v6.0.0 / 2021-11-19
 
 - Change flush threshold from 500kb to 450kb #311

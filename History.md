@@ -1,4 +1,4 @@
-# v6.1.0 / 2022-06-30
+# v6.1.0 / 2022-07-13
 
 - Add an errorHandler property to constructor options (#342)
 - Add sentAt note to readme (#340)

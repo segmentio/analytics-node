@@ -1,13 +1,12 @@
 {
-  "name": "analytics-node",
+  "name": "@june-so/analytics-node",
   "version": "6.1.0",
   "description": "The hassle-free way to integrate analytics into any Node.js application",
   "license": "MIT",
-  "repository": "segmentio/analytics-node",
+  "repository": "@june-so/analytics-node",
   "author": {
-    "name": "Segment",
-    "email": "tools+npm@segment.com",
-    "url": "https://segment.com"
+    "name": "June",
+    "url": "https://june.so"
   },
   "engines": {
     "node": ">=4"
@@ -27,9 +26,9 @@
   "keywords": [
     "analytics",
     "stats",
-    "segment.io",
-    "segmentio",
-    "segment",
+    "june.so",
+    "juneso",
+    "june",
     "client",
     "driver"
   ],

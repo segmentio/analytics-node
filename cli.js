@@ -9,9 +9,9 @@ const toObject = str => JSON.parse(str)
 
 program
   .version(pkg.version)
-  .option('-w, --writeKey <key>', 'the Segment write key to use')
-  .option('-h, --host <host>', 'the Segment API hostname to use')
-  .option('-t, --type <type>', 'the Segment message type')
+  .option('-w, --writeKey <key>', 'the June write key to use')
+  .option('-h, --host <host>', 'the June API hostname to use')
+  .option('-t, --type <type>', 'the June message type')
 
   .option('-u, --userId <id>', 'the user id to send the event as')
   .option('-a, --anonymousId <id>', 'the anonymous user id to send the event as')

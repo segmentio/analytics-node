@@ -16,14 +16,14 @@ const noop = () => {}
 
 class Analytics {
   /**
-   * Initialize a new `Analytics` with your Segment project's `writeKey` and an
+   * Initialize a new `Analytics` with your June project's `writeKey` and an
    * optional dictionary of `options`.
    *
    * @param {String} writeKey
    * @param {Object} [options] (optional)
    *   @property {Number} [flushAt] (default: 20)
    *   @property {Number} [flushInterval] (default: 10000)
-   *   @property {String} [host] (default: 'https://api.segment.io')
+   *   @property {String} [host] (default: 'https://api.june.so')
    *   @property {Boolean} [enable] (default: true)
    *   @property {Object} [axiosConfig] (optional)
    *   @property {Object} [axiosInstance] (default: axios.create(options.axiosConfig))
@@ -35,12 +35,12 @@ class Analytics {
   constructor (writeKey, options) {
     options = options || {}
 
-    assert(writeKey, 'You must pass your Segment project\'s write key.')
+    assert(writeKey, 'You must pass your June project\'s write key.')
 
     this.queue = []
     this.writeKey = writeKey
-    this.host = removeSlash(options.host || 'https://api.segment.io')
-    this.path = removeSlash(options.path || '/v1/batch')
+    this.host = removeSlash(options.host || 'https://api.june.so')
+    this.path = removeSlash(options.path || '/sdk/batch')
     let axiosInstance = options.axiosInstance
     if (axiosInstance == null) {
       axiosInstance = axios.create(options.axiosConfig)
@@ -264,6 +264,8 @@ class Analytics {
       sentAt: new Date()
     }
 
+    console.log(JSON.stringify(data,2,2))
+
     const done = err => {
       setImmediate(() => {
         callbacks.forEach(callback => callback(err, data))
@@ -279,7 +281,7 @@ class Analytics {
     if (typeof window === 'undefined') {
       headers['user-agent'] = `analytics-node/${version}`
     }
-
+    
     const req = {
       auth: {
         username: this.writeKey

@@ -298,6 +298,7 @@ class Analytics {
       })
       .catch(err => {
         if (typeof this.errorHandler === 'function') {
+          done(err)
           return this.errorHandler(err)
         }
 

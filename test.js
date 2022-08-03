@@ -381,6 +381,23 @@ test('flush - do not throw on axios failure if errorHandler option is specified'
   t.true(errorHandler.calledOnce)
 })
 
+test('flush - evoke callback when errorHandler option is specified', async t => {
+  const errorHandler = spy()
+  const client = createClient({ errorHandler })
+  const callback = spy()
+
+  client.queue = [
+    {
+      message: 'error',
+      callback
+    }
+  ]
+
+  await t.notThrows(client.flush())
+  await delay(5)
+  t.true(callback.calledOnce)
+})
+
 test('flush - time out if configured', async t => {
   const client = createClient({ timeout: 500 })
   const callback = spy()

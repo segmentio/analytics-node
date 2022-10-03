@@ -318,7 +318,7 @@ test('flush - don\'t fail when queue is empty', async t => {
 })
 
 test('flush - send messages', async t => {
-  const client = createClient({ flushAt: 2 })
+  const client = createClient({ flushAt: 3 })
 
   const callbackA = spy()
   const callbackB = spy()
@@ -341,7 +341,7 @@ test('flush - send messages', async t => {
 
   const data = await client.flush()
   t.deepEqual(Object.keys(data), ['batch', 'timestamp', 'sentAt'])
-  t.deepEqual(data.batch, ['a', 'b'])
+  t.deepEqual(data.batch, ['a', 'b', 'c'])
   t.true(data.timestamp instanceof Date)
   t.true(data.sentAt instanceof Date)
   setImmediate(() => {

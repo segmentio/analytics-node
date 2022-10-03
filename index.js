@@ -38,7 +38,7 @@ class Analytics {
     assert(writeKey, 'You must pass your Segment project\'s write key.')
 
     this.queue = []
-    this.queueBytes = 0;
+    this.queueBytes = 0
     this.writeKey = writeKey
     this.host = removeSlash(options.host || 'https://api.segment.io')
     this.path = removeSlash(options.path || '/v1/batch')
@@ -218,14 +218,13 @@ class Analytics {
       return
     }
 
-    
     const hasReachedFlushAt = this.queue.length >= this.flushAt
     if (hasReachedFlushAt) {
       this.flush()
       return
     }
-    
-    this.queueBytes += JSON.stringify(item)
+
+    this.queueBytes += JSON.stringify(message)
     const hasReachedQueueSize = this.queueBytes >= this.maxQueueSize
 
     if (hasReachedQueueSize) {
@@ -263,6 +262,7 @@ class Analytics {
       return Promise.resolve()
     }
 
+    this.queueBytes = 0
     const items = this.queue.splice(0, this.queue.length)
     const callbacks = items.map(item => item.callback)
     const messages = items.map(item => item.message)

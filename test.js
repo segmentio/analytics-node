@@ -383,17 +383,17 @@ test('flush - do not throw on axios failure if errorHandler option is specified'
 
 test('flush - evoke callback when errorHandler option is specified', async t => {
   const errorHandler = spy()
-  const client = createClient({ errorHandler })
   const callback = spy()
-
+  const client = createClient({ enable: false, errorHandler })
   client.queue = [
     {
       message: 'error',
       callback
     }
   ]
+  stub(client, 'flush')
 
-  await t.notThrows(client.flush())
+  client.enqueue('type', {}, callback)
   await delay(5)
   t.true(callback.calledOnce)
 })

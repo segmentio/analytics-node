@@ -52,6 +52,7 @@ class Analytics {
     this.flushInterval = options.flushInterval || 10000
     this.flushed = false
     this.errorHandler = options.errorHandler
+    this.pendingFlush = null
     Object.defineProperty(this, 'enable', {
       configurable: false,
       writable: false,
@@ -236,7 +237,8 @@ class Analytics {
    * @return {Analytics}
    */
 
-  flush (callback) {
+  async flush (callback) {
+    await this.pendingFlush
     callback = callback || noop
 
     if (!this.enable) {
@@ -291,7 +293,8 @@ class Analytics {
       req.timeout = typeof this.timeout === 'string' ? ms(this.timeout) : this.timeout
     }
 
-    return this.axiosInstance.post(`${this.host}${this.path}`, data, req)
+    return (this.pendingFlush = this.axiosInstance
+      .post(`${this.host}${this.path}`, data, req)
       .then(() => {
         done()
         return Promise.resolve(data)
@@ -310,7 +313,7 @@ class Analytics {
 
         done(err)
         throw err
-      })
+      }))
   }
 
   _isErrorRetryable (error) {

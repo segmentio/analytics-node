@@ -238,10 +238,11 @@ class Analytics {
    */
 
   async flush (callback) {
-    {
-      const pending = this.pendingFlush
+    try {
+      await this.pendingFlush
+    } catch (err) {
       this.pendingFlush = null
-      await pending // this may throw
+      throw err
     }
     callback = callback || noop
 

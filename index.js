@@ -237,13 +237,13 @@ class Analytics {
    * @return {Analytics}
    */
 
-  async flush(callback) {
+  async flush (callback) {
     {
-      const pending = this.pendingFlush;
-      this.pendingFlush = null;
-      await pending; // this may throw
+      const pending = this.pendingFlush
+      this.pendingFlush = null
+      await pending // this may throw
     }
-    callback = callback || noop;
+    callback = callback || noop
 
     if (!this.enable) {
       setImmediate(callback)

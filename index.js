@@ -238,12 +238,6 @@ class Analytics {
    */
 
   async flush (callback) {
-    try {
-      await this.pendingFlush
-    } catch (err) {
-      this.pendingFlush = null
-      throw err
-    }
     callback = callback || noop
 
     if (!this.enable) {
@@ -259,6 +253,13 @@ class Analytics {
     if (!this.queue.length) {
       setImmediate(callback)
       return Promise.resolve()
+    }
+
+    try {
+      if (this.pendingFlush) { await this.pendingFlush }
+    } catch (err) {
+      this.pendingFlush = null
+      throw err
     }
 
     const items = this.queue.splice(0, this.flushAt)

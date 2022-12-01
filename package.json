@@ -15,7 +15,7 @@
   "scripts": {
     "circle-lint": ".buildscript/circle.sh",
     "dependencies": "yarn",
-    "test": "standard && nyc ava --timeout=20s&& .buildscript/e2e.sh",
+    "test": "ts-standard && nyc ava --timeout=20s&& .buildscript/e2e.sh",
     "coverage": "nyc npm run test",
     "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
     "np": "np --no-publish",
@@ -41,6 +41,7 @@
     "md5": "^2.2.1",
     "ms": "^2.0.0",
     "remove-trailing-slash": "^0.1.0",
+    "typescript": "^4.9.3",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
@@ -56,12 +57,17 @@
     "nyc": "^15.1.0",
     "sinon": "^7.3.2",
     "snyk": "^1.171.1",
-    "standard": "^12.0.1"
+    "ts-standard": "^12.0.1"
   },
   "resolutions": {
     "kind-of": "^6.0.3",
     "lodash": "^4.17.19",
     "set-value": "^2.0.1",
     "yargs-parser": "^13.1.2"
+  },
+  "ts-standard": {
+    "ignore": [
+      "built"
+    ]
   }
 }

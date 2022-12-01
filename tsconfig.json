@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "outDir": "./built",
+    "strictNullChecks": true,
+    "allowJs": true,
+    "target": "es6",
+    "skipLibCheck": true
+  },
+  "include": [
+    "./index.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

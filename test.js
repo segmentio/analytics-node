@@ -176,7 +176,7 @@ test('enqueue - stringify anonymousId', t => {
   const client = createClient()
 
   client.screen({
-    anonymousId: 157963456373623802,
+    anonymousId: 157963,
     name: 'screen name'
   }, noop)
 
@@ -654,7 +654,7 @@ test('dont allow messages > 32kb', t => {
     event: 'event',
     properties: {}
   }
-  for (var i = 0; i < 10000; i++) {
+  for (let i = 0; i < 10000; i++) {
     event.properties[i] = 'a'
   }
 
@@ -664,7 +664,9 @@ test('dont allow messages > 32kb', t => {
 })
 
 test('ensure that failed requests are retried', async t => {
-  const client = createClient({ retryCount: retryCount })
+  const client = createClient({
+    retryCount
+  })
   const callback = spy()
 
   client.queue = [
@@ -722,7 +724,7 @@ test('ensure other axios clients are not impacted by axios-retry', async t => {
   let callCounter = 0
 
   // Client will return a successful response for any requests beyond the first
-  let server = express()
+  const server = express()
     .use(bodyParser.json())
     .get('/v1/anotherEndpoint', (req, res) => {
       if (callCounter > 0) {

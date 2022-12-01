@@ -1,4 +1,7 @@
 'use strict'
+/* eslint-disable  @typescript-eslint/strict-boolean-expressions */
+/* eslint-disable  @typescript-eslint/restrict-template-expressions */
+/* eslint-disable  @typescript-eslint/no-var-requires */
 
 const assert = require('assert')
 const removeSlash = require('remove-trailing-slash')
@@ -12,34 +15,35 @@ const version = require('./package.json').version
 const isString = require('lodash.isstring')
 
 const setImmediate = global.setImmediate || process.nextTick.bind(process)
-const noop = () => {}
+const noop = (): undefined => {}
 
 class Analytics {
-  /**
-   * Initialize a new `Analytics` with your Segment project's `writeKey` and an
-   * optional dictionary of `options`.
-   *
-   * @param {String} writeKey
-   * @param {Object} [options] (optional)
-   *   @property {Number} [flushAt] (default: 20)
-   *   @property {Number} [flushInterval] (default: 10000)
-   *   @property {String} [host] (default: 'https://api.segment.io')
-   *   @property {Boolean} [enable] (default: true)
-   *   @property {Object} [axiosConfig] (optional)
-   *   @property {Object} [axiosInstance] (default: axios.create(options.axiosConfig))
-   *   @property {Object} [axiosRetryConfig] (optional)
-   *   @property {Number} [retryCount] (default: 3)
-   *   @property {Function} [errorHandler] (optional)
-   */
+  writeKey: string
+  queue: array
+  path: string
+  timeout: boolean
+  pendingFlush: any
+  timer: any
+  flushed: boolean
+  options: { // [options] (optional)
+    flushAt: number // [flushAt] (default: 20)
+    flushInterval: number // [flushInterval] (default: 10000)
+    host: string // [host] (default: 'https://api.segment.io')
+    enable: boolean // [ enable] (default: true)
+    axiosConfig: object // [axiosConfig] (optional)
+    axiosInstance: object // [axiosInstance] (default: axios.create(options.axiosConfig))
+    axiosRetryConfig: object // [axiosRetryConfig] (optional)
+    retryCount: number // [retryCount] (default: 3)
+    errorHandler: Function // [errorHandler] (optional)
+    maxQueueSize: number
+  }
 
-  constructor (writeKey, options) {
-    options = options || {}
-
+  constructor (writeKey, options = {}) {
     assert(writeKey, 'You must pass your Segment project\'s write key.')
 
     this.queue = []
     this.writeKey = writeKey
-    this.host = removeSlash(options.host || 'https://api.segment.io')
+    this.host = removeSlash(options.host) || removeSlash('https://api.segment.io')
     this.path = removeSlash(options.path || '/v1/batch')
     let axiosInstance = options.axiosInstance
     if (axiosInstance == null) {
@@ -70,7 +74,7 @@ class Analytics {
     }
   }
 
-  _validate (message, type) {
+  _validate (message, type): any {
     looselyValidate(message, type)
   }
 
@@ -82,7 +86,7 @@ class Analytics {
    * @return {Analytics}
    */
 
-  identify (message, callback) {
+  identify (message, callback): any {
     this._validate(message, 'identify')
     this.enqueue('identify', message, callback)
     return this
@@ -96,7 +100,7 @@ class Analytics {
    * @return {Analytics}
    */
 
-  group (message, callback) {
+  group (message, callback): any {
     this._validate(message, 'group')
     this.enqueue('group', message, callback)
     return this
@@ -110,7 +114,7 @@ class Analytics {
    * @return {Analytics}
    */
 
-  track (message, callback) {
+  track (message, callback): any {
     this._validate(message, 'track')
     this.enqueue('track', message, callback)
     return this
@@ -124,7 +128,7 @@ class Analytics {
    * @return {Analytics}
    */
 
-  page (message, callback) {
+  page (message, callback): any {
     this._validate(message, 'page')
     this.enqueue('page', message, callback)
     return this
@@ -138,7 +142,7 @@ class Analytics {
    * @return {Analytics}
    */
 
-  screen (message, callback) {
+  screen (message, callback): any {
     this._validate(message, 'screen')
     this.enqueue('screen', message, callback)
     return this
@@ -152,7 +156,7 @@ class Analytics {
    * @return {Analytics}
    */
 
-  alias (message, callback) {
+  alias (message, callback): any {
     this._validate(message, 'alias')
     this.enqueue('alias', message, callback)
     return this
@@ -168,7 +172,7 @@ class Analytics {
    * @api private
    */
 
-  enqueue (type, message, callback) {
+  enqueue (type, message, callback): any {
     callback = callback || noop
 
     if (!this.enable) {
@@ -197,7 +201,9 @@ class Analytics {
       // for use in the browser where the uuid package falls back to Math.random()
       // which is not a great source of randomness.
       // Borrowed from analytics.js (https://github.com/segment-integrations/analytics.js-integration-segmentio/blob/a20d2a2d222aeb3ab2a8c7e72280f1df2618440e/lib/index.js#L255-L256).
-      message.messageId = `node-${md5(JSON.stringify(message))}-${uuid()}`
+      const encodedStringifiedMessage: string = md5(JSON.stringify(message))
+      const uuidStr: string = uuid()
+      message.messageId = `node-${encodedStringifiedMessage}-${uuidStr}`
     }
 
     // Historically this library has accepted strings and numbers as IDs.
@@ -219,7 +225,7 @@ class Analytics {
     }
 
     const hasReachedFlushAt = this.queue.length >= this.flushAt
-    const hasReachedQueueSize = this.queue.reduce((acc, item) => acc + JSON.stringify(item).length, 0) >= this.maxQueueSize
+    const hasReachedQueueSize = this.queue.reduce((acc: number, item: object) => acc + JSON.stringify(item).length, 0) >= this.maxQueueSize
     if (hasReachedFlushAt || hasReachedQueueSize) {
       this.flush()
       return
@@ -237,12 +243,12 @@ class Analytics {
    * @return {Analytics}
    */
 
-  async flush (callback) {
+  async flush (callback?): any {
     callback = callback || noop
 
     if (!this.enable) {
       setImmediate(callback)
-      return Promise.resolve()
+      return await Promise.resolve()
     }
 
     if (this.timer) {
@@ -252,7 +258,7 @@ class Analytics {
 
     if (!this.queue.length) {
       setImmediate(callback)
-      return Promise.resolve()
+      return await Promise.resolve()
     }
 
     try {
@@ -272,7 +278,7 @@ class Analytics {
       sentAt: new Date()
     }
 
-    const done = err => {
+    const done = (err?): any => {
       setImmediate(() => {
         callbacks.forEach(callback => callback(err, data))
         callback(err, data)
@@ -301,9 +307,9 @@ class Analytics {
 
     return (this.pendingFlush = this.axiosInstance
       .post(`${this.host}${this.path}`, data, req)
-      .then(() => {
+      .then(async () => {
         done()
-        return Promise.resolve(data)
+        return await Promise.resolve(data)
       })
       .catch(err => {
         if (typeof this.errorHandler === 'function') {
@@ -322,7 +328,7 @@ class Analytics {
       }))
   }
 
-  _isErrorRetryable (error) {
+  _isErrorRetryable (error): boolean {
     // Retry Network Errors.
     if (axiosRetry.isNetworkError(error)) {
       return true

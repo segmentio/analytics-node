@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 /* eslint-disable  @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable  @typescript-eslint/restrict-template-expressions */
 /* eslint-disable  @typescript-eslint/no-var-requires */
+/* eslint-disable  @typescript-eslint/explicit-function-return-type */
 const assert = require('assert');
 const removeSlash = require('remove-trailing-slash');
 const looselyValidate = require('@segment/loosely-validate-event');
@@ -19,7 +20,7 @@ const axiosRetry = require('axios-retry');
 const ms = require('ms');
 const { v4: uuid } = require('uuid');
 const md5 = require('md5');
-const version = require('./package.json').version;
+const version = require('../package.json').version;
 const isString = require('lodash.isstring');
 const setImmediate = global.setImmediate || process.nextTick.bind(process);
 const noop = () => { };
@@ -28,7 +29,7 @@ class Analytics {
         assert(writeKey, 'You must pass your Segment project\'s write key.');
         this.queue = [];
         this.writeKey = writeKey;
-        this.host = removeSlash(options.host) || removeSlash('https://api.segment.io');
+        this.host = removeSlash(options.host || 'https://api.segment.io');
         this.path = removeSlash(options.path || '/v1/batch');
         let axiosInstance = options.axiosInstance;
         if (axiosInstance == null) {

@@ -4,7 +4,7 @@ import express from 'express'
 import delay from 'delay'
 import auth from 'basic-auth'
 import test from 'ava'
-import Analytics from '.'
+import Analytics from './built/index.js'
 import { version } from './package'
 
 const noop = () => {}
@@ -176,7 +176,7 @@ test('enqueue - stringify anonymousId', t => {
   const client = createClient()
 
   client.screen({
-    anonymousId: 157963,
+    anonymousId: 157963456373623800,
     name: 'screen name'
   }, noop)
 
@@ -193,7 +193,7 @@ test('enqueue - stringify ids handles strings', t => {
   const client = createClient()
 
   client.screen({
-    anonymousId: '15796345',
+    anonymousId: '157963456373623800',
     // We're explicitly testing the behaviour of the library if a customer
     // uses a String constructor.
     userId: new String('prateek'), // eslint-disable-line no-new-wrappers
@@ -204,7 +204,7 @@ test('enqueue - stringify ids handles strings', t => {
 
   const item = client.queue.pop()
 
-  t.is(item.message.anonymousId, '15796345')
+  t.is(item.message.anonymousId, '157963456373623800')
   t.is(item.message.userId.toString(), 'prateek')
 })
 

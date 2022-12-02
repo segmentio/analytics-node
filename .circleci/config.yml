@@ -70,7 +70,7 @@ jobs:
       - run: yarn test
       - persist_to_workspace:
           root: .
-          paths: [.]
+          paths: [../built/index.js]
 
   test-node10:
     <<: *node-base-test

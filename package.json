@@ -22,7 +22,7 @@
     "release": "yarn run np"
   },
   "files": [
-    "index.js"
+    "built/index.js"
   ],
   "keywords": [
     "analytics",

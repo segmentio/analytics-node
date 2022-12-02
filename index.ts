@@ -2,6 +2,7 @@
 /* eslint-disable  @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable  @typescript-eslint/restrict-template-expressions */
 /* eslint-disable  @typescript-eslint/no-var-requires */
+/* eslint-disable  @typescript-eslint/explicit-function-return-type */
 
 const assert = require('assert')
 const removeSlash = require('remove-trailing-slash')
@@ -11,11 +12,11 @@ const axiosRetry = require('axios-retry')
 const ms = require('ms')
 const { v4: uuid } = require('uuid')
 const md5 = require('md5')
-const version = require('./package.json').version
+const version = require('../package.json').version
 const isString = require('lodash.isstring')
 
 const setImmediate = global.setImmediate || process.nextTick.bind(process)
-const noop = (): undefined => {}
+const noop = () => {}
 
 class Analytics {
   writeKey: string
@@ -28,7 +29,7 @@ class Analytics {
   options: { // [options] (optional)
     flushAt: number // [flushAt] (default: 20)
     flushInterval: number // [flushInterval] (default: 10000)
-    host: string // [host] (default: 'https://api.segment.io')
+    // host?: string // [host] (default: 'https://api.segment.io')
     enable: boolean // [ enable] (default: true)
     axiosConfig: object // [axiosConfig] (optional)
     axiosInstance: object // [axiosInstance] (default: axios.create(options.axiosConfig))
@@ -43,7 +44,7 @@ class Analytics {
 
     this.queue = []
     this.writeKey = writeKey
-    this.host = removeSlash(options.host) || removeSlash('https://api.segment.io')
+    this.host = removeSlash(options.host || 'https://api.segment.io')
     this.path = removeSlash(options.path || '/v1/batch')
     let axiosInstance = options.axiosInstance
     if (axiosInstance == null) {
@@ -74,7 +75,7 @@ class Analytics {
     }
   }
 
-  _validate (message, type): any {
+  _validate (message, type) {
     looselyValidate(message, type)
   }
 
@@ -86,7 +87,7 @@ class Analytics {
    * @return {Analytics}
    */
 
-  identify (message, callback): any {
+  identify (message, callback) {
     this._validate(message, 'identify')
     this.enqueue('identify', message, callback)
     return this
@@ -100,7 +101,7 @@ class Analytics {
    * @return {Analytics}
    */
 
-  group (message, callback): any {
+  group (message, callback) {
     this._validate(message, 'group')
     this.enqueue('group', message, callback)
     return this
@@ -114,7 +115,7 @@ class Analytics {
    * @return {Analytics}
    */
 
-  track (message, callback): any {
+  track (message, callback) {
     this._validate(message, 'track')
     this.enqueue('track', message, callback)
     return this
@@ -128,7 +129,7 @@ class Analytics {
    * @return {Analytics}
    */
 
-  page (message, callback): any {
+  page (message, callback) {
     this._validate(message, 'page')
     this.enqueue('page', message, callback)
     return this
@@ -142,7 +143,7 @@ class Analytics {
    * @return {Analytics}
    */
 
-  screen (message, callback): any {
+  screen (message, callback) {
     this._validate(message, 'screen')
     this.enqueue('screen', message, callback)
     return this
@@ -156,7 +157,7 @@ class Analytics {
    * @return {Analytics}
    */
 
-  alias (message, callback): any {
+  alias (message, callback) {
     this._validate(message, 'alias')
     this.enqueue('alias', message, callback)
     return this
@@ -172,7 +173,7 @@ class Analytics {
    * @api private
    */
 
-  enqueue (type, message, callback): any {
+  enqueue (type, message, callback) {
     callback = callback || noop
 
     if (!this.enable) {
@@ -201,8 +202,8 @@ class Analytics {
       // for use in the browser where the uuid package falls back to Math.random()
       // which is not a great source of randomness.
       // Borrowed from analytics.js (https://github.com/segment-integrations/analytics.js-integration-segmentio/blob/a20d2a2d222aeb3ab2a8c7e72280f1df2618440e/lib/index.js#L255-L256).
-      const encodedStringifiedMessage: string = md5(JSON.stringify(message))
-      const uuidStr: string = uuid()
+      const encodedStringifiedMessage = md5(JSON.stringify(message))
+      const uuidStr = uuid()
       message.messageId = `node-${encodedStringifiedMessage}-${uuidStr}`
     }
 

@@ -12,6 +12,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 /* eslint-disable  @typescript-eslint/restrict-template-expressions */
 /* eslint-disable  @typescript-eslint/no-var-requires */
 /* eslint-disable  @typescript-eslint/explicit-function-return-type */
+/* eslint-disable  @typescript-eslint/prefer-nullish-coalescing */
 const assert = require('assert');
 const removeSlash = require('remove-trailing-slash');
 const looselyValidate = require('@segment/loosely-validate-event');
@@ -25,8 +26,9 @@ const isString = require('lodash.isstring');
 const setImmediate = global.setImmediate || process.nextTick.bind(process);
 const noop = () => { };
 class Analytics {
-    constructor(writeKey, options = {}) {
+    constructor(writeKey, options) {
         assert(writeKey, 'You must pass your Segment project\'s write key.');
+        options = options || {};
         this.queue = [];
         this.writeKey = writeKey;
         this.host = removeSlash(options.host || 'https://api.segment.io');

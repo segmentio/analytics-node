@@ -3,6 +3,7 @@
 /* eslint-disable  @typescript-eslint/restrict-template-expressions */
 /* eslint-disable  @typescript-eslint/no-var-requires */
 /* eslint-disable  @typescript-eslint/explicit-function-return-type */
+/* eslint-disable  @typescript-eslint/prefer-nullish-coalescing */
 
 const assert = require('assert')
 const removeSlash = require('remove-trailing-slash')
@@ -18,29 +19,40 @@ const isString = require('lodash.isstring')
 const setImmediate = global.setImmediate || process.nextTick.bind(process)
 const noop = () => {}
 
+interface Options {
+  flushAt?: number // [flushAt] (default: 20)
+  flushInterval?: number // [flushInterval] (default: 10000)
+  host?: string // [host] (default: 'https://api.segment.io')
+  enable?: boolean // [ enable] (default: true)
+  axiosConfig?: object // [axiosConfig] (optional)
+  axiosInstance?: object // [axiosInstance] (default: axios.create(options.axiosConfig))
+  axiosRetryConfig?: object // [axiosRetryConfig] (optional)
+  retryCount?: number // [retryCount] (default: 3)
+  errorHandler?: Function // [errorHandler] (optional)
+  maxQueueSize?: number
+  path?: string
+  timeout?: any
+}
+
 class Analytics {
   writeKey: string
-  queue: array
+  flushAt: number
+  flushInterval: number
+  errorHandler: any
+  axiosInstance: object
+  host: string
+  queue: any
   path: string
   timeout: boolean
   pendingFlush: any
   timer: any
   flushed: boolean
-  options: { // [options] (optional)
-    flushAt: number // [flushAt] (default: 20)
-    flushInterval: number // [flushInterval] (default: 10000)
-    // host?: string // [host] (default: 'https://api.segment.io')
-    enable: boolean // [ enable] (default: true)
-    axiosConfig: object // [axiosConfig] (optional)
-    axiosInstance: object // [axiosInstance] (default: axios.create(options.axiosConfig))
-    axiosRetryConfig: object // [axiosRetryConfig] (optional)
-    retryCount: number // [retryCount] (default: 3)
-    errorHandler: Function // [errorHandler] (optional)
-    maxQueueSize: number
-  }
+  maxQueueSize: number
+  enable: any
 
-  constructor (writeKey, options = {}) {
+  constructor (writeKey, options: Options) {
     assert(writeKey, 'You must pass your Segment project\'s write key.')
+    options = options || {}
 
     this.queue = []
     this.writeKey = writeKey

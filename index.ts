@@ -4,6 +4,7 @@
 /* eslint-disable  @typescript-eslint/no-var-requires */
 /* eslint-disable  @typescript-eslint/explicit-function-return-type */
 /* eslint-disable  @typescript-eslint/prefer-nullish-coalescing */
+/* eslint-disable  @typescript-eslint/no-floating-promises */
 
 const assert = require('assert')
 const removeSlash = require('remove-trailing-slash')
@@ -16,16 +17,18 @@ const md5 = require('md5')
 const version = require('../package.json').version
 const isString = require('lodash.isstring')
 
-const setImmediate = global.setImmediate || process.nextTick.bind(process)
+const globalAny: any = global
 const noop = () => {}
 
+const setImmediateFunc = globalAny.setImmediate || process.nextTick.bind(process)
+
 interface Options {
-  flushAt?: number // [flushAt] (default: 20)
+  flushAt?: any // [flushAt] (default: 20)
   flushInterval?: number // [flushInterval] (default: 10000)
   host?: string // [host] (default: 'https://api.segment.io')
   enable?: boolean // [ enable] (default: true)
   axiosConfig?: object // [axiosConfig] (optional)
-  axiosInstance?: object // [axiosInstance] (default: axios.create(options.axiosConfig))
+  axiosInstance?: any // [axiosInstance] (default: axios.create(options.axiosConfig))
   axiosRetryConfig?: object // [axiosRetryConfig] (optional)
   retryCount?: number // [retryCount] (default: 3)
   errorHandler?: Function // [errorHandler] (optional)
@@ -39,7 +42,7 @@ class Analytics {
   flushAt: number
   flushInterval: number
   errorHandler: any
-  axiosInstance: object
+  axiosInstance: any
   host: string
   queue: any
   path: string
@@ -189,7 +192,7 @@ class Analytics {
     callback = callback || noop
 
     if (!this.enable) {
-      return setImmediate(callback)
+      return setImmediateFunc(callback)
     }
 
     message = Object.assign({}, message)
@@ -256,11 +259,11 @@ class Analytics {
    * @return {Analytics}
    */
 
-  async flush (callback?): any {
+  async flush (callback?): Promise<any> {
     callback = callback || noop
 
     if (!this.enable) {
-      setImmediate(callback)
+      setImmediateFunc(callback)
       return await Promise.resolve()
     }
 
@@ -270,7 +273,7 @@ class Analytics {
     }
 
     if (!this.queue.length) {
-      setImmediate(callback)
+      setImmediateFunc(callback)
       return await Promise.resolve()
     }
 
@@ -292,7 +295,7 @@ class Analytics {
     }
 
     const done = (err?): any => {
-      setImmediate(() => {
+      setImmediateFunc(() => {
         callbacks.forEach(callback => callback(err, data))
         callback(err, data)
       })
@@ -307,7 +310,15 @@ class Analytics {
       headers['user-agent'] = `analytics-node/${version}`
     }
 
-    const req = {
+    interface Req {
+      auth: {
+        username: string
+      }
+      headers: object
+      timeout?: any
+    }
+
+    const req: Req = {
       auth: {
         username: this.writeKey
       },

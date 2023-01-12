@@ -13,6 +13,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 /* eslint-disable  @typescript-eslint/no-var-requires */
 /* eslint-disable  @typescript-eslint/explicit-function-return-type */
 /* eslint-disable  @typescript-eslint/prefer-nullish-coalescing */
+/* eslint-disable  @typescript-eslint/no-floating-promises */
 const assert = require('assert');
 const removeSlash = require('remove-trailing-slash');
 const looselyValidate = require('@segment/loosely-validate-event');
@@ -23,8 +24,9 @@ const { v4: uuid } = require('uuid');
 const md5 = require('md5');
 const version = require('../package.json').version;
 const isString = require('lodash.isstring');
-const setImmediate = global.setImmediate || process.nextTick.bind(process);
+const globalAny = global;
 const noop = () => { };
+const setImmediateFunc = globalAny.setImmediate || process.nextTick.bind(process);
 class Analytics {
     constructor(writeKey, options) {
         assert(writeKey, 'You must pass your Segment project\'s write key.');
@@ -144,7 +146,7 @@ class Analytics {
     enqueue(type, message, callback) {
         callback = callback || noop;
         if (!this.enable) {
-            return setImmediate(callback);
+            return setImmediateFunc(callback);
         }
         message = Object.assign({}, message);
         message.type = type;
@@ -204,7 +206,7 @@ class Analytics {
         return __awaiter(this, void 0, void 0, function* () {
             callback = callback || noop;
             if (!this.enable) {
-                setImmediate(callback);
+                setImmediateFunc(callback);
                 return yield Promise.resolve();
             }
             if (this.timer) {
@@ -212,7 +214,7 @@ class Analytics {
                 this.timer = null;
             }
             if (!this.queue.length) {
-                setImmediate(callback);
+                setImmediateFunc(callback);
                 return yield Promise.resolve();
             }
             try {
@@ -233,7 +235,7 @@ class Analytics {
                 sentAt: new Date()
             };
             const done = (err) => {
-                setImmediate(() => {
+                setImmediateFunc(() => {
                     callbacks.forEach(callback => callback(err, data));
                     callback(err, data);
                 });

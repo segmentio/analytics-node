@@ -40,7 +40,7 @@
     "lodash.isstring": "^4.0.1",
     "md5": "^2.2.1",
     "ms": "^2.0.0",
-    "remove-trailing-slash": "^0.1.0",
+    "remove-trailing-slash": "^0.1.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

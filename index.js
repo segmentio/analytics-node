@@ -14,16 +14,16 @@ const isString = require('lodash.isstring')
 const setImmediate = global.setImmediate || process.nextTick.bind(process)
 const noop = () => {}
 
-class Analytics {
+class Journify {
   /**
-   * Initialize a new `Analytics` with your Segment project's `writeKey` and an
+   * Initialize a new `Journify` with your Journify project's `writeKey` and an
    * optional dictionary of `options`.
    *
    * @param {String} writeKey
    * @param {Object} [options] (optional)
    *   @property {Number} [flushAt] (default: 20)
    *   @property {Number} [flushInterval] (default: 10000)
-   *   @property {String} [host] (default: 'https://api.segment.io')
+   *   @property {String} [host] (default: 'https://t.journify.io')
    *   @property {Boolean} [enable] (default: true)
    *   @property {Object} [axiosConfig] (optional)
    *   @property {Object} [axiosInstance] (default: axios.create(options.axiosConfig))
@@ -35,11 +35,11 @@ class Analytics {
   constructor (writeKey, options) {
     options = options || {}
 
-    assert(writeKey, 'You must pass your Segment project\'s write key.')
+    assert(writeKey, 'You must pass your Journify source\'s write key.')
 
     this.queue = []
     this.writeKey = writeKey
-    this.host = removeSlash(options.host || 'https://api.segment.io')
+    this.host = removeSlash(options.host || 'https://t.journify.io')
     this.path = removeSlash(options.path || '/v1/batch')
     let axiosInstance = options.axiosInstance
     if (axiosInstance == null) {
@@ -79,7 +79,7 @@ class Analytics {
    *
    * @param {Object} message
    * @param {Function} [callback] (optional)
-   * @return {Analytics}
+   * @return {Journify}
    */
 
   identify (message, callback) {
@@ -93,7 +93,7 @@ class Analytics {
    *
    * @param {Object} message
    * @param {Function} [callback] (optional)
-   * @return {Analytics}
+   * @return {Journify}
    */
 
   group (message, callback) {
@@ -107,7 +107,7 @@ class Analytics {
    *
    * @param {Object} message
    * @param {Function} [callback] (optional)
-   * @return {Analytics}
+   * @return {Journify}
    */
 
   track (message, callback) {
@@ -121,7 +121,7 @@ class Analytics {
    *
    * @param {Object} message
    * @param {Function} [callback] (optional)
-   * @return {Analytics}
+   * @return {Journify}
    */
 
   page (message, callback) {
@@ -135,26 +135,12 @@ class Analytics {
    *
    * @param {Object} message
    * @param {Function} [callback] (optional)
-   * @return {Analytics}
+   * @return {Journify}
    */
 
   screen (message, callback) {
     this._validate(message, 'screen')
     this.enqueue('screen', message, callback)
-    return this
-  }
-
-  /**
-   * Send an alias `message`.
-   *
-   * @param {Object} message
-   * @param {Function} [callback] (optional)
-   * @return {Analytics}
-   */
-
-  alias (message, callback) {
-    this._validate(message, 'alias')
-    this.enqueue('alias', message, callback)
     return this
   }
 
@@ -179,24 +165,19 @@ class Analytics {
     message.type = type
     message.context = Object.assign({
       library: {
-        name: 'analytics-node',
+        name: "@journifyio/node-js-sdk",
         version
-      }
+      },
     }, message.context)
-
-    message._metadata = Object.assign({
-      nodeVersion: process.versions.node
-    }, message._metadata)
 
     if (!message.timestamp) {
       message.timestamp = new Date()
     }
 
     if (!message.messageId) {
-      // We md5 the messaage to add more randomness. This is primarily meant
+      // We md5 the message to add more randomness. This is primarily meant
       // for use in the browser where the uuid package falls back to Math.random()
       // which is not a great source of randomness.
-      // Borrowed from analytics.js (https://github.com/segment-integrations/analytics.js-integration-segmentio/blob/a20d2a2d222aeb3ab2a8c7e72280f1df2618440e/lib/index.js#L255-L256).
       message.messageId = `node-${md5(JSON.stringify(message))}-${uuid()}`
     }
 
@@ -206,8 +187,13 @@ class Analytics {
     if (message.anonymousId && !isString(message.anonymousId)) {
       message.anonymousId = JSON.stringify(message.anonymousId)
     }
+
     if (message.userId && !isString(message.userId)) {
       message.userId = JSON.stringify(message.userId)
+    }
+
+    if (!message.writeKey) {
+      message.writeKey = this.writeKey
     }
 
     this.queue.push({ message, callback })
@@ -234,7 +220,7 @@ class Analytics {
    * Flush the current queue
    *
    * @param {Function} [callback] (optional)
-   * @return {Analytics}
+   * @return {Journify}
    */
 
   async flush (callback) {
@@ -268,8 +254,13 @@ class Analytics {
 
     const data = {
       batch: messages,
-      timestamp: new Date(),
-      sentAt: new Date()
+      writeKey: this.writeKey,
+      context: {
+        library: {
+          name: "@journifyio/node-js-sdk",
+          version,
+        },
+      },
     }
 
     const done = err => {
@@ -279,22 +270,7 @@ class Analytics {
       })
     }
 
-    // Don't set the user agent if we're on a browser. The latest spec allows
-    // the User-Agent header (see https://fetch.spec.whatwg.org/#terminology-headers
-    // and https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader),
-    // but browsers such as Chrome and Safari have not caught up.
-    const headers = {}
-    if (typeof window === 'undefined') {
-      headers['user-agent'] = `analytics-node/${version}`
-    }
-
-    const req = {
-      auth: {
-        username: this.writeKey
-      },
-      headers
-    }
-
+    const req = {}
     if (this.timeout) {
       req.timeout = typeof this.timeout === 'string' ? ms(this.timeout) : this.timeout
     }
@@ -347,4 +323,4 @@ class Analytics {
   }
 }
 
-module.exports = Analytics
+module.exports = Journify

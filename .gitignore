@@ -1,4 +1,4 @@
 node_modules
-coverage
-.nyc_output
-coverage.lcov
+.idea
+dist
+.DS_Store

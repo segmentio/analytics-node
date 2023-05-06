@@ -1,14 +1,10 @@
 {
-  "name": "analytics-node",
-  "version": "6.2.0",
-  "description": "The hassle-free way to integrate analytics into any Node.js application",
+  "name": "@journifyio/nodejs-sdk",
+  "version": "0.0.1",
+  "description": "The hassle-free way to integrate Journify into any Node.js application",
   "license": "MIT",
-  "repository": "segmentio/analytics-node",
-  "author": {
-    "name": "Segment",
-    "email": "tools+npm@segment.com",
-    "url": "https://segment.com"
-  },
+  "repository": "git@github.com:journifyio/journify-nodejs-sdk.git",
+  "author": "Journifyio",
   "engines": {
     "node": ">=4"
   },
@@ -25,13 +21,10 @@
     "index.js"
   ],
   "keywords": [
-    "analytics",
-    "stats",
-    "segment.io",
-    "segmentio",
-    "segment",
-    "client",
-    "driver"
+    "journify",
+    "nodejs",
+    "node",
+    "sdk"
   ],
   "dependencies": {
     "@segment/loosely-validate-event": "^2.0.0",

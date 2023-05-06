@@ -165,9 +165,9 @@ class Journify {
     message.type = type
     message.context = Object.assign({
       library: {
-        name: "@journifyio/node-js-sdk",
+        name: '@journifyio/nodejs-sdk',
         version
-      },
+      }
     }, message.context)
 
     if (!message.timestamp) {
@@ -178,7 +178,7 @@ class Journify {
       // We md5 the message to add more randomness. This is primarily meant
       // for use in the browser where the uuid package falls back to Math.random()
       // which is not a great source of randomness.
-      message.messageId = `node-${md5(JSON.stringify(message))}-${uuid()}`
+      message.messageId = `nodejs-${md5(JSON.stringify(message))}-${uuid()}`
     }
 
     // Historically this library has accepted strings and numbers as IDs.
@@ -257,10 +257,10 @@ class Journify {
       writeKey: this.writeKey,
       context: {
         library: {
-          name: "@journifyio/node-js-sdk",
-          version,
-        },
-      },
+          name: '@journifyio/nodejs-sdk',
+          version
+        }
+      }
     }
 
     const done = err => {

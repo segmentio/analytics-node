@@ -49,14 +49,14 @@ If you are part of a new startup  (&lt;$5M raised, &lt;2 years since founding), 
 ## Installation
 
 ```bash
-$ npm install analytics-node
+$ npm install journify-nodejs-sdk
 ```
 
 
 ## Usage
 
 ```js
-const Analytics = require('analytics-node');
+const Analytics = require('journify-nodejs-sdk');
 
 const client = new Analytics('write key');
 

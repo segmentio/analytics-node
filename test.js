@@ -4,14 +4,14 @@ import express from 'express'
 import delay from 'delay'
 import auth from 'basic-auth'
 import test from 'ava'
-import Analytics from '.'
+import Journify from '.'
 import { version } from './package'
 
 const noop = () => {}
 
 const context = {
   library: {
-    name: 'analytics-node',
+    name: 'journify-nodejs-sdk',
     version
   }
 }
@@ -26,7 +26,7 @@ const createClient = options => {
     host: `http://localhost:${port}`
   }, options)
 
-  const client = new Analytics('key', options)
+  const client = new Journify('key', options)
   client.flushed = true
 
   return client
@@ -43,13 +43,6 @@ test.before.cb(t => {
       if (!writeKey) {
         return res.status(400).json({
           error: { message: 'missing write key' }
-        })
-      }
-
-      const ua = req.headers['user-agent']
-      if (ua !== `analytics-node/${version}`) {
-        return res.status(400).json({
-          error: { message: 'invalid user-agent' }
         })
       }
 
@@ -86,11 +79,11 @@ test.after(() => {
 })
 
 test('expose a constructor', t => {
-  t.is(typeof Analytics, 'function')
+  t.is(typeof Journify, 'function')
 })
 
 test('require a write key', t => {
-  t.throws(() => new Analytics(), 'You must pass your Segment project\'s write key.')
+  t.throws(() => new Journify(), 'You must pass your Segment project\'s write key.')
 })
 
 test('create a queue', t => {
@@ -100,22 +93,22 @@ test('create a queue', t => {
 })
 
 test('default options', t => {
-  const client = new Analytics('key')
+  const client = new Journify('key')
 
   t.is(client.writeKey, 'key')
-  t.is(client.host, 'https://api.segment.io')
+  t.is(client.host, 'https://t.journify.io')
   t.is(client.flushAt, 20)
   t.is(client.flushInterval, 10000)
 })
 
 test('remove trailing slashes from `host`', t => {
-  const client = new Analytics('key', { host: 'http://google.com///' })
+  const client = new Journify('key', { host: 'http://google.com///' })
 
   t.is(client.host, 'http://google.com')
 })
 
 test('overwrite defaults with options', t => {
-  const client = new Analytics('key', {
+  const client = new Journify('key', {
     host: 'a',
     flushAt: 1,
     flushInterval: 2

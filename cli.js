@@ -2,16 +2,16 @@
 'use strict'
 
 const program = require('commander')
-const Analytics = require('.')
+const Journify = require('.')
 const pkg = require('./package')
 
 const toObject = str => JSON.parse(str)
 
 program
   .version(pkg.version)
-  .option('-w, --writeKey <key>', 'the Segment write key to use')
-  .option('-h, --host <host>', 'the Segment API hostname to use')
-  .option('-t, --type <type>', 'the Segment message type')
+  .option('-w, --writeKey <key>', 'the Journify write key to use')
+  .option('-h, --host <host>', 'the Journify API hostname to use')
+  .option('-t, --type <type>', 'the Journify message type')
 
   .option('-u, --userId <id>', 'the user id to send the event as')
   .option('-a, --anonymousId <id>', 'the anonymous user id to send the event as')
@@ -24,7 +24,6 @@ program
   .option('-n, --name <name>', 'name of the screen or page to send with the message')
   .option('-t, --traits <traits>', 'the identify/group traits to send (JSON-encoded)', toObject)
   .option('-g, --groupId <groupId>', 'the group id')
-  .option('-pid, --previousId <previousId>', 'the previous id')
 
   .parse(process.argv)
 
@@ -46,10 +45,9 @@ const properties = program.properties
 const name = program.name
 const traits = program.traits
 const groupId = program.groupId
-const previousId = program.previousId
 
 const run = (method, args) => {
-  const analytics = new Analytics(writeKey, { host, flushAt: 1 })
+  const analytics = new Journify(writeKey, { host, flushAt: 1 })
   analytics[method](args, err => {
     if (err) {
       console.error(err.stack)
@@ -102,15 +100,6 @@ switch (type) {
     run('group', {
       groupId,
       traits,
-      userId,
-      anonymousId,
-      context,
-      integrations
-    })
-    break
-  case 'alias':
-    run('alias', {
-      previousId,
       userId,
       anonymousId,
       context,

@@ -1,5 +1,7 @@
 name: Push
 on: push
+env:
+  RUN_E2E_TESTS: true
 jobs:
   push:
     runs-on: ubuntu-latest

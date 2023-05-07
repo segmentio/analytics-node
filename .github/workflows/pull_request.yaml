@@ -7,6 +7,8 @@ on:
     types:
       - opened
       - edited
+env:
+  RUN_E2E_TESTS: true
 
 jobs:
   versioning:
@@ -21,7 +23,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-      
+
       - name: Install modules
         run: yarn install
 
@@ -36,15 +38,15 @@ jobs:
           pull_request_title="${{ github.event.pull_request.title }}"
           new_version_regex='(\[MAJOR\]|\[MINOR\]|\[PATCH\])\ .+'
           new_version="false"
-          
+
           if [[ $pull_request_title =~ $new_version_regex ]]; then
             new_version="true"
             major_regex='\[MAJOR\]\ .+'
             minor_regex='\[MINOR\]\ .+'
             patch_regex='\[PATCH\]\ .+'
-          
+
             git checkout ${{ github.head_ref }}
-          
+
             if [[ $pull_request_title =~ $major_regex ]]; then
               npm run major-version
             elif [[ $pull_request_title =~ $minor_regex ]]; then
@@ -53,13 +55,13 @@ jobs:
               npm run patch-version
             fi
           fi
-          
+
           if [[ $new_version == "true" ]]; then
             current_version=$(node -p "require('./package.json').version")
             tag_name="v$current_version"
-          
+
             git push
-          
+
             git tag -a $tag_name -m "New version $tag_name"
             git push origin $tag_name
           fi

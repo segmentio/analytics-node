@@ -5,6 +5,8 @@ on:
     branches:
       - main
     types: [closed]
+env:
+  RUN_E2E_TESTS: true
 
 jobs:
   release:
@@ -32,7 +34,7 @@ jobs:
         run: |
           pull_request_title="${{ github.event.pull_request.title }}"
           new_release_regex='(\[MAJOR\]|\[MINOR\]|\[PATCH\])\ .+'
-          
+
           if [[ $pull_request_title =~ $new_release_regex ]]; then
             current_version=$(node -p "require('./package.json').version")
             tag_name="v$current_version"

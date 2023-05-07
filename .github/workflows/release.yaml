@@ -3,7 +3,7 @@ name: Automatic releasing after merge to main
 on:
   pull_request:
     branches:
-      - main
+      - master
     types: [closed]
 env:
   RUN_E2E_TESTS: true

@@ -29,7 +29,7 @@ client.track({
 Documentation is available at [https://docs.journify.io/sources/nodejs-sdk](https://docs.journify.io/sources/nodejs-sdk).
 
 # Contributing
-You can contribute to Journify Node.js SDK by forking the repo and making pull requests on the `main` branch.
+You can contribute to Journify Node.js SDK by forking the repo and making pull requests on the `master` branch.
 
 To publish a new version, you need to add a prefix to your pull request title following the [semantic versioning spec](https://semver.org/):
 * **[MAJOR]** \{Pull request title\}

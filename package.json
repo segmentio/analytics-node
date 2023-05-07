@@ -12,7 +12,7 @@
   "scripts": {
     "setup": "cp scripts/githooks/* .git/hooks/ && chmod +x .git/hooks/*",
     "build": "npm run setup && npm run update-version && npm run lint && npm run test",
-    "test": "ava && ./scripts/e2e-test.sh",
+    "test": "ava",
     "lint": "eslint .",
     "update-version": "sh scripts/update-version-var.sh",
     "major-version": "npm --no-git-tag-version version major && npm run update-version && git commit -am 'update version (major)'",

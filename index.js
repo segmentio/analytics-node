@@ -8,7 +8,7 @@ const axiosRetry = require('axios-retry')
 const ms = require('ms')
 const { v4: uuid } = require('uuid')
 const md5 = require('md5')
-const version = require('./package.json').version
+const LIB_VERSION = require('./generated/libVersion').LIB_VERSION
 const isString = require('lodash.isstring')
 
 const setImmediate = global.setImmediate || process.nextTick.bind(process)
@@ -166,7 +166,7 @@ class Journify {
     message.context = Object.assign({
       library: {
         name: '@journifyio/nodejs-sdk',
-        version
+        version: LIB_VERSION
       }
     }, message.context)
 
@@ -258,7 +258,7 @@ class Journify {
       context: {
         library: {
           name: '@journifyio/nodejs-sdk',
-          version
+          version: LIB_VERSION
         }
       }
     }

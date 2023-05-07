@@ -5,14 +5,14 @@ import delay from 'delay'
 import auth from 'basic-auth'
 import test from 'ava'
 import Journify from '.'
-import { version } from './package'
+import {LIB_VERSION} from './generated/libVersion'
 
 const noop = () => {}
 
 const context = {
   library: {
     name: 'journify-nodejs-sdk',
-    version
+    version: LIB_VERSION,
   }
 }
 

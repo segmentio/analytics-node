@@ -1,9 +1,10 @@
 {
   "name": "@journifyio/nodejs-sdk",
   "version": "0.0.1",
-  "description": "The hassle-free way to integrate Journify into any Node.js application",
+  "description": "Journify SDK in Node.js",
   "license": "MIT",
   "repository": "git@github.com:journifyio/journify-nodejs-sdk.git",
+  "homepage": "https://github.com/journifyio/journify-nodejs-sdk",
   "author": "Journifyio",
   "engines": {
     "node": ">=4"

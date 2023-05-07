@@ -1,0 +1,57 @@
+name: Automatic releasing after merge to main
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+env:
+  RUN_E2E_TESTS: true
+
+jobs:
+  release:
+    if: github.event.pull_request.merged
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install modules
+        run: yarn install
+
+      - name: Build, Lint & Test
+        run: npm run build
+
+      - name: Check for a potential new release
+        id: release_check
+        run: |
+          pull_request_title="${{ github.event.pull_request.title }}"
+          new_release_regex='(\[MAJOR\]|\[MINOR\]|\[PATCH\])\ .+'
+
+          if [[ $pull_request_title =~ $new_release_regex ]]; then
+            current_version=$(node -p "require('./package.json').version")
+            tag_name="v$current_version"
+            echo "new_release=true" >> $GITHUB_OUTPUT
+            echo "tag_name=$tag_name" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Publish
+        if: steps.release_check.outputs.new_release == 'true'
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          access: public
+
+      - name: Release to Github
+        if: steps.release_check.outputs.new_release == 'true'
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.release_check.outputs.tag_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}

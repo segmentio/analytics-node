@@ -1,0 +1,23 @@
+name: Push
+on: push
+env:
+  RUN_E2E_TESTS: true
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install modules
+        run: yarn install
+
+      - name: Build, Lint & Test
+        run: npm run build

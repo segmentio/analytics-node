@@ -1,37 +1,30 @@
 {
-  "name": "analytics-node",
-  "version": "6.2.0",
-  "description": "The hassle-free way to integrate analytics into any Node.js application",
+  "name": "@journifyio/nodejs-sdk",
+  "version": "0.0.1",
+  "description": "Journify SDK in Node.js",
   "license": "MIT",
-  "repository": "segmentio/analytics-node",
-  "author": {
-    "name": "Segment",
-    "email": "tools+npm@segment.com",
-    "url": "https://segment.com"
-  },
+  "repository": "git@github.com:journifyio/journify-nodejs-sdk.git",
+  "homepage": "https://github.com/journifyio/journify-nodejs-sdk",
+  "author": "Journifyio",
   "engines": {
     "node": ">=4"
   },
   "scripts": {
-    "circle-lint": ".buildscript/circle.sh",
-    "dependencies": "yarn",
-    "test": "standard && nyc ava --timeout=20s&& .buildscript/e2e.sh",
-    "coverage": "nyc npm run test",
-    "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
-    "np": "np --no-publish",
-    "release": "yarn run np"
+    "setup": "cp scripts/githooks/* .git/hooks/ && chmod +x .git/hooks/*",
+    "build": "npm run setup && npm run update-version && npm run lint && npm run test",
+    "test": "ava",
+    "lint": "eslint .",
+    "update-version": "sh scripts/update-version-var.sh",
+    "major-version": "npm --no-git-tag-version version major && npm run update-version && git commit -am 'update version (major)'",
+    "minor-version": "npm --no-git-tag-version version minor && npm run update-version && git commit -am 'update version (minor)'",
+    "patch-version": "npm --no-git-tag-version version patch && npm run update-version && git commit -am 'update version (patch)'"
   },
-  "files": [
-    "index.js"
-  ],
+  "main": "index.js",
   "keywords": [
-    "analytics",
-    "stats",
-    "segment.io",
-    "segmentio",
-    "segment",
-    "client",
-    "driver"
+    "journify",
+    "nodejs",
+    "node",
+    "sdk"
   ],
   "dependencies": {
     "@segment/loosely-validate-event": "^2.0.0",
@@ -50,18 +43,10 @@
     "codecov": "^3.8.1",
     "commander": "^2.9.0",
     "delay": "^4.2.0",
+    "eslint": "^8.40.0",
     "express": "^4.15.2",
     "husky": "^3.0.4",
-    "np": "^7.5.0",
-    "nyc": "^15.1.0",
     "sinon": "^7.3.2",
-    "snyk": "^1.171.1",
-    "standard": "^12.0.1"
-  },
-  "resolutions": {
-    "kind-of": "^6.0.3",
-    "lodash": "^4.17.19",
-    "set-value": "^2.0.1",
-    "yargs-parser": "^13.1.2"
+    "snyk": "^1.171.1"
   }
 }

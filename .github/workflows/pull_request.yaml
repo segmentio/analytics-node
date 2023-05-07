@@ -1,0 +1,67 @@
+name: Automatic versioning based on pull request title
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - edited
+env:
+  RUN_E2E_TESTS: true
+
+jobs:
+  versioning:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install modules
+        run: yarn install
+
+      - name: Configure git
+        run: |
+          git config --global user.email "ci@journify.io"
+          git config --global user.name "Journify CI bot"
+
+      - name: Update version
+        id: update_version
+        run: |
+          pull_request_title="${{ github.event.pull_request.title }}"
+          new_version_regex='(\[MAJOR\]|\[MINOR\]|\[PATCH\])\ .+'
+          new_version="false"
+
+          if [[ $pull_request_title =~ $new_version_regex ]]; then
+            new_version="true"
+            major_regex='\[MAJOR\]\ .+'
+            minor_regex='\[MINOR\]\ .+'
+            patch_regex='\[PATCH\]\ .+'
+
+            git checkout ${{ github.head_ref }}
+
+            if [[ $pull_request_title =~ $major_regex ]]; then
+              npm run major-version
+            elif [[ $pull_request_title =~ $minor_regex ]]; then
+              npm run minor-version
+            elif [[ $pull_request_title =~ $patch_regex ]]; then
+              npm run patch-version
+            fi
+          fi
+
+          if [[ $new_version == "true" ]]; then
+            current_version=$(node -p "require('./package.json').version")
+            tag_name="v$current_version"
+
+            git push
+
+            git tag -a $tag_name -m "New version $tag_name"
+            git push origin $tag_name
+          fi

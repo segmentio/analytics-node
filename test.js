@@ -4,15 +4,15 @@ import express from 'express'
 import delay from 'delay'
 import auth from 'basic-auth'
 import test from 'ava'
-import Analytics from '.'
-import { version } from './package'
+import Journify from '.'
+import {LIB_VERSION} from './generated/libVersion'
 
 const noop = () => {}
 
 const context = {
   library: {
-    name: 'analytics-node',
-    version
+    name: '@journifyio/nodejs-sdk',
+    version: LIB_VERSION,
   }
 }
 
@@ -26,7 +26,7 @@ const createClient = options => {
     host: `http://localhost:${port}`
   }, options)
 
-  const client = new Analytics('key', options)
+  const client = new Journify('key', options)
   client.flushed = true
 
   return client
@@ -37,19 +37,10 @@ test.before.cb(t => {
   express()
     .use(bodyParser.json())
     .post('/v1/batch', (req, res) => {
-      const batch = req.body.batch
-
-      const { name: writeKey } = auth(req)
+      const {writeKey, batch } = req.body
       if (!writeKey) {
         return res.status(400).json({
           error: { message: 'missing write key' }
-        })
-      }
-
-      const ua = req.headers['user-agent']
-      if (ua !== `analytics-node/${version}`) {
-        return res.status(400).json({
-          error: { message: 'invalid user-agent' }
         })
       }
 
@@ -86,11 +77,11 @@ test.after(() => {
 })
 
 test('expose a constructor', t => {
-  t.is(typeof Analytics, 'function')
+  t.is(typeof Journify, 'function')
 })
 
 test('require a write key', t => {
-  t.throws(() => new Analytics(), 'You must pass your Segment project\'s write key.')
+  t.throws(() => new Journify(), 'You must pass your Journify source\'s write key.')
 })
 
 test('create a queue', t => {
@@ -100,22 +91,22 @@ test('create a queue', t => {
 })
 
 test('default options', t => {
-  const client = new Analytics('key')
+  const client = new Journify('key')
 
   t.is(client.writeKey, 'key')
-  t.is(client.host, 'https://api.segment.io')
+  t.is(client.host, 'https://t.journify.io')
   t.is(client.flushAt, 20)
   t.is(client.flushInterval, 10000)
 })
 
 test('remove trailing slashes from `host`', t => {
-  const client = new Analytics('key', { host: 'http://google.com///' })
+  const client = new Journify('key', { host: 'http://google.com///' })
 
   t.is(client.host, 'http://google.com')
 })
 
 test('overwrite defaults with options', t => {
-  const client = new Analytics('key', {
+  const client = new Journify('key', {
     host: 'a',
     flushAt: 1,
     flushInterval: 2
@@ -143,14 +134,14 @@ test('enqueue - add a message to the queue', t => {
   const item = client.queue.pop()
 
   t.is(typeof item.message.messageId, 'string')
-  t.regex(item.message.messageId, /node-[a-zA-Z0-9]{32}/)
+  t.regex(item.message.messageId, /nodejs-[a-zA-Z0-9]{32}/)
   t.deepEqual(item, {
     message: {
       timestamp,
       type: 'type',
       context,
-      _metadata: metadata,
-      messageId: item.message.messageId
+      messageId: item.message.messageId,
+      writeKey: 'key'
     },
     callback: noop
   })
@@ -340,10 +331,9 @@ test('flush - send messages', async t => {
   ]
 
   const data = await client.flush()
-  t.deepEqual(Object.keys(data), ['batch', 'timestamp', 'sentAt'])
+  t.deepEqual(Object.keys(data), ['batch', 'writeKey', 'context'])
   t.deepEqual(data.batch, ['a', 'b'])
-  t.true(data.timestamp instanceof Date)
-  t.true(data.sentAt instanceof Date)
+  t.true(data.context instanceof Object)
   setImmediate(() => {
     t.true(callbackA.calledOnce)
     t.true(callbackB.calledOnce)
@@ -597,36 +587,6 @@ test('screen - require either userId or anonymousId', t => {
   t.throws(() => client.screen({}), 'You must pass either an "anonymousId" or a "userId".')
   t.notThrows(() => client.screen({ userId: 'id' }))
   t.notThrows(() => client.screen({ anonymousId: 'id' }))
-})
-
-test('alias - enqueue a message', t => {
-  const client = createClient()
-  stub(client, 'enqueue')
-
-  const message = {
-    userId: 'id',
-    previousId: 'id'
-  }
-
-  client.alias(message, noop)
-
-  t.true(client.enqueue.calledOnce)
-  t.deepEqual(client.enqueue.firstCall.args, ['alias', message, noop])
-})
-
-test('alias - require previousId and userId', t => {
-  const client = createClient()
-  stub(client, 'enqueue')
-
-  t.throws(() => client.alias(), 'You must pass a message object.')
-  t.throws(() => client.alias({}), 'You must pass a "userId".')
-  t.throws(() => client.alias({ userId: 'id' }), 'You must pass a "previousId".')
-  t.notThrows(() => {
-    client.alias({
-      userId: 'id',
-      previousId: 'id'
-    })
-  })
 })
 
 test('isErrorRetryable', t => {

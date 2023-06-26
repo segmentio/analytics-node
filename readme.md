@@ -1,6 +1,7 @@
-> Alert ⚠️: Try the [new analytics-node SDK](https://github.com/segmentio/analytics-next/tree/master/packages/node#readme)! Currently in [Public Beta](https://segment.com/legal/first-access-beta-preview).
+# 🚫 This package is deprecated.
+## Please install the new node SDK: [@segment/analytics-node](https://github.com/segmentio/analytics-next/tree/master/packages/node#readme).
 
-# analytics-node [![CircleCI](https://circleci.com/gh/segmentio/analytics-node.svg?style=svg&circle-token=68654e8cd0fcd16b1f3ae9943a1d8e20e36ae6c5)](https://circleci.com/gh/segmentio/analytics-node)
+### analytics-node
 
 A Node.js client for [Segment](https://segment.com) — The hassle-free way to integrate analytics into any application.
 

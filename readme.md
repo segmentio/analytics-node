@@ -1,9 +1,16 @@
-# 🚫 This package is deprecated.
+
 ## Please install the new node SDK: [@segment/analytics-node](https://github.com/segmentio/analytics-next/tree/master/packages/node#readme).
 
 ### analytics-node
 
 A Node.js client for [Segment](https://segment.com) — The hassle-free way to integrate analytics into any application.
+
+
+### ⚠️ Maintenance ⚠️
+This library is in maintenance mode. It will send data as intended, but receive no new feature support and only critical maintenance updates from Segment.
+
+We highly recommend using our upgraded [Analytics-Node](https://github.com/segmentio/analytics-next/tree/master/packages/node#readme) to benefit from feature enhancements and ongoing support.
+
 
 <div align="center">
   <img src="https://user-images.githubusercontent.com/16131737/53616724-d409f180-3b98-11e9-9d39-553c958ecf99.png"/>

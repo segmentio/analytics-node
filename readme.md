@@ -6,8 +6,8 @@
 A Node.js client for [Segment](https://segment.com) — The hassle-free way to integrate analytics into any application.
 
 
-### ⚠️ Maintenance ⚠️
-This library is in maintenance mode. It will send data as intended, but receive no new feature support and only critical maintenance updates from Segment.
+### ⚠️ Community ⚠️
+This library is community supported. Segment does not manage or update this library. We suggest forking the repo if changes are needed for your project.
 
 We highly recommend using our upgraded [Analytics-Node](https://github.com/segmentio/analytics-next/tree/master/packages/node#readme) to benefit from feature enhancements and ongoing support.
 
